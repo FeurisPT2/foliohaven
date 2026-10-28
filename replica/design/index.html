@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Icecream Ebook Reader — Design System Primitives Gallery</title>
+  <link rel="stylesheet" href="tokens.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-sans);
+      font-size: var(--type-base-size);
+      line-height: var(--type-base-line);
+      padding: 32px;
+      transition: background-color var(--motion-base), color var(--motion-base);
+    }
+    header {
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 {
+      font-size: var(--type-display-size);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .badge-clean-room {
+      display: inline-block;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-muted);
+      font-size: var(--type-xs-size);
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      margin-top: 8px;
+    }
+    .theme-switcher-bar {
+      display: flex;
+      gap: 8px;
+    }
+    .theme-btn {
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      cursor: pointer;
+      font-size: var(--type-sm-size);
+      font-weight: 500;
+      transition: all var(--motion-fast);
+    }
+    .theme-btn.active, .theme-btn:hover {
+      background-color: var(--color-accent);
+      color: var(--color-on-accent);
+      border-color: var(--color-accent);
+    }
+
+    section {
+      margin-bottom: 48px;
+    }
+    h2 {
+      font-size: var(--type-xl-size);
+      font-weight: 700;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* --- Buttons --- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: var(--font-sans);
+      font-size: var(--type-sm-size);
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all var(--motion-fast);
+      user-select: none;
+      text-decoration: none;
+    }
+    .btn:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+    .btn-primary {
+      background-color: var(--color-accent);
+      color: var(--color-on-accent);
+    }
+    .btn-primary:hover {
+      background-color: var(--color-accent-hover);
+    }
+    .btn-secondary {
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      border-color: var(--color-border);
+    }
+    .btn-secondary:hover {
+      background-color: var(--color-surface-hover);
+      border-color: var(--color-border-input);
+    }
+    .btn-ghost {
+      background-color: transparent;
+      color: var(--color-text);
+    }
+    .btn-ghost:hover {
+      background-color: var(--color-surface-hover);
+    }
+    .btn-danger {
+      background-color: transparent;
+      color: var(--color-danger);
+      border-color: var(--color-danger);
+    }
+    .btn-danger:hover {
+      background-color: var(--color-danger);
+      color: var(--color-on-accent);
+    }
+    .btn-disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* --- Inputs --- */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .input-label {
+      font-size: var(--type-xs-size);
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+    .input-field {
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border-input);
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-sans);
+      font-size: var(--type-base-size);
+      outline: none;
+      transition: border-color var(--motion-fast);
+      min-width: 260px;
+    }
+    .input-field:focus {
+      border: 2px solid var(--color-accent);
+      padding: 7px 11px;
+    }
+
+    /* --- Badges --- */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      font-size: var(--type-xs-size);
+      font-weight: 600;
+      border-radius: var(--radius-xs);
+      letter-spacing: 0.04em;
+    }
+    .badge-epub { background: #e6f0ff; color: #1f5fdb; }
+    .badge-pdf  { background: #ffebe6; color: #c92a2a; }
+    .badge-mobi { background: #fff2e6; color: #b35900; }
+    .badge-fb2  { background: #e6f9f0; color: #1b7a4b; }
+    .badge-cbz  { background: #f3e8ff; color: #7c3aed; }
+    .badge-txt  { background: #f0f3f8; color: #525b6a; }
+
+    /* --- Book Card Primitive --- */
+    .book-card {
+      width: 160px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      box-shadow: var(--shadow-card);
+      transition: all var(--motion-fast);
+      position: relative;
+      cursor: pointer;
+    }
+    .book-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-2px);
+      border-color: var(--color-accent);
+    }
+    .card-thumb {
+      width: 140px;
+      height: 180px;
+      background: linear-gradient(135deg, #e3e8f0 0%, #cbd5e1 100%);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-thumb .badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+    }
+    .card-thumb .star {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      color: #f59e0b;
+      font-size: 16px;
+    }
+    .card-title {
+      font-size: var(--type-sm-size);
+      font-weight: 600;
+      margin-top: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-author {
+      font-size: var(--type-xs-size);
+      color: var(--color-text-muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-progress-track {
+      width: 100%;
+      height: 4px;
+      background: var(--color-border);
+      border-radius: 2px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .card-progress-bar {
+      height: 100%;
+      background: var(--color-success);
+    }
+
+    /* --- Reader Themes Palette Box --- */
+    .palette-box {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      width: 280px;
+      box-shadow: var(--shadow-card);
+    }
+    .palette-box.day {
+      background: #ffffff;
+      color: #1a1d20;
+    }
+    .palette-box.night {
+      background: #181a1f;
+      color: #e2e4e8;
+    }
+    .palette-box.sepia {
+      background: #faf3e0;
+      color: #3d2e1e;
+    }
+    .palette-box.dark-sepia {
+      background: #2b241e;
+      color: #ddd1be;
+    }
+    .palette-box p {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      line-height: 22px;
+      margin-top: 8px;
+    }
+    .palette-title {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: var(--type-sm-size);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.7;
+    }
+
+    /* --- Text Highlighting Swatches --- */
+    .highlight-swatch {
+      padding: 2px 6px;
+      border-radius: 2px;
+      color: #14181f;
+      font-weight: 500;
+    }
+    .hl-yellow { background: var(--color-highlight-yellow); }
+    .hl-green  { background: var(--color-highlight-green); }
+    .hl-cyan   { background: var(--color-highlight-cyan); }
+    .hl-pink   { background: var(--color-highlight-pink); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>Icecream Ebook Reader — Design System</h1>
+      <div class="badge-clean-room">WCAG 2.2 AA/AAA Validated Clean-Room Design System</div>
+    </div>
+    <div class="theme-switcher-bar">
+      <button class="theme-btn active" onclick="setAppTheme('light')">Light Chrome</button>
+      <button class="theme-btn" onclick="setAppTheme('dark')">Dark Chrome</button>
+    </div>
+  </header>
+
+  <!-- Buttons Section -->
+  <section>
+    <h2>1. Button Primitives (`IceButton`)</h2>
+    <div class="row">
+      <button class="btn btn-primary">+ Add Book to Library</button>
+      <button class="btn btn-secondary">Select Image...</button>
+      <button class="btn btn-ghost">Select All</button>
+      <button class="btn btn-danger">Delete from Library</button>
+      <button class="btn btn-secondary btn-disabled">Disabled Action</button>
+    </div>
+  </section>
+
+  <!-- Input Fields -->
+  <section>
+    <h2>2. Text & Search Inputs (`IceLineEdit`)</h2>
+    <div class="row">
+      <div class="input-group">
+        <label class="input-label" for="search-input">Search Library</label>
+        <input class="input-field" id="search-input" type="search" placeholder="Search by title, author, series...">
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="title-input">Book Title</label>
+        <input class="input-field" id="title-input" type="text" value="The Fellowship of the Ring">
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="author-input">Author Name</label>
+        <input class="input-field" id="author-input" type="text" value="J.R.R. Tolkien">
+      </div>
+    </div>
+  </section>
+
+  <!-- Format Badges -->
+  <section>
+    <h2>3. Format Badges & Tags</h2>
+    <div class="row">
+      <span class="badge badge-epub">EPUB</span>
+      <span class="badge badge-pdf">PDF</span>
+      <span class="badge badge-mobi">MOBI</span>
+      <span class="badge badge-fb2">FB2</span>
+      <span class="badge badge-cbz">CBZ</span>
+      <span class="badge badge-txt">TXT</span>
+    </div>
+  </section>
+
+  <!-- Book Card Primitive -->
+  <section>
+    <h2>4. Book Card (`BookCardWidget` - C03)</h2>
+    <div class="row">
+      <div class="book-card">
+        <div class="card-thumb">
+          <span class="badge badge-epub">EPUB</span>
+          <span class="star">&#9733;</span>
+        </div>
+        <div class="card-title">Dune</div>
+        <div class="card-author">Frank Herbert</div>
+        <div class="card-progress-track">
+          <div class="card-progress-bar" style="width: 74%;"></div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="card-thumb">
+          <span class="badge badge-pdf">PDF</span>
+        </div>
+        <div class="card-title">Design Patterns: GoF</div>
+        <div class="card-author">Erich Gamma et al.</div>
+        <div class="card-progress-track">
+          <div class="card-progress-bar" style="width: 42%;"></div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="card-thumb">
+          <span class="badge badge-mobi">MOBI</span>
+        </div>
+        <div class="card-title">Clean Code</div>
+        <div class="card-author">Robert C. Martin</div>
+        <div class="card-progress-track">
+          <div class="card-progress-bar" style="width: 100%;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 Reader Palettes -->
+  <section>
+    <h2>5. Reader Canvas Color Profiles (Day, Night, Sepia, Dark Sepia)</h2>
+    <div class="row">
+      <div class="palette-box day">
+        <div class="palette-title">Day Theme (Paper White)</div>
+        <p>In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat.</p>
+      </div>
+
+      <div class="palette-box night">
+        <div class="palette-title">Night Theme (Deep Slate)</div>
+        <p>It was a dark and stormy night; the rain fell in torrents — except at occasional intervals, when it was checked by a violent gust of wind which swept up the streets.</p>
+      </div>
+
+      <div class="palette-box sepia">
+        <div class="palette-title">Sepia Theme (Warm Parchment)</div>
+        <p>Call me Ishmael. Some years ago — never mind how long precisely — having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little.</p>
+      </div>
+
+      <div class="palette-box dark-sepia">
+        <div class="palette-title">Dark Sepia (Roasted Walnut)</div>
+        <p>It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Text Highlighting -->
+  <section>
+    <h2>6. In-Book Text Highlighting Swatches</h2>
+    <div class="row">
+      <p style="font-size: 16px; line-height: 28px;">
+        Sample text demonstrating the four annotation colors:
+        <span class="highlight-swatch hl-yellow">Yellow highlight (#ffe270)</span> for primary key concepts,
+        <span class="highlight-swatch hl-green">Green highlight (#a8f29a)</span> for definitions and rules,
+        <span class="highlight-swatch hl-cyan">Cyan highlight (#7be5f8)</span> for quotes and references, and
+        <span class="highlight-swatch hl-pink">Pink highlight (#ffa0c5)</span> for urgent or critical notes.
+      </p>
+    </div>
+  </section>
+
+  <script>
+    function setAppTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.querySelectorAll('.theme-btn')[0].classList.remove('active');
+        document.querySelectorAll('.theme-btn')[1].classList.add('active');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        document.querySelectorAll('.theme-btn')[0].classList.add('active');
+        document.querySelectorAll('.theme-btn')[1].classList.remove('active');
+      }
+    }
+  </script>
+
+</body>
+</html>

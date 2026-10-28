@@ -1,0 +1,68 @@
+feature,area,priority,original,clone,complexity,notes
+EPUB 2.0.1 and 3.2 Ingestion & Rendering,Formats,Must,yes,yes,L,Parse OCF ZIP container OPF package spine and NCX/Nav navigation
+PDF Document Rendering & Viewport Scaling,Formats,Must,yes,yes,L,Rasterize page-based vector content with Poppler/PDFium and Hi-DPI scaling
+MOBI / PRC / AZW PalmDOC LZ77 Decompression,Formats,Must,yes,yes,M,Unpack PDB container parse PalmDOC/MOBI headers and decompress LZ77 stream
+FB2 XML Parsing & Base64 Cover Extraction,Formats,Must,yes,yes,M,Stream XML parser for FictionBook DOM with embedded base64 cover extraction
+CBZ / CBR Comic Book Archive Extraction,Formats,Must,yes,yes,S,Natural alphanumeric image ordering and ComicInfo.xml metadata parsing
+TXT Charset Detection & Paragraph Reflow,Formats,Must,yes,yes,S,Detect encoding via BOM/uchardet and apply heuristic paragraph reflow
+DJVU Document Viewing,Formats,Could,yes,planned,M,Support DjVu fixed-layout raster pages via optional backend plugin
+DRM Protection Detection & Warning,Formats,Must,yes,planned,S,Detect encrypted containers and display clean non-fatal error dialog
+Single Book File Import,Library,Must,yes,yes,S,Open file dialog for supported ebook formats with duplicate hash checking
+Bulk Directory & Folder Import,Library,Must,yes,yes,M,Recursive background directory scanning with batch transaction commits
+Drag and Drop Import into Library,Library,Must,yes,yes,S,Accept file and folder drops directly onto the library canvas
+Cover Grid Bookshelf View,Library,Must,yes,yes,M,Responsive card grid flow layout with high-resolution cover thumbnails
+Detailed Metadata Table View,Library,Must,yes,yes,M,Multi-column sortable QTableView with reading progress delegate
+Instant Library Search & Filtering,Library,Must,yes,yes,S,Real-time search filtering across title author and format attributes
+System Categories Filtering,Library,Must,yes,yes,S,Built-in filters for All Recently Read Read Favorites and Trash
+Custom User Folders & Categories,Library,Should,yes,yes,M,Create rename and delete hierarchical user collections and folders
+Book Deduplication via Content Hash,Library,Must,yes,yes,S,Compute SHA-256 hash upon import to prevent duplicate records
+Soft Deletion & Trash Bin Workflow,Library,Must,yes,yes,S,Move books to trash with is_deleted flag and restore or permanent purge
+Multi-Book Selection & Operations Footer,Library,Should,yes,yes,M,Batch selection drawer for bulk category assign export or deletion
+Book Properties & Metadata Editing,Library,Should,yes,yes,S,Inspect and edit title author and description fields
+Custom Cover Image Replacement,Library,Should,yes,yes,S,Allow user to select replacement cover image for any book
+Removable Media Auto-Import,Library,Could,yes,yes,S,Detect books on removable USB/SD drives and copy to local library
+Reflowable Document Layout Engine,Reader,Must,yes,yes,XL,Dynamic HTML/CSS text reflow supporting font scaling and margins
+Fixed-Layout Page Document Engine,Reader,Must,yes,yes,L,Page image rendering engine for PDF and comic archives
+Single Column Reading View,Reader,Must,yes,yes,M,Single centered text column layout for focused reading
+Two-Column Double Page Spread,Reader,Must,yes,yes,M,Balanced side-by-side columns mimicking an open physical book
+Interactive Resizing Suspension Mechanism,Reader,Must,yes,yes,M,Freeze reflow calculation during active window drag resize
+Reading Position Tracking via Page & CFI,Reader,Must,yes,yes,M,Precise position tracking using EPUB CFI and page indices
+Fullscreen Distraction-Free Mode,Reader,Must,yes,yes,S,Borderless full-screen view toggled via F11 or toolbar icon
+Autohiding Toolbars & Scrubber in Fullscreen,Reader,Should,yes,yes,S,Toolbar autohides off-screen and reveals on top edge cursor hover
+Auto Page Flipping Mode with Timer,Reader,Should,yes,yes,S,Automatic page advance driven by configurable timer interval
+Margin Click Navigation Zones,Reader,Must,yes,yes,S,Left and right viewport margins act as responsive page turn triggers
+Keyboard Navigation Shortcuts,Reader,Must,yes,yes,S,Complete hotkey navigation using arrows space page-up and page-down
+Hierarchical Table of Contents Drawer,Navigation,Must,yes,yes,M,Expandable tree view of chapters and sections with direct jumping
+Interactive Progress Scrubber Slider,Navigation,Must,yes,yes,S,Continuous position slider with chapter tooltip and page counter
+Direct Jump to Page Number,Navigation,Must,yes,yes,S,Input box and action to navigate immediately to target page index
+History Back Navigation Link,Navigation,Should,yes,yes,S,Dynamic button returning to previous page after chapter or TOC jumps
+In-Book Asynchronous Full-Text Search,Navigation,Must,yes,yes,L,Non-blocking background search across chapters with match streaming
+Search Match Highlighting & Jump to Hit,Navigation,Must,yes,yes,M,Highlight search query term in context snippet and scroll canvas
+Text Selection Context Menu Popup,Annotations,Must,yes,yes,M,Floating action bubble positioned over selected text
+Multi-Color Text Highlighting,Annotations,Must,yes,yes,M,Wrap selection in 4 distinct highlight color styles and underline
+Text Commentary & Notes Attached to Highlights,Annotations,Must,yes,yes,M,Attach user text commentary to highlighted text ranges
+Notes & Highlights Side Drawer,Annotations,Must,yes,yes,M,Slide-out panel listing all annotations with search and delete
+Export Notes to Standalone HTML Document,Annotations,Should,yes,yes,S,Generate styled HTML report containing all notes and highlights
+Copy Selected Text to Clipboard,Annotations,Must,yes,yes,S,Standard copy action supporting Ctrl+C and context popup
+External Web Lookup Services,Annotations,Should,yes,yes,S,Launch browser searches on Google Wikipedia or Google Translate
+Bookmark Creation & Management Drawer,Annotations,Must,yes,yes,M,Slide-out drawer displaying saved bookmarks with thumbnail previews
+Quick Bookmark Toggle Hotkey,Annotations,Must,yes,yes,S,Instant toggle of bookmark at current reading position via Ctrl+D
+Reading Themes (Day Night Sepia Dark Sepia),Customization,Must,yes,yes,S,Four distinct synchronized color palettes for reader canvas and UI
+Typography Customization,Customization,Must,yes,yes,M,Adjust font family font size line spacing and text margins
+Text Alignment Options,Customization,Must,yes,yes,S,Switch between justified left-aligned centered and right-aligned text
+Display Dimming Brightness Overlay Slider,Customization,Should,yes,yes,S,Semi-transparent black overlay for comfortable reading in darkness
+Customizable Keyboard Shortcuts,Customization,Should,yes,yes,M,Interactive hotkey configuration table for 25 reader operations
+Global Preferences Configuration Dialog,Customization,Must,yes,yes,M,Modal preferences dialog with System Reading Hotkeys and TTS tabs
+Text-to-Speech (TTS) Narration Engine,Accessibility,Should,yes,yes,M,Speech synthesis reading book chapters aloud via native OS voices
+TTS Speech Rate Pitch and Volume Controls,Accessibility,Should,yes,yes,S,Sliders adjusting narration speed pitch and loudness in real time
+Real-Time Paragraph Spoken Word Highlighting,Accessibility,Should,yes,planned,M,Visual highlight on canvas tracking the paragraph being spoken
+Voice Selection for SAPI and OneCore,Accessibility,Should,yes,planned,S,Enumerate and select from installed system voice engines
+Multi-Language UI Localization,Accessibility,Could,yes,planned,M,Multi-language support via compiled Qt QM translation catalogs
+Production SQLite Database with WAL Journaling,Persistence,Must,yes,yes,M,SQLite schema with Write-Ahead Logging and busy timeout handling
+Foreign Key Constraints & Cascading Deletes,Persistence,Must,yes,yes,S,Enforce referential integrity with cascading triggers and foreign keys
+Reading Progress & Session History Storage,Persistence,Must,yes,yes,S,Persist exact reading offset CFI percentage and duration
+Optimized Database Lookup Indexes,Persistence,Must,yes,yes,S,Performance indexes on book_hash time_last_view format and folders
+Local INI Configuration File,Persistence,Must,yes,yes,S,Settings file storing geometry themes voice mapping and view modes
+Disk Thumbnail Cache with LRU Management,Persistence,Must,yes,partial,M,Cached cover images stored on disk with memory LRU cache
+Full Library Archive Backup & Migration (.EBR),Persistence,Should,yes,partial,M,ZIP container packaging SQLite database covers and books
+Print Ebook Dialog,Output,Could,yes,yes,M,Configure printer page range copies orientation and quality

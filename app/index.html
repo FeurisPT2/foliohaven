@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Icecream Ebook Reader — Clean-Room Replica</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Full Application Shell -->
+  <div id="app-container">
+
+    <!-- S01 / C01: Navigation Sidebar -->
+    <aside id="sidebar" role="navigation" aria-label="Library Navigation">
+      <div class="sidebar-header">
+        <div class="brand-icon">E</div>
+        <div class="brand-title">Ebook Reader</div>
+      </div>
+
+      <div class="sidebar-scroll">
+        <div class="sidebar-section-title">Library</div>
+        <div class="nav-item active" data-category="all" role="button" tabindex="0">
+          <div class="item-left">
+            <span>📚</span>
+            <span>All Books</span>
+          </div>
+          <span class="nav-badge" id="badge-all">0</span>
+        </div>
+        <div class="nav-item" data-category="recent" role="button" tabindex="0">
+          <div class="item-left">
+            <span>⏱️</span>
+            <span>Recently Read</span>
+          </div>
+          <span class="nav-badge" id="badge-recent">0</span>
+        </div>
+        <div class="nav-item" data-category="favorites" role="button" tabindex="0">
+          <div class="item-left">
+            <span>⭐</span>
+            <span>Favorites</span>
+          </div>
+          <span class="nav-badge" id="badge-favorites">0</span>
+        </div>
+        <div class="nav-item" data-category="read" role="button" tabindex="0">
+          <div class="item-left">
+            <span>✅</span>
+            <span>Finished</span>
+          </div>
+          <span class="nav-badge" id="badge-read">0</span>
+        </div>
+        <div class="nav-item" data-category="trash" role="button" tabindex="0">
+          <div class="item-left">
+            <span>🗑️</span>
+            <span>Trash</span>
+          </div>
+          <span class="nav-badge" id="badge-trash">0</span>
+        </div>
+
+        <div class="sidebar-section-title">Formats</div>
+        <div class="nav-item" data-format="EPUB" role="button" tabindex="0">
+          <div class="item-left"><span>📄</span><span>EPUB</span></div>
+          <span class="nav-badge" id="badge-format-epub">0</span>
+        </div>
+        <div class="nav-item" data-format="PDF" role="button" tabindex="0">
+          <div class="item-left"><span>📄</span><span>PDF</span></div>
+          <span class="nav-badge" id="badge-format-pdf">0</span>
+        </div>
+        <div class="nav-item" data-format="MOBI" role="button" tabindex="0">
+          <div class="item-left"><span>📄</span><span>MOBI</span></div>
+          <span class="nav-badge" id="badge-format-mobi">0</span>
+        </div>
+        <div class="nav-item" data-format="FB2" role="button" tabindex="0">
+          <div class="item-left"><span>📄</span><span>FB2</span></div>
+          <span class="nav-badge" id="badge-format-fb2">0</span>
+        </div>
+        <div class="nav-item" data-format="CBZ" role="button" tabindex="0">
+          <div class="item-left"><span>📄</span><span>CBZ</span></div>
+          <span class="nav-badge" id="badge-format-cbz">0</span>
+        </div>
+        <div class="nav-item" data-format="TXT" role="button" tabindex="0">
+          <div class="item-left"><span>📄</span><span>TXT</span></div>
+          <span class="nav-badge" id="badge-format-txt">0</span>
+        </div>
+
+        <div class="sidebar-section-title">Categories</div>
+        <div id="user-folders-list"></div>
+        <button class="nav-item" id="btn-add-category-sidebar" style="width: 100%; border: none; background: transparent;">
+          <div class="item-left"><span>➕</span><span>Add Category</span></div>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-ghost" id="btn-open-settings" title="Settings (S08)">⚙️ Settings</button>
+        <button class="btn btn-ghost" id="btn-open-help" title="Help & Shortcuts">❓ Help</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area: S01 Library Viewport -->
+    <main id="main-viewport" role="main">
+
+      <!-- C02: Library Top Action Header -->
+      <header id="library-header">
+        <div class="header-left">
+          <button class="btn btn-primary" id="btn-add-book">+ Add Book</button>
+          <input type="file" id="file-import-input" accept=".epub,.pdf,.mobi,.fb2,.cbz,.cbr,.txt" style="display: none;">
+          <button class="btn btn-secondary" id="btn-add-folder">+ Add Category</button>
+          <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input class="search-input" id="library-search" type="search" placeholder="Search by title or author...">
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="view-switch">
+            <button class="view-btn active" id="btn-view-grid" title="Cover Shelf Grid (S01A)">Grid</button>
+            <button class="view-btn" id="btn-view-table" title="Metadata Table View (S01B)">Table</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- S01A: Grid View & S01B: Table View Canvas -->
+      <section id="library-content" aria-label="Library Books">
+        <!-- Empty State Container -->
+        <div id="empty-state">
+          <div style="font-size: 48px;">📖</div>
+          <div class="empty-title">Your Library is Empty</div>
+          <p style="margin-top: 6px;">Drop ebook files here or click below to add your first book.</p>
+          <button class="btn btn-primary" id="btn-empty-add" style="margin-top: 16px;">+ Add Book to Library</button>
+        </div>
+
+        <!-- S01A: Grid Shelf -->
+        <div id="grid-view" role="region" aria-label="Bookshelf Grid"></div>
+
+        <!-- S01B: Metadata Table -->
+        <table id="table-view" role="grid" aria-label="Bookshelf Table">
+          <thead>
+            <tr>
+              <th data-sort="title">Title</th>
+              <th data-sort="author">Author</th>
+              <th data-sort="date_added">Date Added</th>
+              <th data-sort="progress_percent">Progress</th>
+              <th data-sort="format">Format</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </section>
+
+      <!-- C05: Library Operations Footer -->
+      <footer id="operations-footer">
+        <div id="selection-counter" style="font-weight: 600;">0 books selected</div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-ghost" id="btn-select-all">Select All</button>
+          <button class="btn btn-ghost" id="btn-clear-selection">Clear Selection</button>
+          <button class="btn btn-secondary" id="btn-batch-category">Move to Category...</button>
+          <button class="btn btn-danger" id="btn-batch-delete">Move to Trash</button>
+          <button class="btn btn-secondary" id="btn-batch-restore" style="display: none;">Restore Books</button>
+          <button class="btn btn-danger" id="btn-batch-purge" style="display: none;">Purge Permanently</button>
+        </div>
+      </footer>
+    </main>
+
+    <!-- ======================================================================
+         S02: In-Depth Reader Canvas Screen (Overlays Viewport)
+         ====================================================================== -->
+    <div id="reader-screen" role="region" aria-label="Ebook Reader Canvas">
+
+      <!-- C06: Top Reader Toolbar -->
+      <header id="reader-toolbar">
+        <div class="reader-tool-group">
+          <button class="btn btn-ghost" id="btn-back-to-library" title="Back to Library (Esc)">⬅ Library</button>
+          <span style="color: var(--color-border);">|</span>
+          <button class="btn btn-ghost" id="btn-toggle-toc" title="Table of Contents (Ctrl+T)">📑 Contents</button>
+          <button class="btn btn-ghost" id="btn-toggle-bookmarks" title="Bookmarks (Ctrl+B)">🔖 Bookmarks (<span id="reader-bookmark-count">0</span>)</button>
+          <button class="btn btn-ghost" id="btn-toggle-notes" title="Notes & Highlights (Ctrl+N)">✏️ Notes (<span id="reader-notes-count">0</span>)</button>
+          <button class="btn btn-ghost" id="btn-toggle-search" title="Search in Book (Ctrl+F)">🔍 Search</button>
+        </div>
+
+        <div class="reader-tool-group">
+          <button class="btn btn-ghost" id="btn-tts-play" title="Read Aloud (F7)">▶ Read Aloud</button>
+          <button class="btn btn-ghost" id="btn-quick-bookmark" title="Add Bookmark for this page (Ctrl+D)">⭐ Bookmark</button>
+          <button class="btn btn-ghost" id="btn-reader-print" title="Print Ebook (Ctrl+P)">🖨️</button>
+          <button class="btn btn-ghost" id="btn-reader-fullscreen" title="Fullscreen (F11)">⛶</button>
+          <button class="btn btn-ghost" id="btn-reader-settings" title="Reading Settings (S07)">⚙️</button>
+        </div>
+      </header>
+
+      <!-- Reader Content Viewport with Margin Navigation Zones -->
+      <div id="reader-canvas">
+        <div class="margin-click-zone zone-left" id="zone-prev" title="Previous Page (Left Arrow / Backspace)">
+          <div class="zone-arrow">‹</div>
+        </div>
+
+        <div id="reader-book-content" style="width: 100%; height: 100%; display: flex; justify-content: center;"></div>
+
+        <div class="margin-click-zone zone-right" id="zone-next" title="Next Page (Right Arrow / Spacebar)">
+          <div class="zone-arrow">›</div>
+        </div>
+      </div>
+
+      <!-- C07: Bottom Reader Scrubber Footer -->
+      <footer id="reader-footer">
+        <div id="reader-page-info" style="font-size: var(--type-sm-size); font-weight: 600; min-width: 130px;">Page 1 / 1</div>
+        <input class="scrubber-slider" id="reader-scrubber" type="range" min="0" max="100" value="0">
+        <div id="reader-progress-info" style="font-size: var(--type-sm-size); color: var(--color-text-muted); min-width: 60px; text-align: right;">0%</div>
+      </footer>
+
+      <!-- Screen Dimming Overlay -->
+      <div id="dim-overlay"></div>
+    </div>
+
+    <!-- ======================================================================
+         Side Drawers
+         ====================================================================== -->
+
+    <!-- S04: Table of Contents Drawer (Left) -->
+    <aside class="drawer drawer-left" id="drawer-toc" aria-label="Table of Contents">
+      <div class="drawer-header">
+        <div class="drawer-title">Table of Contents</div>
+        <button class="btn btn-ghost" id="btn-close-toc">✕</button>
+      </div>
+      <div class="drawer-body" id="toc-list"></div>
+    </aside>
+
+    <!-- S03: Bookmarks Drawer (Right) -->
+    <aside class="drawer drawer-right" id="drawer-bookmarks" aria-label="Bookmarks">
+      <div class="drawer-header">
+        <div class="drawer-title">Bookmarks</div>
+        <button class="btn btn-ghost" id="btn-close-bookmarks">✕</button>
+      </div>
+      <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-border);">
+        <button class="btn btn-primary" id="btn-add-bookmark-drawer" style="width: 100%;">+ Add Bookmark</button>
+      </div>
+      <div class="drawer-body" id="bookmarks-list"></div>
+      <div class="drawer-footer">
+        <button class="btn btn-danger" id="btn-clear-all-bookmarks">Clear All Bookmarks</button>
+      </div>
+    </aside>
+
+    <!-- S05: Notes & Highlights Drawer (Right) -->
+    <aside class="drawer drawer-right" id="drawer-notes" aria-label="Notes and Highlights">
+      <div class="drawer-header">
+        <div class="drawer-title">Notes & Highlights</div>
+        <button class="btn btn-ghost" id="btn-close-notes">✕</button>
+      </div>
+      <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-border); display: flex; gap: 8px;">
+        <button class="btn btn-secondary" id="btn-export-notes-html" style="flex: 1;">Export to HTML</button>
+      </div>
+      <div class="drawer-body" id="notes-list"></div>
+      <div class="drawer-footer">
+        <button class="btn btn-danger" id="btn-clear-all-notes">Clear All Notes</button>
+      </div>
+    </aside>
+
+    <!-- S10: In-Book Search Drawer (Right) -->
+    <aside class="drawer drawer-right" id="drawer-search" aria-label="In-Book Search">
+      <div class="drawer-header">
+        <div class="drawer-title">Search in Book</div>
+        <button class="btn btn-ghost" id="btn-close-search">✕</button>
+      </div>
+      <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-border);">
+        <input class="search-input" id="inbook-search-input" type="search" placeholder="Type text to search...">
+      </div>
+      <div class="drawer-body" id="inbook-search-results">
+        <p style="color: var(--color-text-muted); font-size: var(--type-sm-size); text-align: center; margin-top: 24px;">Enter a keyword above to search through the entire book.</p>
+      </div>
+    </aside>
+
+    <!-- S06 / C08: Text Selection Context Bubble -->
+    <div id="note-popup" role="dialog" aria-label="Text Selection Actions">
+      <button class="swatch-btn" data-color="yellow" style="background: #ffe270;" title="Yellow highlight"></button>
+      <button class="swatch-btn" data-color="green" style="background: #a8f29a;" title="Green highlight"></button>
+      <button class="swatch-btn" data-color="cyan" style="background: #7be5f8;" title="Cyan highlight"></button>
+      <button class="swatch-btn" data-color="pink" style="background: #ffa0c5;" title="Pink highlight"></button>
+      <span style="color: var(--color-border);">|</span>
+      <button class="btn btn-ghost" id="btn-popup-note" title="Add Note Commentary">✏️ Note</button>
+      <button class="btn btn-ghost" id="btn-popup-copy" title="Copy Text">📋 Copy</button>
+    </div>
+
+    <!-- S07: In-Reader Quick Settings Popover -->
+    <div id="quick-settings-popover" role="dialog" aria-label="Reading Settings">
+      <div class="settings-row">
+        <span class="settings-label">Reading Theme</span>
+        <div class="theme-pill-group">
+          <div class="theme-pill active" data-reading-theme="day">Day</div>
+          <div class="theme-pill" data-reading-theme="night">Night</div>
+          <div class="theme-pill" data-reading-theme="sepia">Sepia</div>
+          <div class="theme-pill" data-reading-theme="dark-sepia">Dark Sepia</div>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-label">Layout Mode</span>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-secondary" id="btn-col-single">Single Column</button>
+          <button class="btn btn-primary" id="btn-col-double">Two Columns</button>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-label">Font Size</span>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="btn btn-secondary" id="btn-font-dec">A-</button>
+          <span id="label-font-size" style="font-weight: 600; min-width: 36px; text-align: center;">16px</span>
+          <button class="btn btn-secondary" id="btn-font-inc">A+</button>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-label">Font Family</span>
+        <select id="select-font-family" style="padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid var(--color-border-input);">
+          <option value="Georgia">Georgia (Serif)</option>
+          <option value="'Segoe UI', sans-serif">Segoe UI (Sans)</option>
+          <option value="'Times New Roman', serif">Times New Roman</option>
+          <option value="Consolas, monospace">Consolas (Mono)</option>
+        </select>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-label">Night Dimmer</span>
+        <input type="range" id="slider-dimmer" min="0" max="80" value="0" style="width: 140px;">
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         Modals (S08, S09, S11, S12)
+         ====================================================================== -->
+
+    <!-- S08: Global Preferences Dialog -->
+    <div class="modal-overlay" id="modal-settings">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title">Application Preferences</div>
+          <button class="btn btn-ghost" id="btn-close-settings-modal">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="settings-row">
+            <span class="settings-label">Interface Chrome Theme</span>
+            <select id="select-app-chrome-theme" style="padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--color-border-input);">
+              <option value="light">Light Theme</option>
+              <option value="dark">Dark Theme</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <span class="settings-label">Default Reading Mode</span>
+            <select id="select-default-reading-mode" style="padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--color-border-input);">
+              <option value="day">Day (Paper White)</option>
+              <option value="sepia">Sepia (Warm Parchment)</option>
+              <option value="night">Night (Deep Slate)</option>
+              <option value="dark-sepia">Dark Sepia</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <span class="settings-label">Text to Speech (TTS) Speed</span>
+            <input type="range" id="settings-tts-speed" min="5" max="20" value="10">
+          </div>
+          <div class="settings-row">
+            <span class="settings-label">TTS Audio Volume</span>
+            <input type="range" id="settings-tts-volume" min="0" max="100" value="80">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btn-cancel-settings">Cancel</button>
+          <button class="btn btn-primary" id="btn-save-settings">Save Preferences</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- S09: Book Properties Dialog -->
+    <div class="modal-overlay" id="modal-properties">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title">Book Properties</div>
+          <button class="btn btn-ghost" id="btn-close-properties">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="input-group">
+            <label class="input-label" for="prop-title">Title</label>
+            <input class="input-field" id="prop-title" type="text">
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="prop-author">Author</label>
+            <input class="input-field" id="prop-author" type="text">
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="prop-desc">Description</label>
+            <textarea class="input-field" id="prop-desc" rows="3" style="resize: vertical;"></textarea>
+          </div>
+          <div style="font-size: var(--type-xs-size); color: var(--color-text-muted); display: flex; flex-direction: column; gap: 4px;">
+            <div id="prop-meta-format">Format: EPUB</div>
+            <div id="prop-meta-size">Size: 184 KB</div>
+            <div id="prop-meta-hash">SHA-256: e3b0c442...</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btn-cancel-properties">Cancel</button>
+          <button class="btn btn-primary" id="btn-save-properties">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- S11: Print Dialog -->
+    <div class="modal-overlay" id="modal-print">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title">Print Ebook Document</div>
+          <button class="btn btn-ghost" id="btn-close-print">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="settings-row">
+            <span class="settings-label">Printer</span>
+            <select style="padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--color-border-input);">
+              <option>Microsoft Print to PDF</option>
+              <option>Default Document Printer</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <span class="settings-label">Page Range</span>
+            <div style="display: flex; gap: 8px;">
+              <label><input type="radio" name="print-range" checked> Current View</label>
+              <label><input type="radio" name="print-range"> Entire Chapter</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btn-cancel-print">Cancel</button>
+          <button class="btn btn-primary" id="btn-confirm-print">Print</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- S12: General Confirmation / Alert Dialog -->
+    <div class="modal-overlay" id="modal-confirm">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title" id="confirm-title">Confirm Action</div>
+          <button class="btn btn-ghost" id="btn-close-confirm">✕</button>
+        </div>
+        <div class="modal-body">
+          <p id="confirm-message">Are you sure you want to proceed with this action?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btn-confirm-cancel">Cancel</button>
+          <button class="btn btn-danger" id="btn-confirm-proceed">Proceed</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="db.js"></script>
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1312 @@
+TOTAL PARSED STRINGS: 372
+TOTAL CONTEXTS: 43
+
+==================================================
+CONTEXT: Application (11 strings)
+==================================================
+  SOURCE:      An error has occurred when trying to open: "%1"
+  TRANSLATION: An error has occurred when trying to open: "%1"
+  ---
+  SOURCE:      B
+  TRANSLATION: B
+  ---
+  SOURCE:      Close
+  TRANSLATION: Close
+  ---
+  SOURCE:      GB
+  TRANSLATION: GB
+  ---
+  SOURCE:      KB
+  TRANSLATION: KB
+  ---
+  SOURCE:      MB
+  TRANSLATION: MB
+  ---
+  SOURCE:      Maximize
+  TRANSLATION: Maximize
+  ---
+  SOURCE:      Minimize
+  TRANSLATION: Minimize
+  ---
+  SOURCE:      OK
+  TRANSLATION: OK
+  ---
+  SOURCE:      Restore
+  TRANSLATION: Restore
+  ---
+  SOURCE:      TB
+  TRANSLATION: TB
+  ---
+
+==================================================
+CONTEXT: BookModel (7 strings)
+==================================================
+  SOURCE:      Author
+  TRANSLATION: Author
+  ---
+  SOURCE:      Date
+  TRANSLATION: Date
+  ---
+  SOURCE:      Notes
+  TRANSLATION: Notes
+  ---
+  SOURCE:      Progress
+  TRANSLATION: Progress
+  ---
+  SOURCE:      Title
+  TRANSLATION: Title
+  ---
+  SOURCE:      Unknown
+  TRANSLATION: Unknown
+  ---
+  [The author of the book is empty]
+  SOURCE:      Unknown
+  TRANSLATION: Unknown
+  ---
+
+==================================================
+CONTEXT: DateFormats (3 strings)
+==================================================
+  SOURCE:      Today
+  TRANSLATION: Today
+  ---
+  SOURCE:      d MMM
+  TRANSLATION: d MMM
+  ---
+  SOURCE:      d MMM yyyy
+  TRANSLATION: d/MM/yyyy
+  ---
+
+==================================================
+CONTEXT: Dialog_BookAdded (4 strings)
+==================================================
+  SOURCE:      %n books added!
+  TRANSLATION: %n books added!
+  ---
+  SOURCE:      Book added!
+  TRANSLATION: The book is added!
+  ---
+  SOURCE:      OK
+  TRANSLATION: OK
+  ---
+  SOURCE:      Start reading now
+  TRANSLATION: Start reading now
+  ---
+
+==================================================
+CONTEXT: Dialog_BookExists (2 strings)
+==================================================
+  SOURCE:      Ok
+  TRANSLATION: 
+  ---
+  SOURCE:      The document %1 has already been added
+  TRANSLATION: The document %1 has already been added
+  ---
+
+==================================================
+CONTEXT: Dialog_BookExported (2 strings)
+==================================================
+  SOURCE:      %n books exported!
+  TRANSLATION: %n books exported!
+  ---
+  SOURCE:      Ok
+  TRANSLATION: OK
+  ---
+
+==================================================
+CONTEXT: Dialog_BookImported (2 strings)
+==================================================
+  SOURCE:      %n books imported!
+  TRANSLATION: %n books imported!
+  ---
+  SOURCE:      Ok
+  TRANSLATION: OK
+  ---
+
+==================================================
+CONTEXT: Dialog_BookProperties (15 strings)
+==================================================
+  SOURCE:      Author:
+  TRANSLATION: Author:
+  ---
+  SOURCE:      Book info
+  TRANSLATION: Book information
+  ---
+  SOURCE:      CANCEL
+  TRANSLATION: CANCEL
+  ---
+  SOURCE:      Change image
+  TRANSLATION: Change book cover
+  ---
+  SOURCE:      Description:
+  TRANSLATION: Description:
+  ---
+  SOURCE:      Folder:
+  TRANSLATION: Path:
+  ---
+  SOURCE:      Format:
+  TRANSLATION: Format:
+  ---
+  SOURCE:      Images (%1)
+  TRANSLATION: Images (%1)
+  ---
+  SOURCE:      Last open:
+  TRANSLATION: Last read on:
+  ---
+  SOURCE:      Progress:
+  TRANSLATION: Progress:
+  ---
+  SOURCE:      Reset cover to initial image
+  TRANSLATION: Restore the book cover
+  ---
+  SOURCE:      SAVE
+  TRANSLATION: SAVE
+  ---
+  SOURCE:      Select image
+  TRANSLATION: Select image
+  ---
+  SOURCE:      Size:
+  TRANSLATION: Size:
+  ---
+  SOURCE:      Title:
+  TRANSLATION: Title:
+  ---
+
+==================================================
+CONTEXT: Dialog_ClearBookmarks (4 strings)
+==================================================
+  SOURCE:      Are you sure you want to clear all bookmarks?
+  TRANSLATION: Are you sure you want to clear all bookmarks?
+  ---
+  SOURCE:      Mark book as read and move it to Read category?
+  TRANSLATION: Mark a book as read and move it to the Read category?
+  ---
+  SOURCE:      No
+  TRANSLATION: No
+  ---
+  SOURCE:      Yes
+  TRANSLATION: Yes
+  ---
+
+==================================================
+CONTEXT: Dialog_ClearLibrary (7 strings)
+==================================================
+  SOURCE:      Always
+  TRANSLATION: Always copy
+  ---
+  SOURCE:      Are you sure you want to clear library?
+  TRANSLATION: Are you sure you want to empty Library?
+  ---
+  SOURCE:      Do you want to copy files to local storage from removable disks?
+  TRANSLATION: The files you are trying to add to the Library are stored externally. Do you want to copy them to a local device? Otherwise, the files will only be available when the external storage is connected.
+  ---
+  SOURCE:      No
+  TRANSLATION: No
+  ---
+  SOURCE:      Some files are located on removable disks.
+  TRANSLATION: Attention!
+  ---
+  SOURCE:      This action will move your books to "Deleted" folder.
+All your files are still leaved on the disk.
+  TRANSLATION: This action will move the books to the "Deleted" folder. The actual eBook files will remain on your computer.
+  ---
+  SOURCE:      Yes
+  TRANSLATION: Yes
+  ---
+
+==================================================
+CONTEXT: Dialog_ClearNotes (3 strings)
+==================================================
+  SOURCE:      Are you sure you want to clear all notes?
+  TRANSLATION: Are you sure you want to clear all notes?
+  ---
+  SOURCE:      No
+  TRANSLATION: No
+  ---
+  SOURCE:      Yes
+  TRANSLATION: Yes
+  ---
+
+==================================================
+CONTEXT: Dialog_DeleteBook_FromTrash (4 strings)
+==================================================
+  SOURCE:      Are you sure you want to delete this book?
+  TRANSLATION: Are you sure you want to delete this book?
+  ---
+  SOURCE:      No
+  TRANSLATION: No
+  ---
+  SOURCE:      This action will clear cached book data.
+All your files are still leaved on the disk.
+Book: %1
+  TRANSLATION: This action will remove the book "%1" from the "Deleted" folder. The actual eBook file will remain on your computer.
+  ---
+  SOURCE:      Yes
+  TRANSLATION: Yes
+  ---
+
+==================================================
+CONTEXT: Dialog_DeleteCategory (3 strings)
+==================================================
+  SOURCE:      Are you sure you want to delete this folder?
+  TRANSLATION: Are you sure you want to delete this category?
+  ---
+  SOURCE:      No
+  TRANSLATION: No
+  ---
+  SOURCE:      Yes
+  TRANSLATION: Yes
+  ---
+
+==================================================
+CONTEXT: Dialog_EmptyTrash (4 strings)
+==================================================
+  SOURCE:      Are you sure you want to clear trash?
+  TRANSLATION: Are you sure you want to empty trash?
+  ---
+  SOURCE:      No
+  TRANSLATION: No
+  ---
+  SOURCE:      This action will only clear application data, including internal cache, book preferences and reading progress.
+All your files are still leaved on the disk.
+  TRANSLATION: This action will remove the books and all the associated data from the "Deleted" folder. The actual eBook files will remain on your computer. 
+  ---
+  SOURCE:      Yes
+  TRANSLATION: Yes
+  ---
+
+==================================================
+CONTEXT: Dialog_OpenExternalLink (3 strings)
+==================================================
+  SOURCE:      No
+  TRANSLATION: No
+  ---
+  SOURCE:      Open this link in external browser?
+  TRANSLATION: Are you sure you want to open this link in your browser?
+  ---
+  SOURCE:      Yes
+  TRANSLATION: Yes
+  ---
+
+==================================================
+CONTEXT: Dialog_Password (4 strings)
+==================================================
+  SOURCE:      Cancel
+  TRANSLATION: Cancel
+  ---
+  SOURCE:      File %1 is protected for reading with password
+  TRANSLATION: The file "%1" is password protected.
+  ---
+  SOURCE:      Unlock
+  TRANSLATION: Unlock
+  ---
+  SOURCE:      Wrong password!
+  TRANSLATION: Wrong password!
+  ---
+
+==================================================
+CONTEXT: Dialog_RegisterAppAsDefault (4 strings)
+==================================================
+  SOURCE:      %1 is not currently your default app to process "%2" files. Would you like to make it default?
+  TRANSLATION: 
+  ---
+  SOURCE:      Always perform this check when starting.
+  TRANSLATION: 
+  ---
+  SOURCE:      NO
+  TRANSLATION: 
+  ---
+  SOURCE:      YES
+  TRANSLATION: 
+  ---
+
+==================================================
+CONTEXT: Dialog_RegisterAppAsDefault_Win8+ (4 strings)
+==================================================
+  SOURCE:      %1 is not currently your default app to process "%2" files.
+  TRANSLATION: 
+  ---
+  SOURCE:      Always perform this check when starting.
+  TRANSLATION: 
+  ---
+  SOURCE:      LEARN MORE
+  TRANSLATION: 
+  ---
+  SOURCE:      OK
+  TRANSLATION: OK
+  ---
+
+==================================================
+CONTEXT: Dialog_Update (6 strings)
+==================================================
+  SOURCE:      CANCEL
+  TRANSLATION: CANCEL
+  ---
+  SOURCE:      DOWNLOAD
+  TRANSLATION: DOWNLOAD
+  ---
+  SOURCE:      New version of the program is available: <b>%1</b>.
+  TRANSLATION: New version of the program is available: <b>%1</b>.
+  ---
+  SOURCE:      Read about
+  TRANSLATION: Read about
+  ---
+  SOURCE:      Update available!
+  TRANSLATION: Update available!
+  ---
+  SOURCE:      new features
+  TRANSLATION: new features
+  ---
+
+==================================================
+CONTEXT: Dialog_Upgrade (16 strings)
+==================================================
+  SOURCE:      Add eBooks in a bulk by whole folders
+  TRANSLATION: Add eBooks in a bulk by whole folders
+  ---
+  SOURCE:      Add notes with text (EPUB, MOBI, FB2)
+  TRANSLATION: Add notes with text (EPUB, MOBI, FB2)
+  ---
+  SOURCE:      Buy new key
+  TRANSLATION: Buy new key
+  ---
+  SOURCE:      CONTINUE READING
+  TRANSLATION: CONTINUE READING
+  ---
+  SOURCE:      Close
+  TRANSLATION: Close
+  ---
+  SOURCE:      Continue reading in %1 sec.
+  TRANSLATION: Continue reading in %1 sec.
+  ---
+  SOURCE:      Copy text from eBooks (EPUB, MOBI, FB2)
+  TRANSLATION: Copy text from eBooks (EPUB, MOBI, FB2)
+  ---
+  SOURCE:      Create custom library categories
+  TRANSLATION: Create custom library categories
+  ---
+  SOURCE:      Edit title and author name for eBooks
+  TRANSLATION: Edit title and author name for eBooks
+  ---
+  SOURCE:      ICECREAM EBOOK READER
+  TRANSLATION: Icecream Ebook Reader
+  ---
+  SOURCE:      PRO FEATURES
+  TRANSLATION: PRO Features
+  ---
+  SOURCE:      Read eBooks in Fullscreen mode
+  TRANSLATION: Read eBooks in Fullscreen mode
+  ---
+  SOURCE:      This license key is valid for up to 5.xx versions of Icecream Ebook Reader PRO.
+Get a new license key to upgrade version 6 to PRO. 
+  TRANSLATION: This license key is valid for up to 5.xx versions of Icecream Ebook Reader PRO.
+Get a new license key to upgrade version 6 to PRO.
+  ---
+  SOURCE:      Upgrade to PRO
+  TRANSLATION: Upgrade to PRO
+  ---
+  SOURCE:      Upgrade to PRO and get access to advanced features without limits.
+  TRANSLATION: Upgrade to PRO and get access to advanced features without limits.
+  ---
+  SOURCE:      You are using Free version of the program.
+  TRANSLATION: You are using Free version of the program.
+  ---
+
+==================================================
+CONTEXT: Dialog_Upgrade_From_v5 (8 strings)
+==================================================
+  SOURCE:      Exclusive discount for existing customers only! Upgrade to PRO the NEW Icecream Ebook Reader.
+  TRANSLATION: Exclusive discount for existing customers only! Upgrade to PRO the NEW Icecream Ebook Reader.
+  ---
+  SOURCE:      HiDPI support and more
+  TRANSLATION: HiDPI support and more
+  ---
+  SOURCE:      New notes engine
+  TRANSLATION: Improved notes management
+  ---
+  SOURCE:      New user interface with several cool themes
+  TRANSLATION: New user interface with several cool themes
+  ---
+  SOURCE:      Not interested? No worries!
+You can still use PRO version of the older Icecream Ebook Reader.
+  TRANSLATION: Not interested? No problem!
+You can still use the older version of Icecream Ebook Reader PRO.
+  ---
+  SOURCE:      Text to speech feature
+  TRANSLATION: Text to speech feature
+  ---
+  SOURCE:      Upgrade with discount
+  TRANSLATION: Get your discount!
+  ---
+  SOURCE:      Use hotkeys
+  TRANSLATION: Use hotkeys
+  ---
+
+==================================================
+CONTEXT: Dialog_UserFeedback (6 strings)
+==================================================
+  SOURCE:      I like it as it is
+  TRANSLATION: I like it as it is
+  ---
+  SOURCE:      Let's make it better
+  TRANSLATION: Let's make it better
+  ---
+  SOURCE:      Let’s make Icecream Ebook Reader better together!
+  TRANSLATION: Let’s make Icecream Ebook Reader better together!
+  ---
+  SOURCE:      Please indicate your suggestions for improving the program in a free form...
+  TRANSLATION: Please indicate your suggestions for improving the program in a free form...
+  ---
+  SOURCE:      Thank you for using the PRO version.
+We want to make Icecream Ebook Reader even better and that's why we decided to ask you if you would like to improve the program. All your comments will be considered - your opinion is very valuable to us! Thank you in advance.
+  TRANSLATION: Thank you for using the PRO version.
+We want to make Icecream Ebook Reader even better and that's why we decided to ask you if you would like to improve the program. All your comments will be considered - your opinion is very valuable to us! Thank you in advance.
+  ---
+  SOURCE:      Thank you!
+  TRANSLATION: Thank you!
+  ---
+
+==================================================
+CONTEXT: Dilog_Errors (5 strings)
+==================================================
+  SOURCE:      Book file is protected. Book can not be opened.
+  TRANSLATION: Ebook file is DRM protected. Book cannot be opened.
+  ---
+  SOURCE:      Ebook file is damaged. Book can not be opened.
+  TRANSLATION: Ebook file is damaged. Book cannot be opened.
+  ---
+  SOURCE:      Printer "%1" was disconnected
+  TRANSLATION: The printer "%1" was disconnected.
+  ---
+  SOURCE:      Save license failed
+  TRANSLATION: License saving failed
+  ---
+  SOURCE:      The file you are trying to open was not found by the following path: %1
+  TRANSLATION: The file you are trying to open was not found by the following path: %1
+  ---
+
+==================================================
+CONTEXT: Formats (1 strings)
+==================================================
+  SOURCE:      p.%1
+  TRANSLATION: p.%1
+  ---
+
+==================================================
+CONTEXT: MainWindow_Footer (17 strings)
+==================================================
+  SOURCE:      %1 books selected
+  TRANSLATION: %1 books selected
+  ---
+  SOURCE:      Add to folder
+  TRANSLATION: Add to category
+  ---
+  SOURCE:      Clear selection
+  TRANSLATION: Clear selection
+  ---
+  SOURCE:      Continue reading
+  TRANSLATION: Continue reading
+  ---
+  SOURCE:      Delete from trash
+  TRANSLATION: Delete permanently
+  ---
+  SOURCE:      Export books...
+  TRANSLATION: Export books...
+  ---
+  SOURCE:      Import books...
+  TRANSLATION: Import books...
+  ---
+  SOURCE:      Move to trash
+  TRANSLATION: Delete
+  ---
+  SOURCE:      Pause exporting
+  TRANSLATION: Pause exporting
+  ---
+  SOURCE:      Pause importing
+  TRANSLATION: Pause importing
+  ---
+  SOURCE:      Remove from folder
+  TRANSLATION: Remove from category
+  ---
+  SOURCE:      Restore from trash
+  TRANSLATION: Restore
+  ---
+  SOURCE:      Resume exporting
+  TRANSLATION: Resume exporting
+  ---
+  SOURCE:      Resume importing
+  TRANSLATION: Resume importing
+  ---
+  SOURCE:      Select all
+  TRANSLATION: Select all 
+  ---
+  SOURCE:      Stop exporting
+  TRANSLATION: Stop exporting
+  ---
+  SOURCE:      Stop importing
+  TRANSLATION: Stop importing
+  ---
+
+==================================================
+CONTEXT: MainWindow_Library (24 strings)
+==================================================
+  SOURCE:      "%1" is not found in "%2"
+  TRANSLATION: "%1" is not found in "%2"
+  ---
+  SOURCE:      "%1" not found
+  TRANSLATION: "%1" not found
+  ---
+  SOURCE:      Add book
+  TRANSLATION: Add book
+  ---
+  SOURCE:      Add book to library
+  TRANSLATION: Add book to library
+  ---
+  SOURCE:      Add folder
+  TRANSLATION: Add folder
+  ---
+  SOURCE:      Add to Favorites
+  TRANSLATION: Add to Favorites
+  ---
+  SOURCE:      Categories...
+  TRANSLATION: Categories...
+  ---
+  SOURCE:      Clear trash
+  TRANSLATION: Empty trash
+  ---
+  SOURCE:      Delete
+  TRANSLATION: Delete
+  ---
+  [delete from library]
+  SOURCE:      Delete
+  TRANSLATION: Delete
+  ---
+  SOURCE:      Drop books here ...
+  TRANSLATION: Drop books here...
+  ---
+  SOURCE:      Move to Read
+  TRANSLATION: Move to "Read"
+  ---
+  SOURCE:      Properties...
+  TRANSLATION: Properties
+  ---
+  SOURCE:      Read
+  TRANSLATION: Read
+  ---
+  SOURCE:      Remove from Favorites
+  TRANSLATION: Remove from Favorites
+  ---
+  SOURCE:      Remove from category
+  TRANSLATION: Remove from category
+  ---
+  SOURCE:      Restore
+  TRANSLATION: Restore
+  ---
+  SOURCE:      Restore all
+  TRANSLATION: Restore all
+  ---
+  SOURCE:      Restore from Read
+  TRANSLATION: Restore from "Read"
+  ---
+  SOURCE:      Search in Library
+  TRANSLATION: Search in Library
+  ---
+  SOURCE:      Select folder
+  TRANSLATION: Select folder
+  ---
+  SOURCE:      You don’t have a books
+  TRANSLATION: No books found.
+  ---
+  SOURCE:      You don’t have a books in "%1"
+  TRANSLATION: No books found in "%1".
+  ---
+  SOURCE:      eBook Files (*.epub *.mobi *.prc *.fb2 *.pdf *.txt *.cbz *.cbr *.zip *.7z)
+  TRANSLATION: eBook Files (*.epub *.mobi *.fb2 *.pdf *.txt *.cbz *.cbr *.zip *.7z)
+  ---
+
+==================================================
+CONTEXT: MainWindow_Reading_Bookmarks (5 strings)
+==================================================
+  SOURCE:      Add bookmark
+  TRANSLATION: Add bookmark
+  ---
+  SOURCE:      Bookmarks
+  TRANSLATION: Bookmarks
+  ---
+  SOURCE:      Clear all bookmarks
+  TRANSLATION: Clear all bookmarks
+  ---
+  SOURCE:      Close
+  TRANSLATION: Close
+  ---
+  SOURCE:      To add a new bookmark click on the button above.
+  TRANSLATION: Click the button above to add a new bookmark.
+  ---
+
+==================================================
+CONTEXT: MainWindow_Reading_ContextMenu (1 strings)
+==================================================
+  SOURCE:      Encoding
+  TRANSLATION: Encoding
+  ---
+
+==================================================
+CONTEXT: MainWindow_Reading_Footer (2 strings)
+==================================================
+  SOURCE:      Back to page
+  TRANSLATION: Back to page
+  ---
+  SOURCE:      Page:
+  TRANSLATION: Page:
+  ---
+
+==================================================
+CONTEXT: MainWindow_Reading_NotePopup (7 strings)
+==================================================
+  SOURCE:      Add note
+  TRANSLATION: Add note
+  ---
+  SOURCE:      Copy
+  TRANSLATION: Copy
+  ---
+  SOURCE:      Delete note
+  TRANSLATION: Delete note
+  ---
+  SOURCE:      Search
+  TRANSLATION: Search
+  ---
+  SOURCE:      Search on Google
+  TRANSLATION: Google
+  ---
+  SOURCE:      Search on Wikipedia
+  TRANSLATION: Wikipedia
+  ---
+  SOURCE:      Translate
+  TRANSLATION: Translate
+  ---
+
+==================================================
+CONTEXT: MainWindow_Reading_Notes (11 strings)
+==================================================
+  SOURCE:      Add note...
+  TRANSLATION: Add note
+  ---
+  SOURCE:      Clear all notes
+  TRANSLATION: Clear all notes
+  ---
+  SOURCE:      Close
+  TRANSLATION: Close
+  ---
+  SOURCE:      Delete note
+  TRANSLATION: Delete note
+  ---
+  SOURCE:      Export notes to HTML
+  TRANSLATION: Export notes to HTML
+  ---
+  SOURCE:      HTML Files (*.html *.htm)
+  TRANSLATION: HTML Files (*.html *.htm)
+  ---
+  SOURCE:      Notes
+  TRANSLATION: Notes
+  ---
+  SOURCE:      Nothing found
+  TRANSLATION: Nothing found
+  ---
+  SOURCE:      Save as HTML
+  TRANSLATION: Save as HTML
+  ---
+  SOURCE:      Search
+  TRANSLATION: Search
+  ---
+  SOURCE:      To add a note:
+1. Select text you need to mark
+2. Then click a color or "Add Note" button in the opened menu.
+  TRANSLATION: To add a note: 
+1. Select the text you want to annotate 
+2. Then click the color or the "Add note" button in the opened menu.
+  ---
+
+==================================================
+CONTEXT: MainWindow_Reading_Print (22 strings)
+==================================================
+  SOURCE:      (default)
+  TRANSLATION: (default)
+  ---
+  SOURCE:      All pages
+  TRANSLATION: All pages
+  ---
+  SOURCE:      CANCEL
+  TRANSLATION: CANCEL
+  ---
+  SOURCE:      Close
+  TRANSLATION: Close
+  ---
+  SOURCE:      Color
+  TRANSLATION: Color
+  ---
+  SOURCE:      Color mode
+  TRANSLATION: Color mode
+  ---
+  SOURCE:      Copies
+  TRANSLATION: Copies
+  ---
+  SOURCE:      Current page
+  TRANSLATION: Current page
+  ---
+  SOURCE:      From
+  TRANSLATION: From
+  ---
+  SOURCE:      Grayscale
+  TRANSLATION: Grayscale
+  ---
+  SOURCE:      High quality
+  TRANSLATION: High quality
+  ---
+  SOURCE:      Landscape
+  TRANSLATION: Landscape
+  ---
+  SOURCE:      Low quality
+  TRANSLATION: Low quality
+  ---
+  SOURCE:      Orientation
+  TRANSLATION: Orientation
+  ---
+  SOURCE:      Pages:
+  TRANSLATION: Pages:
+  ---
+  SOURCE:      Paper size
+  TRANSLATION: Paper size
+  ---
+  SOURCE:      Portrait
+  TRANSLATION: Portrait
+  ---
+  SOURCE:      Print
+  TRANSLATION: Print
+  ---
+  SOURCE:      Print quality
+  TRANSLATION: Print quality
+  ---
+  SOURCE:      Printer
+  TRANSLATION: Printer
+  ---
+  SOURCE:      There are no printers available.
+  TRANSLATION: There are no printers available.
+  ---
+  SOURCE:      To
+  TRANSLATION: From
+  ---
+
+==================================================
+CONTEXT: MainWindow_Reading_Search (5 strings)
+==================================================
+  SOURCE:      Close
+  TRANSLATION: Close
+  ---
+  SOURCE:      Go to page %1
+  TRANSLATION: Go to page %1
+  ---
+  SOURCE:      Nothing found
+  TRANSLATION: Nothing found
+  ---
+  SOURCE:      Search
+  TRANSLATION: Search
+  ---
+  SOURCE:      Search by text or by page number
+  TRANSLATION: Search: text / page number
+  ---
+
+==================================================
+CONTEXT: MainWindow_Reading_Settings (12 strings)
+==================================================
+  SOURCE:      Close
+  TRANSLATION: Close
+  ---
+  SOURCE:      Decrease line spacing by one step
+  TRANSLATION: Decrease line spacing
+  ---
+  SOURCE:      Dimming:
+  TRANSLATION: Dimming:
+  ---
+  SOURCE:      Font size:
+  TRANSLATION: Font size:
+  ---
+  SOURCE:      Increase line spacing by one step
+  TRANSLATION: Increase line spacing
+  ---
+  SOURCE:      Open All Settings
+  TRANSLATION: Open All Settings
+  ---
+  SOURCE:      Original font
+  TRANSLATION: Original font
+  ---
+  SOURCE:      Page view:
+  TRANSLATION: Page view:
+  ---
+  SOURCE:      Settings
+  TRANSLATION: Settings
+  ---
+  SOURCE:      Show hotkeys
+  TRANSLATION: Show hotkeys
+  ---
+  SOURCE:      Text Font:
+  TRANSLATION: Text Font:
+  ---
+  SOURCE:      Theme:
+  TRANSLATION: Theme:
+  ---
+
+==================================================
+CONTEXT: MainWindow_Reading_Toc (5 strings)
+==================================================
+  SOURCE:      Close
+  TRANSLATION: Close
+  ---
+  SOURCE:      Page %1
+  TRANSLATION: Page %1
+  ---
+  SOURCE:      Partition
+  TRANSLATION: Section
+  ---
+  SOURCE:      Table of contents
+  TRANSLATION: Table of contents
+  ---
+  SOURCE:      This book has no table of contents
+  TRANSLATION: This book does not have a table of contents
+  ---
+
+==================================================
+CONTEXT: MainWindow_Reading_ToolBar (29 strings)
+==================================================
+  SOURCE:      Auto flipping pages
+  TRANSLATION: Auto flipping mode ON/OFF
+  ---
+  SOURCE:      Begin/pause text-to-speech reading
+  TRANSLATION: Start/pause reading aloud
+  ---
+  SOURCE:      Bookmarks
+  TRANSLATION: Bookmarks
+  ---
+  SOURCE:      Bookmarks (%1)
+  TRANSLATION: Bookmarks (%1)
+  ---
+  SOURCE:      Contents
+  TRANSLATION: Contents
+  ---
+  SOURCE:      Finish reading and return to library
+  TRANSLATION: Finish reading and return to library
+  ---
+  SOURCE:      Fit to page
+  TRANSLATION: Fit to page
+  ---
+  SOURCE:      Fit to width)
+  TRANSLATION: Fit to width
+  ---
+  SOURCE:      Library
+  TRANSLATION: Library
+  ---
+  SOURCE:      Next paragraph
+  TRANSLATION: Next paragraph
+  ---
+  SOURCE:      Notes (%1)
+  TRANSLATION: Notes (%1)
+  ---
+  SOURCE:      Pages auto flipping time
+  TRANSLATION: Flipping interval
+  ---
+  SOURCE:      Previous paragraph
+  TRANSLATION: Previous paragraph
+  ---
+  SOURCE:      Print
+  TRANSLATION: Print
+  ---
+  SOURCE:      Read Aloud
+  TRANSLATION: Read Aloud
+  ---
+  SOURCE:      Reading speed
+  TRANSLATION: Reading speed
+  ---
+  SOURCE:      Reading volume
+  TRANSLATION: Reading volume
+  ---
+  SOURCE:      Reading volume
+%1 to increase
+%2 to decrease
+  TRANSLATION: Reading volume
+%1 to increase
+%2 to decrease
+  ---
+  SOURCE:      Settings
+  TRANSLATION: Settings
+  ---
+  SOURCE:      Show or hide bookmarks list
+  TRANSLATION: Show or hide bookmarks list
+  ---
+  SOURCE:      Show or hide color notes list
+  TRANSLATION: Show or hide color notes list
+  ---
+  SOURCE:      Show or hide search panel
+  TRANSLATION: Show or hide search panel
+  ---
+  SOURCE:      Show or hide table of contents
+  TRANSLATION: Show or hide table of contents
+  ---
+  SOURCE:      Stop
+  TRANSLATION: Stop
+  ---
+  SOURCE:      Switch fullscreen mode
+  TRANSLATION: Switch to Full screen mode
+  ---
+  SOURCE:      Zoom in
+  TRANSLATION: Zoom in
+  ---
+  SOURCE:      Zoom out
+  TRANSLATION: Zoom out
+  ---
+  SOURCE:      Zoom value
+Press %1 to reset to 100%
+  TRANSLATION: Zoom value
+Press %1 to reset to 100%
+  ---
+  SOURCE:      sec
+  TRANSLATION: sec
+  ---
+
+==================================================
+CONTEXT: MainWindow_Settings_Hotkeys (25 strings)
+==================================================
+  SOURCE:      Add bookmark
+  TRANSLATION: Add bookmark
+  ---
+  SOURCE:      Back to Library
+  TRANSLATION: Back to library
+  ---
+  SOURCE:      Decrease volume
+  TRANSLATION: Decrease volume
+  ---
+  SOURCE:      Fit to page
+  TRANSLATION: Fit to page
+  ---
+  SOURCE:      Fit to width
+  TRANSLATION: Fit to width
+  ---
+  SOURCE:      Go to book end
+  TRANSLATION: Go to the last page
+  ---
+  SOURCE:      Go to book start
+  TRANSLATION: Go to the first page
+  ---
+  SOURCE:      Go to next page
+  TRANSLATION: Go to next page
+  ---
+  SOURCE:      Go to previous page
+  TRANSLATION: Go to previous page
+  ---
+  SOURCE:      Hotkeys
+  TRANSLATION: Hotkeys
+  ---
+  SOURCE:      Increase volume
+  TRANSLATION: Increase volume
+  ---
+  SOURCE:      OK
+  TRANSLATION: OK
+  ---
+  SOURCE:      Reset zoom to 100%
+  TRANSLATION: Reset zoom to 100%
+  ---
+  SOURCE:      Search
+  TRANSLATION: Search
+  ---
+  SOURCE:      Show Table of contents
+  TRANSLATION: Show Table of contents
+  ---
+  SOURCE:      Show bookmarks list
+  TRANSLATION: Show bookmarks list
+  ---
+  SOURCE:      Show hotkeys
+  TRANSLATION: Show hotkeys
+  ---
+  SOURCE:      Show notes list
+  TRANSLATION: Show notes list
+  ---
+  SOURCE:      Start/pause reading aloud
+  TRANSLATION: Start/pause reading aloud
+  ---
+  SOURCE:      Stop reading aloud:
+  TRANSLATION: Stop reading aloud:
+  ---
+  SOURCE:      Switch column count
+  TRANSLATION: Switch column count
+  ---
+  SOURCE:      Switch fullscreen
+  TRANSLATION: Switch fullscreen
+  ---
+  SOURCE:      Switch theme
+  TRANSLATION: Switch theme
+  ---
+  SOURCE:      Zoom in / increase font size
+  TRANSLATION: Zoom in/ increase font size
+  ---
+  SOURCE:      Zoom out / decrease font size
+  TRANSLATION: Zoom out/ decrease font size
+  ---
+
+==================================================
+CONTEXT: MainWindow_Settings_License (15 strings)
+==================================================
+  SOURCE:      ACTIVATE
+  TRANSLATION: ACTIVATE
+  ---
+  SOURCE:      Activate PRO version
+  TRANSLATION: Activate PRO version
+  ---
+  SOURCE:      All rights reserved
+  TRANSLATION: All rights reserved
+  ---
+  SOURCE:      Could not connect to server
+  TRANSLATION: Connection to server failed
+  ---
+  SOURCE:      Don't have a key?
+  TRANSLATION: Buy your key
+  ---
+  SOURCE:      Enter code or paste from clipboard
+  TRANSLATION: Enter key or paste from clipboard
+  ---
+  SOURCE:      FREE
+  TRANSLATION: FREE
+  ---
+  SOURCE:      License
+  TRANSLATION: License
+  ---
+  SOURCE:      PRO
+  TRANSLATION: PRO
+  ---
+  SOURCE:      The activation key is already in use!
+  TRANSLATION: The activation key is already in use!
+  ---
+  SOURCE:      The subscription is expired!
+  TRANSLATION: The subscription has expired!
+  ---
+  SOURCE:      This license key is blocked!
+  TRANSLATION: This license key is locked!
+  ---
+  SOURCE:      Update available!
+  TRANSLATION: Update available!
+  ---
+  SOURCE:      Version
+  TRANSLATION: Version
+  ---
+  SOURCE:      Wrong key. Check your activation key and try again
+  TRANSLATION: Wrong key. Check your activation key and try again!
+  ---
+
+==================================================
+CONTEXT: MainWindow_Settings_Reading (14 strings)
+==================================================
+  SOURCE:      Auto flipping time:
+  TRANSLATION: Auto page flipping interval:
+  ---
+  SOURCE:      Center
+  TRANSLATION: Center
+  ---
+  SOURCE:      Double
+  TRANSLATION: Double
+  ---
+  SOURCE:      Justify
+  TRANSLATION: Justify
+  ---
+  SOURCE:      Left
+  TRANSLATION: Left
+  ---
+  SOURCE:      Original
+  TRANSLATION: Original
+  ---
+  SOURCE:      Original font
+  TRANSLATION: Original font
+  ---
+  SOURCE:      Page view:
+  TRANSLATION: Page view:
+  ---
+  SOURCE:      Reading settings
+  TRANSLATION: Reading settings
+  ---
+  SOURCE:      Right
+  TRANSLATION: Right
+  ---
+  SOURCE:      Single
+  TRANSLATION: Single
+  ---
+  SOURCE:      Text Font:
+  TRANSLATION: Text Font:
+  ---
+  SOURCE:      Text align:
+  TRANSLATION: Text alignment:
+  ---
+  SOURCE:      sec
+  TRANSLATION: sec
+  ---
+
+==================================================
+CONTEXT: MainWindow_Settings_System (22 strings)
+==================================================
+  SOURCE:      Check for updates automatically:
+  TRANSLATION: Check for the updates automatically:
+  ---
+  SOURCE:      Clear library
+  TRANSLATION: Empty Library
+  ---
+  SOURCE:      Copy books from removable devices:
+  TRANSLATION: Copy eBooks from external devices
+  ---
+  SOURCE:      Day
+  TRANSLATION: Day
+  ---
+  SOURCE:      Dimming:
+  TRANSLATION: Dimming:
+  ---
+  SOURCE:      Export
+  TRANSLATION: Export
+  ---
+  SOURCE:      Export library to archive
+  TRANSLATION: Export Library to archive
+  ---
+  SOURCE:      Import
+  TRANSLATION: Import
+  ---
+  SOURCE:      Import books from archive
+  TRANSLATION: Import books from archive
+  ---
+  SOURCE:      Language:
+  TRANSLATION: Language:
+  ---
+  SOURCE:      Library path
+  TRANSLATION: Library path
+  ---
+  SOURCE:      Local bookshelf
+  TRANSLATION: Path to Local Library
+  ---
+  SOURCE:      Manage library
+  TRANSLATION: Manage Library
+  ---
+  SOURCE:      Night
+  TRANSLATION: Night
+  ---
+  SOURCE:      Night Sepia
+  TRANSLATION: Dark sepia
+  ---
+  SOURCE:      Select library folder
+  TRANSLATION: Select Library path
+  ---
+  SOURCE:      Select path to copy books:
+  TRANSLATION: Select path to copy books:
+  ---
+  SOURCE:      Send anonymous analytics:
+  TRANSLATION: Send anonymous usage stats
+  ---
+  SOURCE:      Sepia
+  TRANSLATION: Light sepia
+  ---
+  SOURCE:      System
+  TRANSLATION: System
+  ---
+  SOURCE:      Theme:
+  TRANSLATION: Theme:
+  ---
+  SOURCE:      eBook Archive (*.ebr)
+  TRANSLATION: eBook archive(*.ebr)
+  ---
+
+==================================================
+CONTEXT: MainWindow_Settings_TTS (8 strings)
+==================================================
+  SOURCE:      Locale
+  TRANSLATION: Locale
+  ---
+  SOURCE:      More languages
+  TRANSLATION: More languages
+  ---
+  SOURCE:      Reading pitch
+  TRANSLATION: Reading pitch
+  ---
+  SOURCE:      Reading speed
+  TRANSLATION: Reading speed
+  ---
+  SOURCE:      Reading volume
+  TRANSLATION: Reading volume
+  ---
+  SOURCE:      Refresh lists
+  TRANSLATION: Refresh lists
+  ---
+  SOURCE:      Text to speech
+  TRANSLATION: Text to speech
+  ---
+  SOURCE:      Voice
+  TRANSLATION: Voice
+  ---
+
+==================================================
+CONTEXT: MainWindow_SideBar (17 strings)
+==================================================
+  SOURCE:      Add new category
+  TRANSLATION: Add new category
+  ---
+  SOURCE:      All (%1)
+  TRANSLATION: All (%1)
+  ---
+  SOURCE:      Delete
+  TRANSLATION: Delete
+  ---
+  SOURCE:      Deleted (%1)
+  TRANSLATION: Deleted (%1)
+  ---
+  SOURCE:      Ebook reader
+  TRANSLATION: Ebook Reader
+  ---
+  SOURCE:      Favorites (%1)
+  TRANSLATION: Favorites (%1)
+  ---
+  SOURCE:      Formats
+  TRANSLATION: Formats
+  ---
+  SOURCE:      Help
+  TRANSLATION: Help
+  ---
+  SOURCE:      Icecream
+  TRANSLATION: Icecream
+  ---
+  SOURCE:      New category
+  TRANSLATION: New category
+  ---
+  SOURCE:      No category
+  TRANSLATION: No category
+  ---
+  SOURCE:      No category (%1)
+  TRANSLATION: No category (%1)
+  ---
+  SOURCE:      Read (%1)
+  TRANSLATION: Read (%1)
+  ---
+  SOURCE:      Recently Read (%1)
+  TRANSLATION: Recently Read (%1)
+  ---
+  SOURCE:      Rename
+  TRANSLATION: Rename
+  ---
+  SOURCE:      Settings
+  TRANSLATION: Settings
+  ---
+  SOURCE:      Upgrade to PRO
+  TRANSLATION: Upgrade to PRO
+  ---
+
+==================================================
+CONTEXT: MainWindow_Title (3 strings)
+==================================================
+  SOURCE:      Ebook reader
+  TRANSLATION: Ebook Reader
+  ---
+  SOURCE:      Update available!
+  TRANSLATION: Update available!
+  ---
+  SOURCE:      Upgrade to PRO
+  TRANSLATION: Upgrade to PRO
+  ---
