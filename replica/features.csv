@@ -66,3 +66,9 @@ Local INI Configuration File,Persistence,Must,yes,yes,S,Settings file storing ge
 Disk Thumbnail Cache with LRU Management,Persistence,Must,yes,yes,M,Cached cover images stored on disk with memory LRU cache
 Full Library Archive Backup & Migration (.EBR),Persistence,Should,yes,partial,M,ZIP container packaging SQLite database covers and books
 Print Ebook Dialog,Output,Could,yes,yes,M,Configure printer page range copies orientation and quality
+Zero Commercial Nag Screens or Timers,Customization,Must,no,yes,S,100% unrestricted reading without upgrade popups or timer delays (FIX-1)
+Unlimited Free Library & Custom Folders,Library,Must,no,yes,S,No artificial 10-book cap or paywalled category limits (FIX-1)
+One-Click Study Notes HTML Export,Annotations,Should,no,yes,S,Export highlights and commentary to clean standalone HTML report (FIX-2)
+Native 64-Bit High-DPI Architecture,Reader,Must,no,yes,M,Modern 64-bit C++20/Qt 6 architecture replacing legacy 32-bit QtWebKit (FIX-3)
+Windows 11 Native Dark Title Bar Integration,Customization,Should,no,yes,S,True system dark mode with DWM title bars (FIX-4)
+Transparent Open SQLite Data Portability,Persistence,Should,no,yes,S,Fully accessible SQLite schema for unconstrained data ownership (FIX-6)
