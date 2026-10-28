@@ -1,0 +1,23 @@
+{
+  "name": "foliohaven",
+  "productName": "FolioHaven",
+  "version": "1.0.0",
+  "description": "FolioHaven — Distraction-Free Digital Bookshelf & Desktop Ebook Reader",
+  "main": "main.js",
+  "author": "FolioHaven Team",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "45.1.0"
+  },
+  "keywords": [
+    "ebook",
+    "reader",
+    "epub",
+    "pdf",
+    "mobi",
+    "fb2",
+    "cbz",
+    "desktop",
+    "windows"
+  ]
+}

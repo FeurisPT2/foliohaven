@@ -71,10 +71,71 @@ class AppController {
       });
     });
 
-    // --- Add Book File Importer ---
+    // --- Add Book File Importer (Native Desktop & Web) ---
     const fileInput = document.getElementById("file-import-input");
-    document.getElementById("btn-add-book").addEventListener("click", () => fileInput.click());
-    document.getElementById("btn-empty-add").addEventListener("click", () => fileInput.click());
+    const handleAddBook = async () => {
+      if (window.electronAPI && window.electronAPI.openFileDialog) {
+        try {
+          const books = await window.electronAPI.openFileDialog();
+          if (books && books.length > 0) {
+            books.forEach(b => window.db.addBook(b));
+            this.renderLibrary();
+            this.updateBadges();
+          }
+        } catch (err) {
+          console.error("Desktop file dialog error:", err);
+          fileInput.click();
+        }
+      } else {
+        fileInput.click();
+      }
+    };
+    document.getElementById("btn-add-book").addEventListener("click", handleAddBook);
+    document.getElementById("btn-empty-add").addEventListener("click", handleAddBook);
+
+    // --- Desktop IPC Listener Integration ---
+    if (window.electronAPI) {
+      if (window.electronAPI.onOpenFile) {
+        window.electronAPI.onOpenFile((bookData) => {
+          if (bookData) {
+            const added = window.db.addBook(bookData);
+            this.renderLibrary();
+            this.updateBadges();
+            this.openBook(added || bookData);
+          }
+        });
+      }
+      if (window.electronAPI.onMenuAction) {
+        window.electronAPI.onMenuAction((action) => {
+          if (!action) return;
+          if (action.type === "import-books" && action.books) {
+            action.books.forEach(b => window.db.addBook(b));
+            this.renderLibrary();
+            this.updateBadges();
+          } else if (action.type === "close-reader") {
+            this.closeReader();
+          } else if (action.type === "open-help") {
+            const helpModal = document.getElementById("modal-help");
+            if (helpModal) helpModal.style.display = "flex";
+          } else if (action.type === "add-category") {
+            const folderModal = document.getElementById("modal-add-folder");
+            if (folderModal) folderModal.style.display = "flex";
+          } else if (action.type === "export-stats") {
+            const stats = {
+              app: "FolioHaven",
+              version: "1.0.0",
+              exportedAt: new Date().toISOString(),
+              totalBooks: window.db.getBooks().length,
+              books: window.db.getBooks()
+            };
+            const jsonStr = JSON.stringify(stats, null, 2);
+            if (window.electronAPI.saveFileDialog) {
+              window.electronAPI.saveFileDialog("FolioHaven_Library_Export.json", jsonStr, "JSON Backup");
+            }
+          }
+        });
+      }
+    }
 
     fileInput.addEventListener("change", (e) => {
       const files = Array.from(e.target.files);
