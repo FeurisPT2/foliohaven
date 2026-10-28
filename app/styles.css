@@ -3,7 +3,7 @@
  * Grounded in replica/design/tokens.css
  */
 
-@import url("../replica/design/tokens.css");
+@import url("tokens.css");
 
 * {
   box-sizing: border-box;

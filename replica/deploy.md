@@ -1,9 +1,11 @@
 # Deploy Checklist & Production Runbook: FolioHaven
 
 **Date**: 2026-10-29  
-**Commit**: `ce75506`  
+**Commit**: `fe89bae`  
 **Go from user**: YES (Authorized by User on 2026-10-29)  
-**Live Target**: `https://foliohaven.app`  
+**Live Production URL (Vercel)**: `https://app-seven-taupe-25.vercel.app`  
+**Custom Domain Target**: `https://foliohaven.app`  
+**Vercel Project Dashboard**: `https://vercel.com/fsx-s-projects1/app`  
 
 ---
 
