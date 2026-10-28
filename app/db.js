@@ -325,8 +325,35 @@ const SEED_ANNOTATIONS = [
   }
 ];
 
+class LruThumbnailCache {
+  constructor(maxEntries = 50) {
+    this.maxEntries = maxEntries;
+    this.cache = new Map();
+  }
+
+  get(bookId) {
+    if (!this.cache.has(bookId)) return null;
+    const value = this.cache.get(bookId);
+    this.cache.delete(bookId);
+    this.cache.set(bookId, value); // Refresh recency
+    return value;
+  }
+
+  set(bookId, dataUri) {
+    if (this.cache.has(bookId)) {
+      this.cache.delete(bookId);
+    } else if (this.cache.size >= this.maxEntries) {
+      // Evict least recently used (first key in map)
+      const oldestKey = this.cache.keys().next().value;
+      this.cache.delete(oldestKey);
+    }
+    this.cache.set(bookId, dataUri);
+  }
+}
+
 class Database {
   constructor() {
+    this.coverCache = new LruThumbnailCache(50);
     this.booksKey = "ebookreader_books_v1";
     this.foldersKey = "ebookreader_folders_v1";
     this.bookmarksKey = "ebookreader_bookmarks_v1";

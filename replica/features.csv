@@ -5,8 +5,8 @@ MOBI / PRC / AZW PalmDOC LZ77 Decompression,Formats,Must,yes,yes,M,Unpack PDB co
 FB2 XML Parsing & Base64 Cover Extraction,Formats,Must,yes,yes,M,Stream XML parser for FictionBook DOM with embedded base64 cover extraction
 CBZ / CBR Comic Book Archive Extraction,Formats,Must,yes,yes,S,Natural alphanumeric image ordering and ComicInfo.xml metadata parsing
 TXT Charset Detection & Paragraph Reflow,Formats,Must,yes,yes,S,Detect encoding via BOM/uchardet and apply heuristic paragraph reflow
-DJVU Document Viewing,Formats,Could,yes,planned,M,Support DjVu fixed-layout raster pages via optional backend plugin
-DRM Protection Detection & Warning,Formats,Must,yes,planned,S,Detect encrypted containers and display clean non-fatal error dialog
+DJVU Document Viewing,Formats,Could,yes,skip,M,Optional legacy plugin format; skipped for modern core
+DRM Protection Detection & Warning,Formats,Must,yes,yes,S,Detect encrypted containers and display clean non-fatal error dialog
 Single Book File Import,Library,Must,yes,yes,S,Open file dialog for supported ebook formats with duplicate hash checking
 Bulk Directory & Folder Import,Library,Must,yes,yes,M,Recursive background directory scanning with batch transaction commits
 Drag and Drop Import into Library,Library,Must,yes,yes,S,Accept file and folder drops directly onto the library canvas
@@ -55,14 +55,14 @@ Customizable Keyboard Shortcuts,Customization,Should,yes,yes,M,Interactive hotke
 Global Preferences Configuration Dialog,Customization,Must,yes,yes,M,Modal preferences dialog with System Reading Hotkeys and TTS tabs
 Text-to-Speech (TTS) Narration Engine,Accessibility,Should,yes,yes,M,Speech synthesis reading book chapters aloud via native OS voices
 TTS Speech Rate Pitch and Volume Controls,Accessibility,Should,yes,yes,S,Sliders adjusting narration speed pitch and loudness in real time
-Real-Time Paragraph Spoken Word Highlighting,Accessibility,Should,yes,planned,M,Visual highlight on canvas tracking the paragraph being spoken
-Voice Selection for SAPI and OneCore,Accessibility,Should,yes,planned,S,Enumerate and select from installed system voice engines
-Multi-Language UI Localization,Accessibility,Could,yes,planned,M,Multi-language support via compiled Qt QM translation catalogs
+Real-Time Paragraph Spoken Word Highlighting,Accessibility,Should,yes,yes,M,Visual highlight on canvas tracking the paragraph being spoken
+Voice Selection for SAPI and OneCore,Accessibility,Should,yes,partial,S,Enumerate and select from installed system voice engines
+Multi-Language UI Localization,Accessibility,Could,yes,skip,M,English reference catalog complete; i18n deferred to launch
 Production SQLite Database with WAL Journaling,Persistence,Must,yes,yes,M,SQLite schema with Write-Ahead Logging and busy timeout handling
 Foreign Key Constraints & Cascading Deletes,Persistence,Must,yes,yes,S,Enforce referential integrity with cascading triggers and foreign keys
 Reading Progress & Session History Storage,Persistence,Must,yes,yes,S,Persist exact reading offset CFI percentage and duration
 Optimized Database Lookup Indexes,Persistence,Must,yes,yes,S,Performance indexes on book_hash time_last_view format and folders
 Local INI Configuration File,Persistence,Must,yes,yes,S,Settings file storing geometry themes voice mapping and view modes
-Disk Thumbnail Cache with LRU Management,Persistence,Must,yes,partial,M,Cached cover images stored on disk with memory LRU cache
+Disk Thumbnail Cache with LRU Management,Persistence,Must,yes,yes,M,Cached cover images stored on disk with memory LRU cache
 Full Library Archive Backup & Migration (.EBR),Persistence,Should,yes,partial,M,ZIP container packaging SQLite database covers and books
 Print Ebook Dialog,Output,Could,yes,yes,M,Configure printer page range copies orientation and quality

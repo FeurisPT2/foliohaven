@@ -238,6 +238,60 @@ class AppController {
     // Fullscreen Toggle
     document.getElementById("btn-reader-fullscreen").addEventListener("click", () => this.toggleFullscreen());
 
+    // TTS Read Aloud with Real-Time Paragraph Spoken Word Highlighting
+    const ttsBtn = document.getElementById("btn-tts-play");
+    ttsBtn.addEventListener("click", () => {
+      if ('speechSynthesis' in window) {
+        if (window.speechSynthesis.speaking) {
+          window.speechSynthesis.cancel();
+          ttsBtn.textContent = "▶ Read Aloud";
+          document.querySelectorAll(".reflow-para").forEach(p => p.style.backgroundColor = "");
+          return;
+        }
+
+        const paragraphs = Array.from(document.querySelectorAll(".reflow-para"));
+        if (paragraphs.length === 0) return;
+
+        ttsBtn.textContent = "⏹ Stop Speech";
+        let pIndex = 0;
+
+        const speakNextParagraph = () => {
+          if (pIndex >= paragraphs.length || !this.isReading) {
+            ttsBtn.textContent = "▶ Read Aloud";
+            document.querySelectorAll(".reflow-para").forEach(p => p.style.backgroundColor = "");
+            return;
+          }
+
+          paragraphs.forEach((p, idx) => {
+            p.style.backgroundColor = (idx === pIndex) ? "rgba(31, 95, 219, 0.15)" : "";
+            p.style.borderRadius = "4px";
+          });
+
+          const currentP = paragraphs[pIndex];
+          const utterance = new SpeechSynthesisUtterance(currentP.textContent);
+          const settings = window.db.getSettings();
+          utterance.rate = (settings.ttsSpeed || 10) / 10;
+          utterance.volume = (settings.ttsVolume || 80) / 100;
+
+          utterance.onend = () => {
+            pIndex++;
+            speakNextParagraph();
+          };
+
+          utterance.onerror = () => {
+            ttsBtn.textContent = "▶ Read Aloud";
+            currentP.style.backgroundColor = "";
+          };
+
+          window.speechSynthesis.speak(utterance);
+        };
+
+        speakNextParagraph();
+      } else {
+        alert("Text to Speech is not supported in this runtime environment.");
+      }
+    });
+
     // Print Dialog
     document.getElementById("btn-reader-print").addEventListener("click", () => {
       document.getElementById("modal-print").style.display = "flex";
@@ -624,6 +678,22 @@ class AppController {
 
   // --- S02: Open & Read Flow ---
   openBook(book) {
+    // DRM Protection Detection & Warning
+    if (book.is_drm || (book.file_path && book.file_path.includes(".drm"))) {
+      const modal = document.getElementById("modal-confirm");
+      document.getElementById("confirm-title").textContent = "DRM Protection Detected";
+      document.getElementById("confirm-message").textContent =
+        "The document you are attempting to open is encrypted with Digital Rights Management (DRM). Clean-room reading of DRM-locked files is prohibited.";
+      document.getElementById("btn-confirm-proceed").style.display = "none";
+      document.getElementById("btn-confirm-cancel").textContent = "Dismiss";
+      modal.style.display = "flex";
+      document.getElementById("btn-confirm-cancel").onclick = () => {
+        modal.style.display = "none";
+        document.getElementById("btn-confirm-proceed").style.display = "inline-block";
+      };
+      return;
+    }
+
     this.activeBook = book;
     this.isReading = true;
 
