@@ -112,7 +112,7 @@ class DocumentEngine {
           </div>
         </div>
       `;
-    } else if (this.columnCount === 2 && spread.right) {
+    } else if (this.columnCount === 2) {
       html = `
         <div class="two-column-spread" style="font-family: ${this.fontFamily}; font-size: ${this.fontSize}px; line-height: ${this.lineSpacing}; text-align: ${this.textAlign};">
           <div class="reader-column column-left">
@@ -121,7 +121,7 @@ class DocumentEngine {
           </div>
           <div class="spread-gutter"></div>
           <div class="reader-column column-right">
-            ${spread.right.map(p => `<p class="reflow-para">${this.applyHighlights(p)}</p>`).join("")}
+            ${spread.right ? spread.right.map(p => `<p class="reflow-para">${this.applyHighlights(p)}</p>`).join("") : ""}
           </div>
         </div>
       `;
