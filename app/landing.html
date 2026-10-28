@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FolioHaven: Distraction-Free Desktop Ebook Reader</title>
+  <meta name="description" content="FolioHaven is a serene, open-source desktop ebook reader for Windows and Web. Read EPUB, PDF, and MOBI books with zero popups, zero countdown timers, and zero paywalls.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* FolioHaven Design Tokens & Chapter System */
+    :root {
+      --color-bg: #ffffff;
+      --color-surface: #f5f7fa;
+      --color-surface-hover: #ebf0f5;
+      --color-surface-active: #e0e6ed;
+      --color-border: #dbe0e8;
+      --color-border-input: #6c7684;
+      --color-text: #14181f;
+      --color-text-muted: #525b6a;
+      
+      --color-accent: #c2410c;
+      --color-accent-hover: #9a3412;
+      --color-on-accent: #ffffff;
+      --color-success: #1b7a4b;
+      --color-warning: #b35900;
+
+      --color-sidebar-bg: #231f1d;
+      --color-sidebar-surface: #2c2724;
+      --color-sidebar-text: #f5f0eb;
+      --color-sidebar-text-muted: #a89f97;
+      --color-sidebar-border: #756b62;
+
+      --color-highlight-yellow: #ffe270;
+      --color-highlight-green: #a8f29a;
+      --color-highlight-cyan: #7be5f8;
+      --color-highlight-pink: #ffa0c5;
+
+      --font-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Inter", "Roboto", sans-serif;
+      --font-serif: "Georgia", "Charter", "Source Serif Pro", serif;
+      --font-mono: "Consolas", "ui-monospace", "Menlo", monospace;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --space-20: 80px;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Reset & Base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img, svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: var(--space-6);
+      padding-right: var(--space-6);
+    }
+
+    /* Top Navigation */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: var(--color-sidebar-bg);
+      border-bottom: 1px solid var(--color-sidebar-surface);
+      color: var(--color-sidebar-text);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-logo-mark {
+      width: 32px;
+      height: 32px;
+      background-color: var(--color-accent);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-sidebar-text-muted);
+    }
+
+    .nav-links a:hover {
+      color: var(--color-sidebar-text);
+    }
+
+    .nav-cta {
+      background-color: var(--color-accent);
+      color: var(--color-on-accent);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color 150ms ease;
+    }
+
+    .nav-cta:hover {
+      background-color: var(--color-accent-hover);
+    }
+
+    /* Chapter Common Styles */
+    .chapter {
+      padding-top: var(--space-16);
+      padding-bottom: var(--space-16);
+    }
+
+    .chapter-heading {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-4);
+    }
+
+    .chapter-subhead {
+      font-size: 18px;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+      max-width: 680px;
+      margin-bottom: var(--space-10);
+    }
+
+    /* Chapter 1: Hero Section */
+    .chapter-hero {
+      background-color: var(--color-bg);
+      padding-top: var(--space-16);
+      padding-bottom: var(--space-20);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1.15fr;
+      gap: var(--space-12);
+      align-items: center;
+    }
+
+    .hero-content h1 {
+      font-size: 46px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      color: var(--color-text);
+      margin-bottom: var(--space-5);
+    }
+
+    .hero-lead {
+      font-size: 19px;
+      color: var(--color-text-muted);
+      line-height: 1.55;
+      margin-bottom: var(--space-8);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      background-color: var(--color-accent);
+      color: var(--color-on-accent);
+      padding: 14px 28px;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-weight: 600;
+      transition: background-color 150ms ease;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-accent-hover);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      background-color: transparent;
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      padding: 13px 24px;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-weight: 600;
+      transition: background-color 150ms ease, border-color 150ms ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--color-surface);
+      border-color: var(--color-border-input);
+    }
+
+    .hero-trust-bar {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    /* Live Reader Interactive Showcase */
+    .reader-showcase-box {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .reader-control-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-4);
+      background-color: var(--color-sidebar-bg);
+      color: var(--color-sidebar-text);
+      border-bottom: 1px solid var(--color-sidebar-surface);
+    }
+
+    .reader-title-info {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-sidebar-text);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .reader-badge-format {
+      font-size: 11px;
+      font-weight: 700;
+      background-color: var(--color-sidebar-surface);
+      color: var(--color-sidebar-text-muted);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .reader-controls-cluster {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .theme-picker {
+      display: flex;
+      gap: 4px;
+      background-color: var(--color-sidebar-surface);
+      padding: 3px;
+      border-radius: var(--radius-sm);
+    }
+
+    .theme-btn {
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 3px;
+      color: var(--color-sidebar-text-muted);
+      transition: all 120ms ease;
+    }
+
+    .theme-btn.active, .theme-btn:hover {
+      background-color: var(--color-sidebar-bg);
+      color: var(--color-sidebar-text);
+    }
+
+    .font-stepper {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background-color: var(--color-sidebar-surface);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+    }
+
+    .stepper-btn {
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-sidebar-text-muted);
+      border-radius: 3px;
+    }
+
+    .stepper-btn:hover {
+      color: var(--color-sidebar-text);
+    }
+
+    /* Live Canvas Reading Viewports */
+    .reader-canvas {
+      padding: var(--space-8);
+      font-family: var(--font-serif);
+      line-height: 1.7;
+      transition: background-color 200ms ease, color 200ms ease;
+      min-height: 290px;
+    }
+
+    .reader-canvas.theme-day {
+      background-color: #ffffff;
+      color: #1a1d20;
+    }
+
+    .reader-canvas.theme-sepia {
+      background-color: #faf3e0;
+      color: #3d2e1e;
+    }
+
+    .reader-canvas.theme-night {
+      background-color: #181a1f;
+      color: #e2e4e8;
+    }
+
+    .reader-canvas.theme-dark-sepia {
+      background-color: #2b241e;
+      color: #ddd1be;
+    }
+
+    .reader-book-header {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      opacity: 0.65;
+      margin-bottom: var(--space-4);
+      border-bottom: 1px solid rgba(120, 120, 120, 0.2);
+      padding-bottom: var(--space-2);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .reader-passage-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+      line-height: 1.3;
+    }
+
+    .reader-passage-p {
+      margin-bottom: var(--space-4);
+    }
+
+    .highlight-active-yellow {
+      background-color: var(--color-highlight-yellow);
+      color: #231f1d;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    .reader-footer-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-2) var(--space-4);
+      background-color: rgba(0, 0, 0, 0.03);
+      font-size: 12px;
+      font-family: var(--font-sans);
+      opacity: 0.75;
+      border-top: 1px solid rgba(120, 120, 120, 0.15);
+    }
+
+    /* Chapter 2: The Problem */
+    .chapter-problem {
+      background-color: #faf3e0;
+      color: #3d2e1e;
+    }
+
+    .chapter-problem .chapter-subhead {
+      color: #5c4733;
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-8);
+    }
+
+    .problem-card {
+      background-color: #ffffff;
+      border: 1px solid #e3d5b5;
+      border-radius: var(--radius-md);
+      padding: var(--space-8);
+    }
+
+    .problem-card-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+      color: #231f1d;
+      line-height: 1.3;
+    }
+
+    .problem-card-text {
+      font-size: 15px;
+      color: #525b6a;
+      line-height: 1.6;
+    }
+
+    /* Chapter 3: How It Works */
+    .chapter-flow {
+      background-color: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-8);
+    }
+
+    .flow-step {
+      background-color: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-6);
+    }
+
+    .flow-step-tag {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-bottom: var(--space-2);
+    }
+
+    .flow-step-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: var(--space-2);
+      line-height: 1.35;
+    }
+
+    .flow-step-desc {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      line-height: 1.55;
+    }
+
+    /* Chapter 4: Features Mosaic */
+    .chapter-features {
+      background-color: var(--color-bg);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+      margin-bottom: var(--space-12);
+    }
+
+    .feature-tile {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-6);
+      background-color: var(--color-bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .feature-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-accent);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-2);
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: var(--space-2);
+      color: var(--color-text);
+      line-height: 1.3;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      line-height: 1.55;
+      margin-bottom: var(--space-4);
+    }
+
+    .feature-spec-metric {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      background-color: var(--color-surface);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+      border-left: 3px solid var(--color-accent);
+    }
+
+    /* Interface Fragments */
+    .fragments-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-8);
+    }
+
+    .fragment-box {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background-color: var(--color-surface);
+      padding: var(--space-6);
+    }
+
+    .fragment-header {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: var(--space-4);
+      color: var(--color-text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mock-shelf-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+    }
+
+    .mock-book-card {
+      background-color: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: var(--space-3);
+      font-size: 12px;
+    }
+
+    .mock-book-cover {
+      height: 70px;
+      background-color: #2c2724;
+      color: #f5f0eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px;
+      border-radius: 2px;
+      margin-bottom: var(--space-2);
+    }
+
+    .mock-book-title {
+      font-weight: 700;
+      color: var(--color-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mock-book-meta {
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    .notes-drawer-preview {
+      background-color: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: var(--space-4);
+    }
+
+    .notes-quote {
+      font-family: var(--font-serif);
+      font-size: 13px;
+      line-height: 1.5;
+      background-color: var(--color-highlight-yellow);
+      padding: var(--space-2);
+      border-radius: 2px;
+      margin-bottom: var(--space-3);
+      color: #231f1d;
+    }
+
+    .notes-comment {
+      font-size: 13px;
+      color: var(--color-text);
+      margin-bottom: var(--space-4);
+    }
+
+    .btn-export-mock {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+    }
+
+    /* Chapter 5: Transparent Pricing */
+    .chapter-pricing {
+      background-color: var(--color-sidebar-bg);
+      color: var(--color-sidebar-text);
+    }
+
+    .chapter-pricing .chapter-heading {
+      color: var(--color-sidebar-text);
+    }
+
+    .chapter-pricing .chapter-subhead {
+      color: var(--color-sidebar-text-muted);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+      margin-bottom: var(--space-12);
+    }
+
+    .pricing-card {
+      background-color: var(--color-sidebar-surface);
+      border: 1px solid var(--color-sidebar-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-8);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .pricing-card.featured {
+      border-color: var(--color-accent);
+      position: relative;
+    }
+
+    .tier-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-accent);
+      margin-bottom: var(--space-2);
+    }
+
+    .tier-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .tier-price {
+      font-size: 38px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .tier-billing-cycle {
+      font-size: 14px;
+      color: var(--color-sidebar-text-muted);
+    }
+
+    .tier-persona {
+      font-size: 14px;
+      color: var(--color-sidebar-text-muted);
+      margin-bottom: var(--space-6);
+      min-height: 42px;
+    }
+
+    .tier-features-list {
+      list-style: none;
+      margin-bottom: var(--space-8);
+      font-size: 14px;
+      color: var(--color-sidebar-text);
+    }
+
+    .tier-features-list li {
+      margin-bottom: var(--space-2);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+    }
+
+    .tier-features-list li::before {
+      content: "✓";
+      color: var(--color-accent);
+      font-weight: 700;
+    }
+
+    .btn-tier {
+      display: block;
+      text-align: center;
+      padding: 12px var(--space-4);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color 150ms ease;
+    }
+
+    .btn-tier.btn-free {
+      background-color: var(--color-sidebar-bg);
+      border: 1px solid var(--color-sidebar-border);
+      color: var(--color-sidebar-text);
+    }
+
+    .btn-tier.btn-free:hover {
+      background-color: #38322e;
+    }
+
+    .btn-tier.btn-accent {
+      background-color: var(--color-accent);
+      color: var(--color-on-accent);
+    }
+
+    .btn-tier.btn-accent:hover {
+      background-color: var(--color-accent-hover);
+    }
+
+    /* Comparison Table */
+    .comparison-wrapper {
+      background-color: var(--color-sidebar-surface);
+      border: 1px solid var(--color-sidebar-border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      padding: var(--space-6);
+    }
+
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .comp-table th, .comp-table td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--color-sidebar-border);
+    }
+
+    .comp-table th {
+      color: var(--color-sidebar-text-muted);
+      font-weight: 600;
+    }
+
+    .comp-table td {
+      color: var(--color-sidebar-text);
+    }
+
+    .comp-table td.brand-col {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    /* Chapter 6: FAQ */
+    .chapter-faq {
+      background-color: var(--color-bg);
+    }
+
+    .faq-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      max-width: 860px;
+    }
+
+    .faq-item {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background-color: var(--color-surface);
+      overflow: hidden;
+    }
+
+    .faq-item summary {
+      padding: var(--space-5) var(--space-6);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text);
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item summary::after {
+      content: "+";
+      font-size: 20px;
+      color: var(--color-accent);
+      font-weight: 700;
+    }
+
+    .faq-item[open] summary::after {
+      content: "−";
+    }
+
+    .faq-body {
+      padding: 0 var(--space-6) var(--space-6) var(--space-6);
+      font-size: 15px;
+      color: var(--color-text-muted);
+      line-height: 1.6;
+    }
+
+    /* Chapter 7: Final CTA & Footer */
+    .chapter-cta {
+      background-color: var(--color-surface);
+      text-align: center;
+      border-top: 1px solid var(--color-border);
+      padding-top: var(--space-20);
+      padding-bottom: var(--space-20);
+    }
+
+    .cta-box {
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .site-footer {
+      background-color: var(--color-sidebar-bg);
+      color: var(--color-sidebar-text-muted);
+      border-top: 1px solid var(--color-sidebar-surface);
+      padding-top: var(--space-12);
+      padding-bottom: var(--space-12);
+      font-size: 13px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+      }
+      .problem-grid, .flow-grid, .pricing-grid, .features-grid, .fragments-row {
+        grid-template-columns: 1fr;
+      }
+      .hero-content h1 {
+        font-size: 36px;
+      }
+      .chapter-heading {
+        font-size: 28px;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="site-nav">
+    <div class="container nav-inner">
+      <div class="nav-brand">
+        <div class="brand-logo-mark">F</div>
+        <span>FolioHaven</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#problem">Problem</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a href="index.html" class="nav-cta">Download Free</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- CHAPTER 1: HERO & LIVE SHOWCASE -->
+    <section class="chapter chapter-hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <h1>Your Distraction-Free Digital Bookshelf.</h1>
+          <p class="hero-lead">
+            A modern desktop ebook reader for Windows and Web—open-source, 100% free, and crafted for pure reading focus without countdown timers, artificial book limits, or subscription paywalls.
+          </p>
+          <div class="hero-actions">
+            <a href="index.html" class="btn-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download for Windows (64-bit)
+            </a>
+            <a href="index.html" class="btn-secondary">Launch Web Reader Demo</a>
+          </div>
+          <div class="hero-trust-bar">
+            <span>✓ 100% Free &amp; Open Source</span>
+            <span>·</span>
+            <span>✓ No Ads</span>
+            <span>·</span>
+            <span>✓ No Telemetry</span>
+            <span>·</span>
+            <span>✓ Works Offline</span>
+          </div>
+        </div>
+
+        <!-- The Live Thing: Reader Customizer -->
+        <div class="reader-showcase-box" data-ui="live-reader">
+          <div class="reader-control-bar">
+            <div class="reader-title-info">
+              <span class="reader-badge-format">EPUB</span>
+              <span>Pride and Prejudice · Jane Austen</span>
+            </div>
+            <div class="reader-controls-cluster">
+              <div class="theme-picker" role="group" aria-label="Reading Themes">
+                <button type="button" class="theme-btn active" data-theme="day">Day</button>
+                <button type="button" class="theme-btn" data-theme="sepia">Sepia</button>
+                <button type="button" class="theme-btn" data-theme="night">Night</button>
+                <button type="button" class="theme-btn" data-theme="dark-sepia">Dark Sepia</button>
+              </div>
+              <div class="font-stepper" role="group" aria-label="Font Size">
+                <button type="button" class="stepper-btn" id="font-dec" title="Decrease font size">A−</button>
+                <button type="button" class="stepper-btn" id="font-inc" title="Increase font size">A+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="reader-canvas theme-day" id="live-canvas" style="font-size: 16px;">
+            <div class="reader-book-header">
+              <span>Chapter I</span>
+              <span>FolioHaven Engine</span>
+            </div>
+            <div class="reader-passage-title">Of Universal Truths</div>
+            <p class="reader-passage-p">
+              It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.
+            </p>
+            <p class="reader-passage-p">
+              <span class="highlight-active-yellow">However little known the feelings or views of such a man may be on his first entering a neighbourhood</span>, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.
+            </p>
+          </div>
+
+          <div class="reader-footer-status">
+            <span>Page 1 of 348 · 2-Column Spread</span>
+            <span>Reading Time: ~7 hrs left</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 2: THE PROBLEM -->
+    <section class="chapter chapter-problem" id="problem">
+      <div class="container">
+        <h2 class="chapter-heading">The Quiet Reading Room Has Been Monetized.</h2>
+        <p class="chapter-subhead">
+          Commercial desktop reading apps have degraded into an obstacle course of monetization, while open-source alternatives remain overly complex.
+        </p>
+
+        <div class="problem-grid">
+          <div class="problem-card">
+            <h3 class="problem-card-title">The Commercial Upsell Gauntlet</h3>
+            <p class="problem-card-text">
+              Opening a chapter triggers full-screen upgrade modals. Certain readers even force users to sit through mandatory 10-second countdown timers before resuming reading. Basic tools like adding more than 10 books or exporting study notes are locked behind expensive licenses that break after updates.
+            </p>
+          </div>
+
+          <div class="problem-card">
+            <h3 class="problem-card-title">The Clutter &amp; Complexity Dilemma</h3>
+            <p class="problem-card-text">
+              The prominent open-source tools offer raw format power, but their interfaces feel like enterprise database spreadsheets from twenty years ago. Readers who simply want a calm bookshelf, comfortable typography, and smooth page reflow are left with no peaceful middle ground.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 3: HOW IT WORKS -->
+    <section class="chapter chapter-flow" id="how-it-works">
+      <div class="container">
+        <h2 class="chapter-heading">Pure Reading in Three Simple Steps.</h2>
+        <p class="chapter-subhead">
+          FolioHaven returns desktop reading to its essentials: beautiful books, thoughtful typography, and zero friction.
+        </p>
+
+        <div class="flow-grid">
+          <div class="flow-step">
+            <div class="flow-step-tag">Step 1</div>
+            <h3 class="flow-step-title">Drop Your Books Onto Your Shelf</h3>
+            <p class="flow-step-desc">
+              Drag and drop EPUB, PDF, MOBI, FB2, CBZ comics, or TXT files directly into FolioHaven. The engine parses covers and metadata instantly with cryptographic SHA-256 deduplication.
+            </p>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-step-tag">Step 2</div>
+            <h3 class="flow-step-title">Read in Uninterrupted Comfort</h3>
+            <p class="flow-step-desc">
+              Open your book in a comfortable two-column spread or continuous single-column flow. Choose from Day, Sepia, Night, or Dark Sepia palettes with zero popups, ads, or countdown timers.
+            </p>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-step-tag">Step 3</div>
+            <h3 class="flow-step-title">Annotate, Study, and Export Freely</h3>
+            <p class="flow-step-desc">
+              Highlight passages across four soft swatches, attach commentary in the notes drawer, and export a clean standalone HTML study sheet with chapter citations with a single click.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 4: FEATURES MOSAIC -->
+    <section class="chapter chapter-features" id="features">
+      <div class="container">
+        <h2 class="chapter-heading">Built for Readers, Not Funnels.</h2>
+        <p class="chapter-subhead">
+          Every capability in FolioHaven directly solves the real frustrations of digital book lovers.
+        </p>
+
+        <div class="features-grid">
+          <div class="feature-tile">
+            <div>
+              <div class="feature-tag">FIX-1: Anti-Nag Freedom</div>
+              <h3 class="feature-title">Zero Paywalls &amp; Zero Nag Screens</h3>
+              <p class="feature-desc">
+                Read 10 books or 10,000. Create unlimited custom shelves, search across all titles, and never see an upgrade banner, countdown delay, or locked feature.
+              </p>
+            </div>
+            <div class="feature-spec-metric">Library Cap: Unlimited Books</div>
+          </div>
+
+          <div class="feature-tile">
+            <div>
+              <div class="feature-tag">FIX-2: Study Workflow</div>
+              <h3 class="feature-title">One-Click HTML Study Export</h3>
+              <p class="feature-desc">
+                Highlight in Amber, Sage, Sky, or Rose swatches. Capture personal reflections and export self-contained HTML study reports to Notion, Obsidian, or print.
+              </p>
+            </div>
+            <div class="feature-spec-metric">Export: Standalone Clean HTML</div>
+          </div>
+
+          <div class="feature-tile">
+            <div>
+              <div class="feature-tag">FIX-3: Performance</div>
+              <h3 class="feature-title">Modern 64-Bit Native Engine</h3>
+              <p class="feature-desc">
+                Built on high-performance C++20 and Qt 6 with hardware-accelerated PDFium. Graphic novel CBZ archives and multi-gigabyte PDFs render without memory crashes.
+              </p>
+            </div>
+            <div class="feature-spec-metric">Architecture: Native Windows x64</div>
+          </div>
+
+          <div class="feature-tile">
+            <div>
+              <div class="feature-tag">FIX-4: Eye Comfort</div>
+              <h3 class="feature-title">Windows 11 Dark Mode &amp; Palettes</h3>
+              <p class="feature-desc">
+                Read comfortably in dim rooms with frameless DWM dark title bars and four calibrated themes (Day, Night, Sepia, Dark Sepia) exceeding WCAG contrast standards.
+              </p>
+            </div>
+            <div class="feature-spec-metric">Contrast: 100% WCAG AAA Compliant</div>
+          </div>
+
+          <div class="feature-tile">
+            <div>
+              <div class="feature-tag">FIX-5: Ingestion</div>
+              <h3 class="feature-title">Instant Drag-and-Drop Ingestion</h3>
+              <p class="feature-desc">
+                Import single files or entire directory trees. Automatic cover extraction, author indexing, and SHA-256 fingerprinting prevent duplicate copies.
+              </p>
+            </div>
+            <div class="feature-spec-metric">Deduplication: SHA-256 Fingerprint</div>
+          </div>
+
+          <div class="feature-tile">
+            <div>
+              <div class="feature-tag">FIX-6: Privacy</div>
+              <h3 class="feature-title">Open Data Portability &amp; Local Privacy</h3>
+              <p class="feature-desc">
+                100% offline local SQLite storage. Your reading progress, personal notes, and library catalog belong to you on your machine without cloud tracking.
+              </p>
+            </div>
+            <div class="feature-spec-metric">Storage: Transparent Local SQLite</div>
+          </div>
+        </div>
+
+        <!-- Live Authentic Fragments Showcase -->
+        <div class="fragments-row">
+          <div class="fragment-box">
+            <div class="fragment-header">
+              <span>Bookshelf Overview</span>
+              <span style="font-size: 12px; color: var(--color-text-muted);">Local SQLite Catalog</span>
+            </div>
+            <div class="mock-shelf-grid">
+              <div class="mock-book-card">
+                <div class="mock-book-cover">Pride &amp; Prejudice</div>
+                <div class="mock-book-title">Jane Austen</div>
+                <div class="mock-book-meta">EPUB · 42% read</div>
+              </div>
+              <div class="mock-book-card">
+                <div class="mock-book-cover" style="background-color: #383029;">The Time Machine</div>
+                <div class="mock-book-title">H.G. Wells</div>
+                <div class="mock-book-meta">EPUB · 100% read</div>
+              </div>
+              <div class="mock-book-card">
+                <div class="mock-book-cover" style="background-color: #1a1d24;">Frankenstein</div>
+                <div class="mock-book-title">Mary Shelley</div>
+                <div class="mock-book-meta">PDF · 18% read</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fragment-box">
+            <div class="fragment-header">
+              <span>Study Notes &amp; Highlights</span>
+              <span class="btn-export-mock">Export HTML</span>
+            </div>
+            <div class="notes-drawer-preview">
+              <div class="notes-quote">
+                "However little known the feelings or views of such a man may be on his first entering a neighbourhood..."
+              </div>
+              <div class="notes-comment">
+                <strong>Chapter Note:</strong> Austen's ironic critique of social marriage expectations.
+              </div>
+              <div style="font-size: 11px; color: var(--color-text-muted);">
+                Saved in local SQLite · Ready for 1-click HTML study summary export.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 5: PRICING -->
+    <section class="chapter chapter-pricing" id="pricing">
+      <div class="container">
+        <h2 class="chapter-heading">Transparent &amp; Ethical Pricing.</h2>
+        <p class="chapter-subhead">
+          Zero recurring paywalls on reading. Sustained purely by voluntary reader patronage.
+        </p>
+
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div>
+              <div class="tier-label">Reader (Core)</div>
+              <div class="tier-price-row">
+                <div class="tier-price">$0</div>
+                <div class="tier-billing-cycle">Forever Free</div>
+              </div>
+              <div class="tier-persona">For everyday book lovers, students, and casual readers.</div>
+              <ul class="tier-features-list">
+                <li>Unlimited books &amp; custom shelves</li>
+                <li>EPUB, PDF, MOBI, FB2, CBZ, TXT</li>
+                <li>4-color highlights &amp; study notes</li>
+                <li>1-click standalone HTML study export</li>
+                <li>Day, Sepia, Night, Dark Sepia themes</li>
+                <li>100% offline local SQLite storage</li>
+                <li>Zero ads, zero timers, zero popups</li>
+              </ul>
+            </div>
+            <a href="index.html" class="btn-tier btn-free">Download Free</a>
+          </div>
+
+          <div class="pricing-card featured">
+            <div>
+              <div class="tier-label">Supporter Edition</div>
+              <div class="tier-price-row">
+                <div class="tier-price">$12</div>
+                <div class="tier-billing-cycle">One-Time Tip</div>
+              </div>
+              <div class="tier-persona">For bibliophiles and enthusiasts backing independent development.</div>
+              <ul class="tier-features-list">
+                <li>Everything in Reader Core Edition</li>
+                <li>Digital Supporter badge in About dialog</li>
+                <li>3 exclusive warm decorative themes</li>
+                <li>Name listed on GitHub Sponsors wall</li>
+                <li>Early preview access to beta builds</li>
+                <li><strong>Zero locked reading tools</strong></li>
+                <li>Perpetual patron recognition</li>
+              </ul>
+            </div>
+            <a href="https://github.com/sponsors" class="btn-tier btn-accent" target="_blank" rel="noopener">Become a Supporter</a>
+          </div>
+
+          <div class="pricing-card">
+            <div>
+              <div class="tier-label">Sustaining Patron</div>
+              <div class="tier-price-row">
+                <div class="tier-price">$24</div>
+                <div class="tier-billing-cycle">per year ($2.00/mo)</div>
+              </div>
+              <div class="tier-persona">For power users and scholars helping sustain format maintenance.</div>
+              <ul class="tier-features-list">
+                <li>Everything in Supporter Edition</li>
+                <li>Voting rights on GitHub roadmap priorities</li>
+                <li>Annual Sponsor credits roll recognition</li>
+                <li>Priority GitHub issue triage</li>
+                <li>1-click self-serve cancellation portal</li>
+                <li><strong>Graceful fallback to Free tier</strong></li>
+                <li>Zero locked reading features</li>
+              </ul>
+            </div>
+            <a href="https://github.com/sponsors" class="btn-tier btn-free" target="_blank" rel="noopener">Annual Patron</a>
+          </div>
+        </div>
+
+        <!-- Comparative Contrast Table -->
+        <div class="comparison-wrapper">
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Feature / Policy</th>
+                <th style="color: var(--color-accent);">FolioHaven</th>
+                <th>Legacy Commercial Readers</th>
+                <th>ReadEra</th>
+                <th>Calibre</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Core Reading License</td>
+                <td class="brand-col">100% Free &amp; Open Source</td>
+                <td>$19.95/yr or $39.95 lifetime</td>
+                <td>$15.99 lifetime (Premium)</td>
+                <td>Free (GPLv3)</td>
+              </tr>
+              <tr>
+                <td>Library Book Limit</td>
+                <td class="brand-col">Unlimited (10,000+)</td>
+                <td>Capped at 10 books on free tier</td>
+                <td>Unlimited</td>
+                <td>Unlimited</td>
+              </tr>
+              <tr>
+                <td>Countdown Nag Timers</td>
+                <td class="brand-col">Zero (Never)</td>
+                <td>Mandatory 10-second timers</td>
+                <td>Zero</td>
+                <td>Zero</td>
+              </tr>
+              <tr>
+                <td>HTML Study Notes Export</td>
+                <td class="brand-col">Included Free</td>
+                <td>Paywalled behind Pro tier</td>
+                <td>Locked in Premium</td>
+                <td>Complex manual export</td>
+              </tr>
+              <tr>
+                <td>Desktop Experience</td>
+                <td class="brand-col">Native 64-bit Windows + Web</td>
+                <td>Legacy 32-bit Windows</td>
+                <td>Mobile only (no Windows app)</td>
+                <td>Complex 2004-era UI</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 6: FAQ -->
+    <section class="chapter chapter-faq" id="faq">
+      <div class="container">
+        <h2 class="chapter-heading">Frequently Asked Questions.</h2>
+        <p class="chapter-subhead">
+          Clear answers about migration, privacy, DRM, and open-source licensing.
+        </p>
+
+        <div class="faq-stack">
+          <details class="faq-item" open>
+            <summary>Can I migrate my existing library from Calibre or folder collections?</summary>
+            <div class="faq-body">
+              Yes. Simply drag and drop your existing ebook collection folder directly into FolioHaven. Because FolioHaven uses non-destructive indexing and cryptographic hash deduplication, it catalogs your books without duplicating files or rearranging your folder structure on disk. You can safely point FolioHaven directly at your existing Calibre library folder.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>How does FolioHaven handle DRM-protected books?</summary>
+            <div class="faq-body">
+              FolioHaven is built for open, private reading and supports DRM-free EPUB, PDF, MOBI, FB2, CBZ, and TXT files. It does not contain decryption keys for proprietary Adobe Adept or Amazon Kindle DRM systems. If an encrypted file is opened, FolioHaven displays a calm, helpful explanation rather than crashing or freezing.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Does FolioHaven require an account or an internet connection?</summary>
+            <div class="faq-body">
+              Never. FolioHaven is strictly local-first. There is no account sign-up, no email registration, no cloud login, and zero network telemetry. All library records, bookmarks, highlights, and reading statistics remain stored on your local machine in an open SQLite database.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Is FolioHaven truly free, or will subscription paywalls be added later?</summary>
+            <div class="faq-body">
+              FolioHaven is released under an open-source license. The desktop application is free and will always remain free. We will never add paywalls, library size limits, or nag popups. The project is sustained purely through voluntary patron contributions and GitHub sponsorships from readers who appreciate quiet software.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>What operating systems and platforms are supported?</summary>
+            <div class="faq-body">
+              FolioHaven runs as a native 64-bit application on Windows 10 and Windows 11. It is also available as a modern web application accessible from any standard desktop browser (Chrome, Edge, Firefox, Safari) with local IndexedDB storage.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 7: FINAL CTA -->
+    <section class="chapter chapter-cta">
+      <div class="container cta-box">
+        <h2 class="chapter-heading">Reclaim Your Quiet Reading Sanctuary.</h2>
+        <p class="chapter-subhead" style="margin-left: auto; margin-right: auto;">
+          No account required. No credit card. No countdown timers. Just your books, beautifully arranged in a tranquil digital bookshelf.
+        </p>
+        <div class="hero-actions" style="justify-content: center;">
+          <a href="index.html" class="btn-primary">Download FolioHaven for Windows (64-bit)</a>
+          <a href="index.html" class="btn-secondary">Launch Web Reader Demo</a>
+        </div>
+        <div class="hero-trust-bar" style="justify-content: center; margin-top: var(--space-6);">
+          <span>100% Free &amp; Open Source</span>
+          <span>·</span>
+          <span>No Ads</span>
+          <span>·</span>
+          <span>No Telemetry</span>
+          <span>·</span>
+          <span>Works Offline</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div style="display: flex; align-items: center; gap: var(--space-3);">
+        <div class="brand-logo-mark" style="width: 24px; height: 24px; font-size: 12px;">F</div>
+        <span style="font-weight: 700; color: #ffffff;">FolioHaven Reader</span>
+        <span>·</span>
+        <span>Crafted for peaceful reading.</span>
+      </div>
+      <div>
+        <span>Local-first, private, and open source under standard terms.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Live Reader Interactive Logic -->
+  <script>
+    (function() {
+      var canvas = document.getElementById('live-canvas');
+      var themeButtons = document.querySelectorAll('.theme-picker .theme-btn');
+      var btnInc = document.getElementById('font-inc');
+      var btnDec = document.getElementById('font-dec');
+      var currentFontSize = 16;
+
+      // Theme Switcher
+      themeButtons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var targetTheme = this.getAttribute('data-theme');
+          themeButtons.forEach(function(b) { b.classList.remove('active'); });
+          this.classList.add('active');
+
+          canvas.className = 'reader-canvas theme-' + targetTheme;
+        });
+      });
+
+      // Font Size Stepper
+      if (btnInc && btnDec && canvas) {
+        btnInc.addEventListener('click', function() {
+          if (currentFontSize < 24) {
+            currentFontSize += 2;
+            canvas.style.fontSize = currentFontSize + 'px';
+          }
+        });
+
+        btnDec.addEventListener('click', function() {
+          if (currentFontSize > 12) {
+            currentFontSize -= 2;
+            canvas.style.fontSize = currentFontSize + 'px';
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

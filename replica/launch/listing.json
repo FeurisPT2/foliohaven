@@ -1,0 +1,21 @@
+{
+  "avoid": [
+    "Icecream Ebook Reader",
+    "Icecream Apps",
+    "Icecream Reader",
+    "Icecream"
+  ],
+  "app_store": {
+    "name": "FolioHaven: Ebook Reader",
+    "subtitle": "Serene Bookshelf & Notes",
+    "promotional_text": "Read EPUB, PDF, MOBI, and comic files in a calm, modern reader with full annotations, custom shelves, and HTML study export.",
+    "description": "FolioHaven is a serene, modern desktop ebook reader built for readers and researchers who value focus and typography.\n\nEnjoy an elegant digital bookshelf and an uninterrupted reading experience across all major document formats.\n\nKey Capabilities:\n- Broad Format Compatibility: Open reflowable EPUB, high-resolution PDF, MOBI, FB2, CBZ comics, and TXT files seamlessly.\n- Thoughtful Study Tools: Annotate with four harmonious color swatches, write inline commentary, and export complete study notes directly to clean HTML.\n- Calm Reading Canvas: Dual-column book spreads, distraction-free fullscreen, and four custom reading palettes (Day, Night, Sepia, Dark Sepia).\n- Unrestricted Organization: Build custom shelves, filter by format or progress, and search your entire library instantly.\n- Private & Offline: Your reading data, highlights, and library stay entirely on your local machine with open SQLite storage.\n\nDesigned for book lovers who cherish quiet reading.",
+    "keywords": "epub,pdf,mobi,fb2,cbz,library,viewer,literature,novels,canvas,sepia,document,darkmode,annotations",
+    "whats_new": "Initial release featuring dual-column reading, four-color highlights, custom shelves, and standalone HTML study notes export."
+  },
+  "google_play": {
+    "title": "FolioHaven: Ebook Reader",
+    "short_description": "Calm, focused digital reading with clean typography and study notes.",
+    "full_description": "FolioHaven is a serene, modern desktop ebook reader designed for book lovers, students, and researchers.\n\nImmerse yourself in literature without interruptions. FolioHaven pairs a clean digital bookshelf with an advanced reflow reading engine.\n\nCore Features:\n- Multi-Format Support: Seamlessly read EPUB, PDF, MOBI, FB2, CBZ, and TXT documents.\n- Study Notes & Annotations: Highlight text across four soft color swatches, attach personal commentary, and export your research to clean HTML.\n- Ergonomic Reading Canvas: Enjoy comfortable two-column spreads, smooth zoom controls, and custom themes including Day, Night, Sepia, and Dark Sepia.\n- Complete Library Freedom: Organize your collection into custom shelves, sort by reading progress, and search titles instantly.\n- Privacy First: 100% offline local storage with open SQLite database portability.\n\nExperience calm, uninterrupted reading with FolioHaven."
+  }
+}
