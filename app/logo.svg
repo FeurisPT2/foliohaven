@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" width="200" height="48" fill="none">
+  <!-- Symbol Icon -->
+  <rect x="4" y="8" width="32" height="32" rx="8" fill="#c2410c"/>
+  <path d="M11 15C11 13.8954 11.8954 13 13 13H27C28.1046 13 29 13.8954 29 15V31H13C11.8954 31 11 30.1046 11 29V15Z" fill="#ffffff" fill-opacity="0.2"/>
+  <path d="M13 15H27V29H14.5C13.1193 29 12 27.8807 12 26.5V16C12 15.4477 12.4477 15 13 15Z" fill="#ffffff"/>
+  <path d="M16 18H23M16 21.5H23M16 25H20" stroke="#c2410c" stroke-width="1.75" stroke-linecap="round"/>
+  
+  <!-- Wordmark -->
+  <text x="46" y="29" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" fill="#f5f0eb" letter-spacing="-0.02em">FolioHaven</text>
+  <text x="144" y="29" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="500" fill="#a89f97">Reader</text>
+</svg>

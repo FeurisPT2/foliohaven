@@ -1,0 +1,20 @@
+{
+  "name": "FolioHaven",
+  "avoid": [
+    "Icecream Ebook Reader",
+    "Icecream Apps",
+    "Icecream Reader"
+  ],
+  "domains": [
+    "icecreamapps.com"
+  ],
+  "colors": [
+    "#3498db",
+    "#2980b9",
+    "#1abc9c",
+    "#2ecc71",
+    "#2c3e50",
+    "#1f5fdb",
+    "#174bb0"
+  ]
+}

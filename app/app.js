@@ -1,5 +1,5 @@
 /**
- * Icecream Ebook Reader Replica: Application Controller
+ * FolioHaven: Application Controller
  * Handles UI routing, events, keyboard navigation, and synchronization
  */
 
@@ -87,7 +87,7 @@ class AppController {
           format: ext || "EPUB",
           file_path: file.name,
           file_size_bytes: file.size,
-          content: `Content preview for ${file.name}.\n\nImported successfully into Icecream Ebook Reader clean-room replica library.`
+          content: `Content preview for ${file.name}.\n\nImported successfully into FolioHaven library.`
         });
       });
       this.renderLibrary();
@@ -913,7 +913,7 @@ class AppController {
   exportNotesToHtml() {
     if (!this.activeBook) return;
     const notes = window.db.getAnnotations(this.activeBook.id);
-    let html = `<!DOCTYPE html><html><head><title>Notes: ${escapeHtml(this.activeBook.title)}</title><style>body{font-family:sans-serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.6;} .note{border-left:4px solid #1f5fdb;padding:12px;margin:16px 0;background:#f5f7fa;border-radius:4px;}</style></head><body><h1>Study Notes: ${escapeHtml(this.activeBook.title)}</h1><p><strong>Author:</strong> ${escapeHtml(this.activeBook.author)}</p><hr>`;
+    let html = `<!DOCTYPE html><html><head><title>Notes: ${escapeHtml(this.activeBook.title)}</title><style>body{font-family:sans-serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.6;} .note{border-left:4px solid #c2410c;padding:12px;margin:16px 0;background:#f5f7fa;border-radius:4px;}</style></head><body><h1>Study Notes: ${escapeHtml(this.activeBook.title)}</h1><p><strong>Author:</strong> ${escapeHtml(this.activeBook.author)}</p><hr>`;
     notes.forEach(n => {
       html += `<div class="note"><p><em>"${escapeHtml(n.selected_text)}"</em></p><p><strong>Commentary:</strong> ${escapeHtml(n.note_text)}</p><small>${new Date(n.created_at).toLocaleString()}</small></div>`;
     });

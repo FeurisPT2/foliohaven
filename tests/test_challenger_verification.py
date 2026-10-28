@@ -1,5 +1,5 @@
 """
-Empirical Verification Test Suite for Icecream Ebook Reader Replica
+Empirical Verification Test Suite for FolioHaven Reader Replica
 Author: challenger_2 (teamwork_preview_challenger)
 Purpose: Adversarial validation of features.csv, recon.md, and architecture.md
 """

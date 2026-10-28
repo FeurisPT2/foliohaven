@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Automated End-to-End Test Suite for Icecream Ebook Reader Replica
+Automated End-to-End Test Suite for FolioHaven Reader
 Uses Chrome DevTools Protocol (CDP) over WebSocket to test all 10 application flows.
 """
 
@@ -110,10 +110,11 @@ class MinimalWebSocketClient:
 
 def run_e2e_tests():
     print("======================================================================")
-    print("  ICECREAM EBOOK READER REPLICA: E2E AUTOMATED VERIFICATION SUITE     ")
+    print("  FOLIOHAVEN READER: E2E AUTOMATED VERIFICATION SUITE                  ")
     print("======================================================================")
 
-    app_url = "file:///C:/Users/epicg/Downloads/icecream_ebook_reader_replica/app/index.html"
+    app_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "app"))
+    app_url = f"file:///{app_dir.replace('\\', '/')}/index.html"
     chrome_path = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
     port = 9222
 

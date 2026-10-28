@@ -1,5 +1,5 @@
 /**
- * Icecream Ebook Reader Replica: Complete Application Styles
+ * FolioHaven Reader: Complete Application Styles
  * Grounded in replica/design/tokens.css
  */
 
@@ -287,7 +287,7 @@ body {
   font-weight: 700;
 }
 
-.badge-epub { background: #e6f0ff; color: #1f5fdb; }
+.badge-epub { background: #ffedd5; color: #c2410c; }
 .badge-pdf  { background: #ffebe6; color: #c92a2a; }
 .badge-mobi { background: #fff2e6; color: #b35900; }
 .badge-fb2  { background: #e6f9f0; color: #1b7a4b; }

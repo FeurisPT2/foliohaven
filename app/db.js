@@ -1,5 +1,5 @@
 /**
- * Clean-room Data Layer: Icecream Ebook Reader Replica
+ * Data Layer: FolioHaven Reader
  * Mirrors the SQLite schema defined in replica/schema.sql
  */
 
@@ -275,7 +275,7 @@ I am already far north of London, and as I walk in the streets of Petersburgh, I
 ];
 
 const SEED_FOLDERS = [
-  { id: "f01", name: "Classics", color: "#1f5fdb", sort_order: 1 },
+  { id: "f01", name: "Classics", color: "#c2410c", sort_order: 1 },
   { id: "f02", name: "Sci-Fi & Fantasy", color: "#1b7a4b", sort_order: 2 }
 ];
 
@@ -479,7 +479,7 @@ class Database {
     const newFolder = {
       id: "f_" + Date.now().toString(36),
       name,
-      color: "#1f5fdb",
+      color: "#c2410c",
       sort_order: folders.length + 1
     };
     folders.push(newFolder);
