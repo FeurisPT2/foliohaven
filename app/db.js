@@ -271,6 +271,37 @@ I am already far north of London, and as I walk in the streets of Petersburgh, I
         content: `This item was moved to the trash bin and can be restored or purged permanently.`
       }
     ]
+  },
+  {
+    id: "b1a2c3d4-0001-4000-8000-000000000009",
+    title: "Confidential Research & Cryptography (Encrypted)",
+    author: "Claude Shannon",
+    format: "PDF",
+    file_path: "books/confidential_protocols.pdf",
+    file_size_bytes: 420000,
+    file_hash: "f6a1b2c3d4e57890123456789abcdef0123456789abcdef0123456789abcdef4",
+    cover_image: null,
+    total_pages: 96,
+    current_page: 1,
+    progress_percent: 1,
+    cfi_position: null,
+    is_favorite: 0,
+    is_deleted: 0,
+    is_encrypted: 1,
+    password: "folio",
+    folder_id: "f01",
+    date_added: "2026-10-28T12:00:00Z",
+    last_read: null,
+    description: "An encrypted research monograph on mathematical secrecy systems. Password is required to unlock (Hint: folio).",
+    chapters: [
+      {
+        id: "c1",
+        title: "Section 1: Secrecy Systems",
+        content: `Communication theory provides a rigorous mathematical framework for analyzing secrecy systems. A secrecy system consists of an enciphering operation at the transmitting end and a deciphering operation at the receiving end.
+
+In this monograph, we establish rigorous bounds on the work characteristic required to compromise polyalphabetic and stream ciphers, demonstrating that perfect secrecy is achievable under conditions of equal equivocation.`
+      }
+    ]
   }
 ];
 
@@ -365,6 +396,16 @@ class Database {
   init() {
     if (!localStorage.getItem(this.booksKey)) {
       localStorage.setItem(this.booksKey, JSON.stringify(SEED_BOOKS));
+    } else {
+      // Ensure encrypted seed book exists for demonstration
+      const currentBooks = JSON.parse(localStorage.getItem(this.booksKey) || "[]");
+      if (!currentBooks.some(b => b.id === "b1a2c3d4-0001-4000-8000-000000000009")) {
+        const encBook = SEED_BOOKS.find(b => b.id === "b1a2c3d4-0001-4000-8000-000000000009");
+        if (encBook) {
+          currentBooks.push(encBook);
+          localStorage.setItem(this.booksKey, JSON.stringify(currentBooks));
+        }
+      }
     }
     if (!localStorage.getItem(this.foldersKey)) {
       localStorage.setItem(this.foldersKey, JSON.stringify(SEED_FOLDERS));

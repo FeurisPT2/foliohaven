@@ -785,6 +785,41 @@ mark.highlight-green  { background: var(--color-highlight-green);  color: #14181
 mark.highlight-cyan   { background: var(--color-highlight-cyan);   color: #14181f; padding: 1px 3px; border-radius: 2px; }
 mark.highlight-pink   { background: var(--color-highlight-pink);   color: #14181f; padding: 1px 3px; border-radius: 2px; }
 
+/* TTS Spoken Paragraph Highlight */
+.tts-reading-active {
+  background: rgba(194, 65, 12, 0.15) !important;
+  border-left: 3px solid var(--color-accent) !important;
+  padding-left: 10px !important;
+  border-radius: 4px;
+  transition: all 0.25s ease;
+}
+
+/* In-Book Search Match Snippet & Canvas Pulse */
+mark.search-match {
+  background: #ffea79;
+  color: #1a1614;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.search-pulse {
+  animation: searchGlow 1.5s ease-out;
+}
+
+@keyframes searchGlow {
+  0% { background-color: rgba(255, 234, 121, 0.9); }
+  100% { background-color: transparent; }
+}
+
+/* Book Cover Thumbnail in Grid & Modal */
+.book-card-cover img,
+.book-table-row img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   #sidebar {
