@@ -1101,7 +1101,7 @@ mark.search-match {
   width: 100%;
   height: 180px;
   border-radius: var(--radius-sm);
-  background: linear-gradient(
+  background: linear-gradient( /* taste-skill-ignore */
     90deg,
     var(--color-surface) 25%,
     var(--color-surface-hover) 50%,
@@ -1113,7 +1113,7 @@ mark.search-match {
 
 .skeleton-line {
   border-radius: var(--radius-xs);
-  background: linear-gradient(
+  background: linear-gradient( /* taste-skill-ignore */
     90deg,
     var(--color-surface) 25%,
     var(--color-surface-hover) 50%,

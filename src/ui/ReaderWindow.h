@@ -57,14 +57,20 @@ private slots:
     void onToggleFullscreen();
 
     void onAddBookmark();
+    void onToggleTocDrawer();
+    void onTocHitSelected(QListWidgetItem *item);
     void onToggleSearchDrawer();
     void onExecuteSearch();
     void onSearchHitSelected(QListWidgetItem *item);
     void onToggleNotesDrawer();
     void onAddHighlight();
+    void onAddHighlightWithColor(const QString& colorCode);
     void onExportNotesHtml();
     void onToggleReadAloud();
     void onOpenSettingsDialog();
+    void onAddCategoryClicked();
+    void onBookGridContextMenu(const QPoint &pos);
+    void onBookTableContextMenu(const QPoint &pos);
 
 private:
     void setupUi();
@@ -83,9 +89,14 @@ private:
     LoadedBook m_loadedBook;
     int m_currentPageIndex{0};
     int m_fontSizePt{15};
+    QString m_fontFamily{"Georgia"};
+    double m_lineHeight{1.7};
+    int m_pageMargin{40};
     bool m_isTwoPages{false};
     ReaderTheme m_currentTheme{ReaderTheme::Sepia};
     QString m_activeCategory{"All Books"};
+    QStringList m_customCategories;
+    QString m_selectedHighlightColor{"amber"};
     bool m_isSpeaking{false};
 
     // UI Widgets - General
@@ -93,12 +104,14 @@ private:
 
     // UI Widgets - Library
     QWidget *m_libraryWidget{nullptr};
+    QWidget *m_emptyStateWidget{nullptr};
     QListWidget *m_sidebarList{nullptr};
     QLineEdit *m_searchLibraryEdit{nullptr};
     QListWidget *m_bookGridList{nullptr};
     QTableWidget *m_bookTableWidget{nullptr};
     QStackedWidget *m_viewModeStack{nullptr};
     QLabel *m_statusLabel{nullptr};
+    QPushButton *m_addCategoryBtn{nullptr};
 
     // UI Widgets - Reader
     QWidget *m_readerViewWidget{nullptr};
@@ -118,6 +131,7 @@ private:
     QPushButton *m_twoPagesBtn{nullptr};
     QPushButton *m_zoomOutBtn{nullptr};
     QPushButton *m_zoomInBtn{nullptr};
+    QPushButton *m_tocBtn{nullptr};
     QPushButton *m_searchBtn{nullptr};
     QPushButton *m_bookmarkBtn{nullptr};
     QPushButton *m_notesBtn{nullptr};
@@ -136,8 +150,12 @@ private:
     void updateLayoutButton();
     void updateViewModeButtons(int modeIndex);
     void updateDrawerButtons();
+    void updateSidebarBadges();
 
     // Drawers
+    QDockWidget *m_tocDock{nullptr};
+    QListWidget *m_tocList{nullptr};
+
     QDockWidget *m_searchDock{nullptr};
     QLineEdit *m_inBookSearchEdit{nullptr};
     QListWidget *m_searchResultsList{nullptr};
@@ -145,6 +163,10 @@ private:
     QDockWidget *m_notesDock{nullptr};
     QListWidget *m_bookmarksList{nullptr};
     QListWidget *m_annotationsList{nullptr};
+    QPushButton *m_hlAmberBtn{nullptr};
+    QPushButton *m_hlEmeraldBtn{nullptr};
+    QPushButton *m_hlAzureBtn{nullptr};
+    QPushButton *m_hlRoseBtn{nullptr};
 };
 
 #endif // READER_WINDOW_H

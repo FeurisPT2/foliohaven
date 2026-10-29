@@ -55,6 +55,32 @@ static QVector<QString> paginateText(const QString& fullText, int wordsPerPage =
     return pages;
 }
 
+static QString extractChapterTitle(const QString& rawHtml, const QString& fallback) {
+    // 1. Try h1, h2
+    QRegularExpression hRegex("<h[1-2][^>]*>(.*?)</h[1-2]>", QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+    auto hMatch = hRegex.match(rawHtml);
+    if (hMatch.hasMatch()) {
+        QString title = hMatch.captured(1);
+        title.remove(QRegularExpression("<[^>]*>"));
+        title = title.trimmed();
+        if (!title.isEmpty() && title.length() < 90) return title;
+    }
+    // 2. Try title tag
+    QRegularExpression tRegex("<title[^>]*>(.*?)</title>", QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+    auto tMatch = tRegex.match(rawHtml);
+    if (tMatch.hasMatch()) {
+        QString title = tMatch.captured(1).trimmed();
+        if (!title.isEmpty() && title.length() < 90) return title;
+    }
+    // 3. Humanize fallback
+    QString clean = fallback;
+    clean.replace('_', ' ').replace('-', ' ');
+    if (!clean.isEmpty()) {
+        clean[0] = clean[0].toUpper();
+    }
+    return clean;
+}
+
 static QString cleanHtmlContent(const QString& html) {
     QString content = html;
     // Extract body if present
@@ -91,7 +117,25 @@ LoadedBook DocumentEngine::loadPlainText(const QString& filePath) {
     file.close();
 
     book.pages = paginateText(fullText);
-    book.toc.append({book.title, 0});
+    book.toc.clear();
+    QRegularExpression chRegex(R"(^(?:Chapter|Chương|Part|Phần|Book|Hồi|Act)\s+[0-9IVXLCDM]+.*$)", QRegularExpression::CaseInsensitiveOption);
+    int pIdx = 0;
+    for (const QString& pg : book.pages) {
+        QStringList lines = pg.split(QRegularExpression(R"(<br>|</p>|\n)"), Qt::SkipEmptyParts);
+        for (const QString& line : lines) {
+            QString cleanLine = line.trimmed();
+            cleanLine.remove(QRegularExpression("<[^>]*>"));
+            cleanLine = cleanLine.trimmed();
+            if (chRegex.match(cleanLine).hasMatch()) {
+                book.toc.append({cleanLine.left(60), pIdx});
+                break;
+            }
+        }
+        pIdx++;
+    }
+    if (book.toc.isEmpty()) {
+        book.toc.append({book.title, 0});
+    }
     book.isValid = true;
     return book;
 }
@@ -205,7 +249,8 @@ LoadedBook DocumentEngine::loadEpub(const QString& filePath) {
             QString clean = cleanHtmlContent(content);
             if (!clean.isEmpty()) {
                 QVector<QString> chPages = paginateText(clean, 350);
-                book.toc.append({QFileInfo(chapterPath).baseName(), pageCounter});
+                QString chTitle = extractChapterTitle(content, QFileInfo(chapterPath).baseName());
+                book.toc.append({chTitle, pageCounter});
                 for (const QString& cp : chPages) {
                     book.pages.append(cp);
                     pageCounter++;
