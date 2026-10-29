@@ -839,7 +839,7 @@ void ReaderWindow::onExportNotesHtml() {
             <style>
                 body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 800px; margin: 40px auto; line-height: 1.6; color: #1c1917; background: #fafaf9; }
                 h1 { color: #c2410c; border-bottom: 2px solid #c2410c; padding-bottom: 8px; }
-                .quote { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin: 12px 0; border-radius: 4px; }
+                .quote { background: #fffbeb; border: 1px solid rgba(245, 158, 11, 0.4); padding: 14px 18px; margin: 12px 0; border-radius: 6px; }
                 .bookmark { background: #f5f5f4; border: 1px solid #d6d3d1; padding: 8px 12px; border-radius: 4px; margin-bottom: 6px; }
             </style>
         </head>

@@ -1295,15 +1295,15 @@ class AppController {
     }
     .annotation-card {
       background: #faf7f4;
-      border-left: 4px solid var(--accent-terracotta);
-      border-radius: 0 8px 8px 0;
-      padding: 16px;
+      border: 1px solid rgba(194, 65, 12, 0.25);
+      border-radius: 8px;
+      padding: 16px 20px;
       margin-bottom: 16px;
     }
-    .annotation-card.yellow { border-left-color: var(--hl-yellow); background: #fffdf5; }
-    .annotation-card.green  { border-left-color: var(--hl-green);  background: #f7fdf7; }
-    .annotation-card.cyan   { border-left-color: var(--hl-cyan);   background: #f5fcfd; }
-    .annotation-card.pink   { border-left-color: var(--hl-pink);   background: #fdf6f9; }
+    .annotation-card.yellow { border-color: rgba(245, 158, 11, 0.35); background: #fffdf5; }
+    .annotation-card.green  { border-color: rgba(16, 185, 129, 0.35); background: #f7fdf7; }
+    .annotation-card.cyan   { border-color: rgba(6, 182, 212, 0.35);   background: #f5fcfd; }
+    .annotation-card.pink   { border-color: rgba(236, 72, 153, 0.35);  background: #fdf6f9; }
     .quote {
       font-family: var(--font-serif);
       font-style: italic;
