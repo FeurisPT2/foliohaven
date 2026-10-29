@@ -91,6 +91,7 @@ private:
     QStackedWidget *m_stackWidget{nullptr};
 
     // UI Widgets - Library
+    QWidget *m_libraryWidget{nullptr};
     QListWidget *m_sidebarList{nullptr};
     QLineEdit *m_searchLibraryEdit{nullptr};
     QListWidget *m_bookGridList{nullptr};
@@ -101,6 +102,8 @@ private:
     // UI Widgets - Reader
     QWidget *m_readerViewWidget{nullptr};
     QLabel *m_readerTitleLabel{nullptr};
+    QLabel *m_readerFormatBadge{nullptr};
+    QPushButton *m_backBtn{nullptr};
     QTextBrowser *m_leftPageBrowser{nullptr};
     QTextBrowser *m_rightPageBrowser{nullptr};
     QSlider *m_pageSlider{nullptr};
@@ -112,7 +115,24 @@ private:
     QPushButton *m_themeNightBtn{nullptr};
     QPushButton *m_themeDarkSepiaBtn{nullptr};
     QPushButton *m_twoPagesBtn{nullptr};
+    QPushButton *m_zoomOutBtn{nullptr};
+    QPushButton *m_zoomInBtn{nullptr};
+    QPushButton *m_searchBtn{nullptr};
+    QPushButton *m_bookmarkBtn{nullptr};
+    QPushButton *m_notesBtn{nullptr};
     QPushButton *m_speakBtn{nullptr};
+    QPushButton *m_fsBtn{nullptr};
+
+    // UI Widgets - Library Controls
+    QPushButton *m_addBookBtn{nullptr};
+    QPushButton *m_viewGridBtn{nullptr};
+    QPushButton *m_viewTableBtn{nullptr};
+
+    // Helper functions
+    void updateThemeButtons();
+    void updateLayoutButton();
+    void updateViewModeButtons(int modeIndex);
+    void updateDrawerButtons();
 
     // Drawers
     QDockWidget *m_searchDock{nullptr};

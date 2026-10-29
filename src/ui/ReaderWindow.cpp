@@ -18,6 +18,10 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QApplication>
+#include <QSvgRenderer>
+#include <QPixmap>
+#include <QIcon>
+#include <QToolTip>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -25,6 +29,76 @@
 #include <sapi.h>
 static ISpVoice *g_pVoice = nullptr;
 #endif
+
+static QIcon createSvgIcon(const QString& svgPathData, int size = 16, const QString& strokeColor = "#d6d3d1", double strokeWidth = 2.0, bool fill = false) {
+    QString svgXml = QString(R"(
+        <svg xmlns="http://www.w3.org/2000/svg" width="%1" height="%1" viewBox="0 0 24 24" 
+             fill="%2" stroke="%3" stroke-width="%4" stroke-linecap="round" stroke-linejoin="round">
+            %5
+        </svg>
+    )").arg(size).arg(fill ? strokeColor : "none").arg(strokeColor).arg(strokeWidth).arg(svgPathData);
+
+    QByteArray data = svgXml.toUtf8();
+    QSvgRenderer renderer(data);
+    QPixmap pixmap(size * 2, size * 2);
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing);
+    renderer.render(&painter);
+    return QIcon(pixmap);
+}
+
+static QIcon createColorSwatchIcon(const QString& fillColor, const QString& borderColor, int size = 14) {
+    QPixmap pixmap(size * 2, size * 2);
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QPen pen(QColor(borderColor), 2.0);
+    painter.setPen(pen);
+    painter.setBrush(QBrush(QColor(fillColor)));
+    painter.drawEllipse(2, 2, (size * 2) - 4, (size * 2) - 4);
+
+    return QIcon(pixmap);
+}
+
+static QString toolbarBtnStyle(bool isActive = false) {
+    if (isActive) {
+        return R"(
+            QPushButton {
+                background-color: #382a20;
+                border: 1.5px solid #ea580c;
+                border-radius: 6px;
+                padding: 5px 12px;
+                color: #ffedd5;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            QPushButton:hover {
+                background-color: #443224;
+            }
+        )";
+    }
+    return R"(
+        QPushButton {
+            background-color: #24201e;
+            border: 1px solid #3d3835;
+            border-radius: 6px;
+            padding: 5px 12px;
+            color: #d6d3d1;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        QPushButton:hover {
+            background-color: #332d29;
+            border-color: #57534e;
+            color: #ffffff;
+        }
+        QPushButton:pressed {
+            background-color: #1a1716;
+        }
+    )";
+}
 
 ReaderWindow::ReaderWindow(QWidget *parent)
     : QMainWindow(parent) {
@@ -61,8 +135,8 @@ void ReaderWindow::setupUi() {
     setupReaderView();
     setupDrawers();
 
-    m_stackWidget->addWidget(m_sidebarList->parentWidget()); // 0: Library
-    m_stackWidget->addWidget(m_readerViewWidget);            // 1: Reader
+    m_stackWidget->addWidget(m_libraryWidget);    // 0: Library
+    m_stackWidget->addWidget(m_readerViewWidget); // 1: Reader
 
     // Application Dark Theme Stylesheet
     setStyleSheet(R"(
@@ -75,31 +149,31 @@ void ReaderWindow::setupUi() {
             color: #f5f5f4;
         }
         QLineEdit {
-            background-color: #292524;
-            border: 1px solid #44403c;
+            background-color: #24201e;
+            border: 1px solid #3d3835;
             border-radius: 6px;
             padding: 8px 12px;
             color: #f5f5f4;
             font-size: 13px;
         }
         QLineEdit:focus {
-            border: 1px solid #c2410c;
+            border: 1px solid #ea580c;
         }
         QPushButton {
-            background-color: #292524;
-            border: 1px solid #44403c;
+            background-color: #24201e;
+            border: 1px solid #3d3835;
             border-radius: 6px;
-            padding: 7px 14px;
+            padding: 6px 12px;
             color: #f5f5f4;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
         }
         QPushButton:hover {
-            background-color: #3b3532;
-            border-color: #78716c;
+            background-color: #332d29;
+            border-color: #57534e;
         }
         QPushButton:pressed {
-            background-color: #1c1917;
+            background-color: #1a1716;
         }
         QListWidget, QTableWidget {
             background-color: #1c1917;
@@ -119,11 +193,11 @@ void ReaderWindow::setupUi() {
             background-color: #292524;
         }
         QHeaderView::section {
-            background-color: #292524;
+            background-color: #24201e;
             color: #a8a29e;
             padding: 8px;
             border: none;
-            border-bottom: 1px solid #44403c;
+            border-bottom: 1px solid #3d3835;
             font-weight: 600;
             font-size: 12px;
         }
@@ -155,24 +229,24 @@ void ReaderWindow::setupUi() {
         }
         QDockWidget {
             color: #f5f5f4;
-            titlebar-close-icon: url(close.png);
         }
         QDockWidget::title {
-            background: #292524;
+            background: #24201e;
             padding: 8px;
             font-weight: 600;
+            border-bottom: 1px solid #3d3835;
         }
     )");
 }
 
 void ReaderWindow::setupLibraryView() {
-    QWidget *libContainer = new QWidget(this);
-    QHBoxLayout *mainLayout = new QHBoxLayout(libContainer);
+    m_libraryWidget = new QWidget(this);
+    QHBoxLayout *mainLayout = new QHBoxLayout(m_libraryWidget);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 
     // Left Sidebar
-    QWidget *sidebarWidget = new QWidget(libContainer);
+    QWidget *sidebarWidget = new QWidget(m_libraryWidget);
     sidebarWidget->setFixedWidth(240);
     sidebarWidget->setStyleSheet("background-color: #171514; border-right: 1px solid #292524;");
     QVBoxLayout *sideLayout = new QVBoxLayout(sidebarWidget);
@@ -187,28 +261,78 @@ void ReaderWindow::setupLibraryView() {
     subLogo->setStyleSheet("font-size: 11px; color: #a8a29e; margin-bottom: 10px;");
     sideLayout->addWidget(subLogo);
 
-    QPushButton *addBtn = new QPushButton("+ Add Books...", sidebarWidget);
-    addBtn->setStyleSheet("background-color: #c2410c; color: white; font-weight: 600; border: none; padding: 10px; border-radius: 6px;");
-    connect(addBtn, &QPushButton::clicked, this, &ReaderWindow::onAddBookClicked);
-    sideLayout->addWidget(addBtn);
+    m_addBookBtn = new QPushButton("Add Books...", sidebarWidget);
+    m_addBookBtn->setIcon(createSvgIcon("M12 5v14 M5 12h14", 16, "#ffffff", 2.5));
+    m_addBookBtn->setCursor(Qt::PointingHandCursor);
+    m_addBookBtn->setStyleSheet(R"(
+        QPushButton {
+            background-color: #c2410c;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 13px;
+            border: 1px solid #ea580c;
+            padding: 10px 16px;
+            border-radius: 8px;
+        }
+        QPushButton:hover {
+            background-color: #ea580c;
+            border-color: #f97316;
+        }
+        QPushButton:pressed {
+            background-color: #9a3412;
+        }
+    )");
+    connect(m_addBookBtn, &QPushButton::clicked, this, &ReaderWindow::onAddBookClicked);
+    sideLayout->addWidget(m_addBookBtn);
 
     m_sidebarList = new QListWidget(sidebarWidget);
-    m_sidebarList->setStyleSheet("background: transparent; border: none;");
-    m_sidebarList->addItem("📚 All Books");
-    m_sidebarList->addItem("⭐ Favorites");
-    m_sidebarList->addItem("📖 Currently Reading");
-    m_sidebarList->addItem("✅ Completed");
-    m_sidebarList->addItem("📄 EPUB Documents");
-    m_sidebarList->addItem("📕 PDF Documents");
-    m_sidebarList->addItem("📗 MOBI Ebooks");
-    m_sidebarList->addItem("📝 TXT Files");
+    m_sidebarList->setStyleSheet(R"(
+        QListWidget {
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+        QListWidget::item {
+            padding: 9px 12px;
+            border-radius: 6px;
+            margin: 2px 0px;
+            color: #d6d3d1;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        QListWidget::item:hover:!selected {
+            background-color: #292524;
+            color: #ffffff;
+        }
+        QListWidget::item:selected {
+            background-color: #c2410c;
+            color: #ffffff;
+            font-weight: 600;
+        }
+    )");
+
+    auto addCatItem = [this](const QString& title, const QString& svgPath) {
+        QListWidgetItem *it = new QListWidgetItem(m_sidebarList);
+        it->setText(title);
+        it->setIcon(createSvgIcon(svgPath, 16, "#d6d3d1"));
+    };
+
+    addCatItem("All Books", "M4 19.5A2.5 2.5 0 0 1 6.5 17H20 M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z");
+    addCatItem("Favorites", "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z");
+    addCatItem("Currently Reading", "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z");
+    addCatItem("Completed", "M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4L12 14.01l-3-3");
+    addCatItem("EPUB Documents", "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6");
+    addCatItem("PDF Documents", "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M10 12h4 M10 16h4");
+    addCatItem("MOBI Ebooks", "M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z M9 10h6 M9 14h6");
+    addCatItem("TXT Files", "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M10 13h4");
+
     m_sidebarList->setCurrentRow(0);
     connect(m_sidebarList, &QListWidget::itemClicked, this, &ReaderWindow::onCategorySelected);
     sideLayout->addWidget(m_sidebarList);
 
     sideLayout->addStretch();
 
-    QLabel *dropTip = new QLabel("💡 Tip: Drag & drop any book file into the app to import.", sidebarWidget);
+    QLabel *dropTip = new QLabel("Tip: Drag & drop any book file into the app to import.", sidebarWidget);
     dropTip->setWordWrap(true);
     dropTip->setStyleSheet("font-size: 11px; color: #78716c;");
     sideLayout->addWidget(dropTip);
@@ -216,7 +340,7 @@ void ReaderWindow::setupLibraryView() {
     mainLayout->addWidget(sidebarWidget);
 
     // Right Content Area
-    QWidget *contentArea = new QWidget(libContainer);
+    QWidget *contentArea = new QWidget(m_libraryWidget);
     QVBoxLayout *contentLayout = new QVBoxLayout(contentArea);
     contentLayout->setContentsMargins(24, 20, 24, 20);
     contentLayout->setSpacing(16);
@@ -231,12 +355,19 @@ void ReaderWindow::setupLibraryView() {
 
     topBar->addStretch();
 
-    QPushButton *viewGridBtn = new QPushButton("Grid View", contentArea);
-    QPushButton *viewTableBtn = new QPushButton("Table View", contentArea);
-    connect(viewGridBtn, &QPushButton::clicked, [this]() { onViewModeToggled(0); });
-    connect(viewTableBtn, &QPushButton::clicked, [this]() { onViewModeToggled(1); });
-    topBar->addWidget(viewGridBtn);
-    topBar->addWidget(viewTableBtn);
+    m_viewGridBtn = new QPushButton("Grid", contentArea);
+    m_viewGridBtn->setIcon(createSvgIcon("M3 3h7v7H3z M14 3h7v7h-7z M14 14h7v7h-7z M3 14h7v7H3z", 14, "#d6d3d1"));
+    m_viewGridBtn->setCursor(Qt::PointingHandCursor);
+
+    m_viewTableBtn = new QPushButton("Table", contentArea);
+    m_viewTableBtn->setIcon(createSvgIcon("M8 6h13 M8 12h13 M8 18h13 M3 6h.01 M3 12h.01 M3 18h.01", 14, "#d6d3d1"));
+    m_viewTableBtn->setCursor(Qt::PointingHandCursor);
+
+    connect(m_viewGridBtn, &QPushButton::clicked, [this]() { onViewModeToggled(0); });
+    connect(m_viewTableBtn, &QPushButton::clicked, [this]() { onViewModeToggled(1); });
+    topBar->addWidget(m_viewGridBtn);
+    topBar->addWidget(m_viewTableBtn);
+    updateViewModeButtons(0);
 
     contentLayout->addLayout(topBar);
 
@@ -286,64 +417,176 @@ void ReaderWindow::setupReaderView() {
     topNav->setStyleSheet("background-color: #171514; border-bottom: 1px solid #292524; padding: 6px 16px;");
     QHBoxLayout *navLayout = new QHBoxLayout(topNav);
     navLayout->setContentsMargins(0, 0, 0, 0);
+    navLayout->setSpacing(8);
 
-    QPushButton *backBtn = new QPushButton("← Library (Esc)", topNav);
-    connect(backBtn, &QPushButton::clicked, this, &ReaderWindow::onCloseReader);
-    navLayout->addWidget(backBtn);
+    m_backBtn = new QPushButton("Library", topNav);
+    m_backBtn->setIcon(createSvgIcon("M19 12H5 M12 19l-7-7 7-7", 14, "#d6d3d1"));
+    m_backBtn->setToolTip("Return to Library (Esc)");
+    m_backBtn->setCursor(Qt::PointingHandCursor);
+    m_backBtn->setStyleSheet(toolbarBtnStyle(false));
+    connect(m_backBtn, &QPushButton::clicked, this, &ReaderWindow::onCloseReader);
+    navLayout->addWidget(m_backBtn);
 
     m_readerTitleLabel = new QLabel("Book Title", topNav);
-    m_readerTitleLabel->setStyleSheet("font-weight: 600; font-size: 14px; margin-left: 12px;");
+    m_readerTitleLabel->setStyleSheet("font-weight: 600; font-size: 13px; color: #f5f5f4; margin-left: 8px;");
     navLayout->addWidget(m_readerTitleLabel);
+
+    m_readerFormatBadge = new QLabel("PDF", topNav);
+    m_readerFormatBadge->setStyleSheet(R"(
+        background-color: rgba(194, 65, 12, 0.2);
+        color: #fb923c;
+        border: 1px solid rgba(234, 88, 12, 0.4);
+        border-radius: 4px;
+        padding: 2px 7px;
+        font-size: 11px;
+        font-weight: 700;
+        margin-right: 12px;
+    )");
+    navLayout->addWidget(m_readerFormatBadge);
 
     navLayout->addStretch();
 
-    // Palettes
+    // Palettes with Color Swatches
     m_themeDayBtn = new QPushButton("Day", topNav);
-    m_themeSepiaBtn = new QPushButton("Sepia", topNav);
-    m_themeNightBtn = new QPushButton("Night", topNav);
-    m_themeDarkSepiaBtn = new QPushButton("Dark Sepia", topNav);
+    m_themeDayBtn->setIcon(createColorSwatchIcon("#fafaf9", "#a8a29e"));
+    m_themeDayBtn->setCursor(Qt::PointingHandCursor);
     connect(m_themeDayBtn, &QPushButton::clicked, [this]() { onThemeChanged(ReaderTheme::Day); });
+
+    m_themeSepiaBtn = new QPushButton("Sepia", topNav);
+    m_themeSepiaBtn->setIcon(createColorSwatchIcon("#f5ebd7", "#b49b78"));
+    m_themeSepiaBtn->setCursor(Qt::PointingHandCursor);
     connect(m_themeSepiaBtn, &QPushButton::clicked, [this]() { onThemeChanged(ReaderTheme::Sepia); });
+
+    m_themeNightBtn = new QPushButton("Night", topNav);
+    m_themeNightBtn->setIcon(createColorSwatchIcon("#121212", "#52525b"));
+    m_themeNightBtn->setCursor(Qt::PointingHandCursor);
     connect(m_themeNightBtn, &QPushButton::clicked, [this]() { onThemeChanged(ReaderTheme::Night); });
+
+    m_themeDarkSepiaBtn = new QPushButton("Dark Sepia", topNav);
+    m_themeDarkSepiaBtn->setIcon(createColorSwatchIcon("#251d16", "#634832"));
+    m_themeDarkSepiaBtn->setCursor(Qt::PointingHandCursor);
     connect(m_themeDarkSepiaBtn, &QPushButton::clicked, [this]() { onThemeChanged(ReaderTheme::DarkSepia); });
+
     navLayout->addWidget(m_themeDayBtn);
     navLayout->addWidget(m_themeSepiaBtn);
     navLayout->addWidget(m_themeNightBtn);
     navLayout->addWidget(m_themeDarkSepiaBtn);
+    updateThemeButtons();
+
+    // Separator 1
+    QFrame *sep1 = new QFrame(topNav);
+    sep1->setFrameShape(QFrame::VLine);
+    sep1->setStyleSheet("color: #383330;");
+    navLayout->addWidget(sep1);
 
     // Layout toggle
-    m_twoPagesBtn = new QPushButton("📖 2 Pages", topNav);
+    m_twoPagesBtn = new QPushButton(topNav);
+    m_twoPagesBtn->setCursor(Qt::PointingHandCursor);
     connect(m_twoPagesBtn, &QPushButton::clicked, this, &ReaderWindow::onToggleTwoPages);
+    updateLayoutButton();
     navLayout->addWidget(m_twoPagesBtn);
 
-    // Font scaling
-    QPushButton *zoomOutBtn = new QPushButton("A-", topNav);
-    QPushButton *zoomInBtn = new QPushButton("A+", topNav);
-    connect(zoomOutBtn, &QPushButton::clicked, this, &ReaderWindow::onZoomOut);
-    connect(zoomInBtn, &QPushButton::clicked, this, &ReaderWindow::onZoomIn);
-    navLayout->addWidget(zoomOutBtn);
-    navLayout->addWidget(zoomInBtn);
+    // Font Scaling Segmented Pair
+    m_zoomOutBtn = new QPushButton("A-", topNav);
+    m_zoomOutBtn->setCursor(Qt::PointingHandCursor);
+    m_zoomOutBtn->setToolTip("Decrease Font Size");
+    connect(m_zoomOutBtn, &QPushButton::clicked, this, &ReaderWindow::onZoomOut);
+
+    m_zoomInBtn = new QPushButton("A+", topNav);
+    m_zoomInBtn->setCursor(Qt::PointingHandCursor);
+    m_zoomInBtn->setToolTip("Increase Font Size");
+    connect(m_zoomInBtn, &QPushButton::clicked, this, &ReaderWindow::onZoomIn);
+
+    m_zoomOutBtn->setStyleSheet(R"(
+        QPushButton {
+            background-color: #24201e;
+            border: 1px solid #3d3835;
+            border-right: none;
+            border-top-left-radius: 6px;
+            border-bottom-left-radius: 6px;
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+            padding: 5px 10px;
+            color: #d6d3d1;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        QPushButton:hover {
+            background-color: #332d29;
+            color: #ffffff;
+        }
+        QPushButton:pressed {
+            background-color: #1a1716;
+        }
+    )");
+
+    m_zoomInBtn->setStyleSheet(R"(
+        QPushButton {
+            background-color: #24201e;
+            border: 1px solid #3d3835;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
+            padding: 5px 10px;
+            color: #d6d3d1;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        QPushButton:hover {
+            background-color: #332d29;
+            color: #ffffff;
+        }
+        QPushButton:pressed {
+            background-color: #1a1716;
+        }
+    )");
+
+    navLayout->addWidget(m_zoomOutBtn);
+    navLayout->addWidget(m_zoomInBtn);
+
+    // Separator 2
+    QFrame *sep2 = new QFrame(topNav);
+    sep2->setFrameShape(QFrame::VLine);
+    sep2->setStyleSheet("color: #383330;");
+    navLayout->addWidget(sep2);
 
     // Tools
-    QPushButton *searchBtn = new QPushButton("🔍 Search", topNav);
-    connect(searchBtn, &QPushButton::clicked, this, &ReaderWindow::onToggleSearchDrawer);
-    navLayout->addWidget(searchBtn);
+    m_searchBtn = new QPushButton("Search", topNav);
+    m_searchBtn->setIcon(createSvgIcon("M21 21l-4.35-4.35 M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z", 14, "#d6d3d1"));
+    m_searchBtn->setCursor(Qt::PointingHandCursor);
+    m_searchBtn->setStyleSheet(toolbarBtnStyle(false));
+    connect(m_searchBtn, &QPushButton::clicked, this, &ReaderWindow::onToggleSearchDrawer);
+    navLayout->addWidget(m_searchBtn);
 
-    QPushButton *bookmarkBtn = new QPushButton("🔖 Bookmark", topNav);
-    connect(bookmarkBtn, &QPushButton::clicked, this, &ReaderWindow::onAddBookmark);
-    navLayout->addWidget(bookmarkBtn);
+    m_bookmarkBtn = new QPushButton("Bookmark", topNav);
+    m_bookmarkBtn->setIcon(createSvgIcon("M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z", 14, "#d6d3d1"));
+    m_bookmarkBtn->setCursor(Qt::PointingHandCursor);
+    m_bookmarkBtn->setStyleSheet(toolbarBtnStyle(false));
+    connect(m_bookmarkBtn, &QPushButton::clicked, this, &ReaderWindow::onAddBookmark);
+    navLayout->addWidget(m_bookmarkBtn);
 
-    QPushButton *notesBtn = new QPushButton("📝 Notes", topNav);
-    connect(notesBtn, &QPushButton::clicked, this, &ReaderWindow::onToggleNotesDrawer);
-    navLayout->addWidget(notesBtn);
+    m_notesBtn = new QPushButton("Notes", topNav);
+    m_notesBtn->setIcon(createSvgIcon("M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7 M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z", 14, "#d6d3d1"));
+    m_notesBtn->setCursor(Qt::PointingHandCursor);
+    m_notesBtn->setStyleSheet(toolbarBtnStyle(false));
+    connect(m_notesBtn, &QPushButton::clicked, this, &ReaderWindow::onToggleNotesDrawer);
+    navLayout->addWidget(m_notesBtn);
 
-    m_speakBtn = new QPushButton("🔊 Read Aloud", topNav);
+    m_speakBtn = new QPushButton("Read Aloud", topNav);
+    m_speakBtn->setIcon(createSvgIcon("M11 5L6 9H2v6h4l5 4V5z M19.07 4.93a10 10 0 0 1 0 14.14 M15.54 8.46a5 5 0 0 1 0 7.07", 14, "#d6d3d1"));
+    m_speakBtn->setCursor(Qt::PointingHandCursor);
+    m_speakBtn->setStyleSheet(toolbarBtnStyle(false));
     connect(m_speakBtn, &QPushButton::clicked, this, &ReaderWindow::onToggleReadAloud);
     navLayout->addWidget(m_speakBtn);
 
-    QPushButton *fsBtn = new QPushButton("⛶ Fullscreen (F)", topNav);
-    connect(fsBtn, &QPushButton::clicked, this, &ReaderWindow::onToggleFullscreen);
-    navLayout->addWidget(fsBtn);
+    m_fsBtn = new QPushButton("Fullscreen", topNav);
+    m_fsBtn->setIcon(createSvgIcon("M8 3H5a2 2 0 0 0-2 2v3 M16 3h3a2 2 0 0 1 2 2v3 M8 21H5a2 2 0 0 1-2-2v-3 M16 21h3a2 2 0 0 0 2-2v-3", 14, "#d6d3d1"));
+    m_fsBtn->setToolTip("Toggle Fullscreen (F)");
+    m_fsBtn->setCursor(Qt::PointingHandCursor);
+    m_fsBtn->setStyleSheet(toolbarBtnStyle(false));
+    connect(m_fsBtn, &QPushButton::clicked, this, &ReaderWindow::onToggleFullscreen);
+    navLayout->addWidget(m_fsBtn);
 
     readerLayout->addWidget(topNav);
 
@@ -353,9 +596,26 @@ void ReaderWindow::setupReaderView() {
     canvasLayout->setContentsMargins(40, 20, 40, 20);
     canvasLayout->setSpacing(30);
 
-    m_prevBtn = new QPushButton("‹", canvasContainer);
-    m_prevBtn->setFixedSize(40, 80);
-    m_prevBtn->setStyleSheet("font-size: 28px; border-radius: 8px;");
+    m_prevBtn = new QPushButton(canvasContainer);
+    m_prevBtn->setIcon(createSvgIcon("M15 18l-6-6 6-6", 24, "#d6d3d1", 2.5));
+    m_prevBtn->setIconSize(QSize(28, 28));
+    m_prevBtn->setFixedSize(44, 96);
+    m_prevBtn->setCursor(Qt::PointingHandCursor);
+    m_prevBtn->setToolTip("Previous Page (Left Arrow / Page Up)");
+    m_prevBtn->setStyleSheet(R"(
+        QPushButton {
+            background-color: rgba(30, 27, 25, 0.75);
+            border: 1px solid rgba(87, 83, 78, 0.45);
+            border-radius: 22px;
+        }
+        QPushButton:hover {
+            background-color: rgba(194, 65, 12, 0.9);
+            border-color: #ea580c;
+        }
+        QPushButton:pressed {
+            background-color: #9a3412;
+        }
+    )");
     connect(m_prevBtn, &QPushButton::clicked, this, &ReaderWindow::onPrevPage);
     canvasLayout->addWidget(m_prevBtn);
 
@@ -370,9 +630,26 @@ void ReaderWindow::setupReaderView() {
     m_rightPageBrowser->setVisible(false);
     canvasLayout->addWidget(m_rightPageBrowser, 1);
 
-    m_nextBtn = new QPushButton("›", canvasContainer);
-    m_nextBtn->setFixedSize(40, 80);
-    m_nextBtn->setStyleSheet("font-size: 28px; border-radius: 8px;");
+    m_nextBtn = new QPushButton(canvasContainer);
+    m_nextBtn->setIcon(createSvgIcon("M9 18l6-6-6-6", 24, "#d6d3d1", 2.5));
+    m_nextBtn->setIconSize(QSize(28, 28));
+    m_nextBtn->setFixedSize(44, 96);
+    m_nextBtn->setCursor(Qt::PointingHandCursor);
+    m_nextBtn->setToolTip("Next Page (Right Arrow / Space / Page Down)");
+    m_nextBtn->setStyleSheet(R"(
+        QPushButton {
+            background-color: rgba(30, 27, 25, 0.75);
+            border: 1px solid rgba(87, 83, 78, 0.45);
+            border-radius: 22px;
+        }
+        QPushButton:hover {
+            background-color: rgba(194, 65, 12, 0.9);
+            border-color: #ea580c;
+        }
+        QPushButton:pressed {
+            background-color: #9a3412;
+        }
+    )");
     connect(m_nextBtn, &QPushButton::clicked, this, &ReaderWindow::onNextPage);
     canvasLayout->addWidget(m_nextBtn);
 
@@ -380,9 +657,18 @@ void ReaderWindow::setupReaderView() {
 
     // Bottom Navigation Bar
     QWidget *bottomBar = new QWidget(m_readerViewWidget);
-    bottomBar->setStyleSheet("background-color: #171514; border-top: 1px solid #292524; padding: 10px 24px;");
+    bottomBar->setStyleSheet("background-color: #171514; border-top: 1px solid #292524; padding: 8px 24px;");
     QHBoxLayout *bottomLayout = new QHBoxLayout(bottomBar);
     bottomLayout->setContentsMargins(0, 0, 0, 0);
+    bottomLayout->setSpacing(12);
+
+    QPushButton *prevPageBtn = new QPushButton(bottomBar);
+    prevPageBtn->setIcon(createSvgIcon("M15 18l-6-6 6-6", 14, "#a8a29e"));
+    prevPageBtn->setText("Prev");
+    prevPageBtn->setCursor(Qt::PointingHandCursor);
+    prevPageBtn->setStyleSheet(toolbarBtnStyle(false));
+    connect(prevPageBtn, &QPushButton::clicked, this, &ReaderWindow::onPrevPage);
+    bottomLayout->addWidget(prevPageBtn);
 
     m_pageSlider = new QSlider(Qt::Horizontal, bottomBar);
     m_pageSlider->setMinimum(1);
@@ -390,8 +676,26 @@ void ReaderWindow::setupReaderView() {
     connect(m_pageSlider, &QSlider::valueChanged, this, &ReaderWindow::onSliderPageChanged);
     bottomLayout->addWidget(m_pageSlider, 1);
 
+    QPushButton *nextPageBtn = new QPushButton(bottomBar);
+    nextPageBtn->setIcon(createSvgIcon("M9 18l6-6-6-6", 14, "#a8a29e"));
+    nextPageBtn->setText("Next");
+    nextPageBtn->setCursor(Qt::PointingHandCursor);
+    nextPageBtn->setStyleSheet(toolbarBtnStyle(false));
+    connect(nextPageBtn, &QPushButton::clicked, this, &ReaderWindow::onNextPage);
+    bottomLayout->addWidget(nextPageBtn);
+
     m_pageIndicatorLabel = new QLabel("Page 1 of 1 • 0%", bottomBar);
-    m_pageIndicatorLabel->setStyleSheet("font-size: 13px; font-weight: 500; margin-left: 16px; min-width: 130px;");
+    m_pageIndicatorLabel->setStyleSheet(R"(
+        background-color: #24201e;
+        border: 1px solid #3d3835;
+        border-radius: 12px;
+        padding: 4px 14px;
+        color: #e7e5e4;
+        font-size: 12px;
+        font-weight: 600;
+        min-width: 130px;
+    )");
+    m_pageIndicatorLabel->setAlignment(Qt::AlignCenter);
     bottomLayout->addWidget(m_pageIndicatorLabel);
 
     readerLayout->addWidget(bottomBar);
@@ -406,10 +710,32 @@ void ReaderWindow::setupDrawers() {
     sLayout->setContentsMargins(12, 12, 12, 12);
     sLayout->setSpacing(10);
 
+    QHBoxLayout *searchRow = new QHBoxLayout();
     m_inBookSearchEdit = new QLineEdit(searchWidget);
     m_inBookSearchEdit->setPlaceholderText("Search keyword in active book...");
     connect(m_inBookSearchEdit, &QLineEdit::returnPressed, this, &ReaderWindow::onExecuteSearch);
-    sLayout->addWidget(m_inBookSearchEdit);
+    searchRow->addWidget(m_inBookSearchEdit, 1);
+
+    QPushButton *searchExecBtn = new QPushButton("Find", searchWidget);
+    searchExecBtn->setIcon(createSvgIcon("M21 21l-4.35-4.35 M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z", 13, "#ffffff"));
+    searchExecBtn->setCursor(Qt::PointingHandCursor);
+    searchExecBtn->setStyleSheet(R"(
+        QPushButton {
+            background-color: #c2410c;
+            border: 1px solid #ea580c;
+            border-radius: 6px;
+            padding: 7px 12px;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        QPushButton:hover {
+            background-color: #ea580c;
+        }
+    )");
+    connect(searchExecBtn, &QPushButton::clicked, this, &ReaderWindow::onExecuteSearch);
+    searchRow->addWidget(searchExecBtn);
+    sLayout->addLayout(searchRow);
 
     m_searchResultsList = new QListWidget(searchWidget);
     connect(m_searchResultsList, &QListWidget::itemClicked, this, &ReaderWindow::onSearchHitSelected);
@@ -451,8 +777,43 @@ void ReaderWindow::setupDrawers() {
 
     QHBoxLayout *notesActions = new QHBoxLayout();
     QPushButton *highlightBtn = new QPushButton("Highlight Selected", notesWidget);
+    highlightBtn->setIcon(createSvgIcon("m9 11-6 6v3h3l6-6 M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4", 14, "#d6d3d1"));
+    highlightBtn->setCursor(Qt::PointingHandCursor);
+    highlightBtn->setStyleSheet(R"(
+        QPushButton {
+            background-color: #24201e;
+            border: 1px solid #3d3835;
+            border-radius: 6px;
+            padding: 7px 12px;
+            color: #d6d3d1;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        QPushButton:hover {
+            background-color: #332d29;
+            border-color: #57534e;
+            color: #ffffff;
+        }
+    )");
     connect(highlightBtn, &QPushButton::clicked, this, &ReaderWindow::onAddHighlight);
+
     QPushButton *exportBtn = new QPushButton("Export HTML", notesWidget);
+    exportBtn->setIcon(createSvgIcon("M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M7 10l5 5 5-5 M12 15V3", 14, "#ffffff"));
+    exportBtn->setCursor(Qt::PointingHandCursor);
+    exportBtn->setStyleSheet(R"(
+        QPushButton {
+            background-color: #c2410c;
+            border: 1px solid #ea580c;
+            border-radius: 6px;
+            padding: 7px 14px;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        QPushButton:hover {
+            background-color: #ea580c;
+        }
+    )");
     connect(exportBtn, &QPushButton::clicked, this, &ReaderWindow::onExportNotesHtml);
     notesActions->addWidget(highlightBtn);
     notesActions->addWidget(exportBtn);
@@ -506,6 +867,151 @@ void ReaderWindow::applyTheme(ReaderTheme theme) {
 
     m_leftPageBrowser->setStyleSheet(browserStyle);
     m_rightPageBrowser->setStyleSheet(browserStyle);
+
+    updateThemeButtons();
+}
+
+void ReaderWindow::updateThemeButtons() {
+    auto makeThemeStyle = [this](ReaderTheme theme) {
+        bool isActive = (m_currentTheme == theme);
+        if (isActive) {
+            return QString(R"(
+                QPushButton {
+                    background-color: #382a20;
+                    border: 1.5px solid #ea580c;
+                    border-radius: 6px;
+                    padding: 5px 11px;
+                    color: #ffedd5;
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+                QPushButton:hover {
+                    background-color: #443224;
+                }
+            )");
+        } else {
+            return QString(R"(
+                QPushButton {
+                    background-color: #24201e;
+                    border: 1px solid #3d3835;
+                    border-radius: 6px;
+                    padding: 5px 11px;
+                    color: #a8a29e;
+                    font-size: 12px;
+                    font-weight: 500;
+                }
+                QPushButton:hover {
+                    background-color: #2f2a27;
+                    border-color: #57534e;
+                    color: #f5f5f4;
+                }
+            )");
+        }
+    };
+
+    if (m_themeDayBtn) m_themeDayBtn->setStyleSheet(makeThemeStyle(ReaderTheme::Day));
+    if (m_themeSepiaBtn) m_themeSepiaBtn->setStyleSheet(makeThemeStyle(ReaderTheme::Sepia));
+    if (m_themeNightBtn) m_themeNightBtn->setStyleSheet(makeThemeStyle(ReaderTheme::Night));
+    if (m_themeDarkSepiaBtn) m_themeDarkSepiaBtn->setStyleSheet(makeThemeStyle(ReaderTheme::DarkSepia));
+}
+
+void ReaderWindow::updateLayoutButton() {
+    if (!m_twoPagesBtn) return;
+    if (m_isTwoPages) {
+        m_twoPagesBtn->setIcon(createSvgIcon("M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z", 14, "#ffedd5"));
+        m_twoPagesBtn->setText("2 Pages");
+        m_twoPagesBtn->setToolTip("Switch to 1 Page View");
+        m_twoPagesBtn->setStyleSheet(toolbarBtnStyle(true));
+    } else {
+        m_twoPagesBtn->setIcon(createSvgIcon("M4 2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z M8 6h8 M8 10h8 M8 14h4", 14, "#d6d3d1"));
+        m_twoPagesBtn->setText("1 Page");
+        m_twoPagesBtn->setToolTip("Switch to 2 Pages View");
+        m_twoPagesBtn->setStyleSheet(toolbarBtnStyle(false));
+    }
+}
+
+void ReaderWindow::updateViewModeButtons(int modeIndex) {
+    if (!m_viewGridBtn || !m_viewTableBtn) return;
+    if (modeIndex == 0) { // Grid active
+        m_viewGridBtn->setStyleSheet(R"(
+            QPushButton {
+                background-color: #c2410c;
+                border: 1px solid #ea580c;
+                border-top-left-radius: 6px;
+                border-bottom-left-radius: 6px;
+                border-top-right-radius: 0px;
+                border-bottom-right-radius: 0px;
+                border-right: none;
+                padding: 6px 14px;
+                color: #ffffff;
+                font-size: 12px;
+                font-weight: 600;
+            }
+        )");
+        m_viewTableBtn->setStyleSheet(R"(
+            QPushButton {
+                background-color: #24201e;
+                border: 1px solid #3d3835;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+                border-top-right-radius: 6px;
+                border-bottom-right-radius: 6px;
+                padding: 6px 14px;
+                color: #a8a29e;
+                font-size: 12px;
+                font-weight: 500;
+            }
+            QPushButton:hover {
+                background-color: #332d29;
+                color: #ffffff;
+            }
+        )");
+    } else { // Table active
+        m_viewGridBtn->setStyleSheet(R"(
+            QPushButton {
+                background-color: #24201e;
+                border: 1px solid #3d3835;
+                border-top-left-radius: 6px;
+                border-bottom-left-radius: 6px;
+                border-top-right-radius: 0px;
+                border-bottom-right-radius: 0px;
+                border-right: none;
+                padding: 6px 14px;
+                color: #a8a29e;
+                font-size: 12px;
+                font-weight: 500;
+            }
+            QPushButton:hover {
+                background-color: #332d29;
+                color: #ffffff;
+            }
+        )");
+        m_viewTableBtn->setStyleSheet(R"(
+            QPushButton {
+                background-color: #c2410c;
+                border: 1px solid #ea580c;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+                border-top-right-radius: 6px;
+                border-bottom-right-radius: 6px;
+                padding: 6px 14px;
+                color: #ffffff;
+                font-size: 12px;
+                font-weight: 600;
+            }
+        )");
+    }
+}
+
+void ReaderWindow::updateDrawerButtons() {
+    if (m_searchBtn) {
+        bool active = m_searchDock && m_searchDock->isVisible();
+        m_searchBtn->setStyleSheet(toolbarBtnStyle(active));
+    }
+    if (m_notesBtn) {
+        bool active = m_notesDock && m_notesDock->isVisible();
+        m_notesBtn->setStyleSheet(toolbarBtnStyle(active));
+    }
 }
 
 void ReaderWindow::onThemeChanged(ReaderTheme theme) {
@@ -514,7 +1020,7 @@ void ReaderWindow::onThemeChanged(ReaderTheme theme) {
 
 void ReaderWindow::onToggleTwoPages() {
     m_isTwoPages = !m_isTwoPages;
-    m_twoPagesBtn->setText(m_isTwoPages ? "📄 1 Page" : "📖 2 Pages");
+    updateLayoutButton();
     m_rightPageBrowser->setVisible(m_isTwoPages);
     displayCurrentPage();
 }
@@ -630,11 +1136,17 @@ void ReaderWindow::openBookFile(const QString& filePath) {
     m_currentPageIndex = 0;
 
     // Switch to Reader View
-    m_readerTitleLabel->setText(QString("%1 — %2 (%3)").arg(book.title).arg(book.author).arg(book.format));
+    m_readerTitleLabel->setText(QString("%1 — %2").arg(book.title).arg(book.author));
+    if (m_readerFormatBadge) {
+        m_readerFormatBadge->setText(book.format);
+    }
     m_pageSlider->setMaximum(std::max(1, (int)book.pages.size()));
     m_pageSlider->setValue(1);
 
     m_stackWidget->setCurrentIndex(1);
+    applyTheme(m_currentTheme);
+    updateLayoutButton();
+    updateDrawerButtons();
     displayCurrentPage();
     refreshLibrary();
 }
@@ -706,6 +1218,7 @@ void ReaderWindow::onCloseReader() {
     saveCurrentProgress();
     m_searchDock->hide();
     m_notesDock->hide();
+    updateDrawerButtons();
     m_stackWidget->setCurrentIndex(0);
     refreshLibrary();
 }
@@ -732,6 +1245,7 @@ void ReaderWindow::onSearchLibraryChanged(const QString& /*text*/) {
 
 void ReaderWindow::onViewModeToggled(int modeIndex) {
     m_viewModeStack->setCurrentIndex(modeIndex);
+    updateViewModeButtons(modeIndex);
 }
 
 void ReaderWindow::onBookDoubleClicked(QListWidgetItem *item) {
@@ -754,6 +1268,7 @@ void ReaderWindow::onToggleSearchDrawer() {
     if (m_searchDock->isVisible()) {
         m_inBookSearchEdit->setFocus();
     }
+    updateDrawerButtons();
 }
 
 void ReaderWindow::onExecuteSearch() {
@@ -778,6 +1293,7 @@ void ReaderWindow::onSearchHitSelected(QListWidgetItem *item) {
 
 void ReaderWindow::onToggleNotesDrawer() {
     m_notesDock->setVisible(!m_notesDock->isVisible());
+    updateDrawerButtons();
     if (m_notesDock->isVisible() && m_activeBookRecord.id > 0) {
         // Refresh Bookmarks
         m_bookmarksList->clear();
@@ -877,13 +1393,30 @@ void ReaderWindow::onToggleReadAloud() {
     if (m_isSpeaking) {
         g_pVoice->Pause();
         m_isSpeaking = false;
-        m_speakBtn->setText("🔊 Read Aloud");
+        m_speakBtn->setText("Read Aloud");
+        m_speakBtn->setIcon(createSvgIcon("M11 5L6 9H2v6h4l5 4V5z M19.07 4.93a10 10 0 0 1 0 14.14 M15.54 8.46a5 5 0 0 1 0 7.07", 14, "#d6d3d1"));
+        m_speakBtn->setStyleSheet(toolbarBtnStyle(false));
     } else {
         QString textToSpeak = m_leftPageBrowser->toPlainText();
         if (textToSpeak.trimmed().isEmpty()) return;
 
         m_isSpeaking = true;
-        m_speakBtn->setText("⏸ Pause");
+        m_speakBtn->setText("Pause");
+        m_speakBtn->setIcon(createSvgIcon("M6 4h4v16H6z M14 4h4v16h-4z", 14, "#ffffff"));
+        m_speakBtn->setStyleSheet(R"(
+            QPushButton {
+                background-color: #c2410c;
+                border: 1px solid #ea580c;
+                border-radius: 6px;
+                padding: 5px 12px;
+                color: #ffffff;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            QPushButton:hover {
+                background-color: #ea580c;
+            }
+        )");
         g_pVoice->Speak(textToSpeak.toStdWString().c_str(), SPF_ASYNC | SPF_PURGEBEFORESPEAK, nullptr);
     }
 #endif
