@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://foliohaven.vercel.app"><img src="https://img.shields.io/badge/Live%20Demo-Vercel-black?style=flat-square&logo=vercel" alt="Vercel Deployment" /></a>
-  <a href="https://github.com/FeurisPT2/foliohaven/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Release-v1.0.0-blue?style=flat-square&logo=windows" alt="GitHub Release" /></a>
+  <a href="https://github.com/FeurisPT2/foliohaven/releases/tag/v1.0.1"><img src="https://img.shields.io/badge/Release-v1.0.1-blue?style=flat-square&logo=windows" alt="GitHub Release" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-emerald?style=flat-square" alt="MIT License" /></a>
   <a href="https://foliohaven.vercel.app/reader"><img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Web-blueviolet?style=flat-square" alt="Platforms" /></a>
   <a href="#"><img src="https://img.shields.io/badge/Design-Tasteskill%20v2%20Anti--Slop-success?style=flat-square" alt="Tasteskill v2" /></a>
