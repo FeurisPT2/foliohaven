@@ -38,7 +38,8 @@ Unlike proprietary desktop readers bogged down with advertisements, nag screens,
 
 | Target | Access Link | Description |
 | :--- | :--- | :--- |
-| **Native Windows App (100% C++20 / Qt 6)** | [Download 26MB Portable Zip (GitHub)](https://github.com/FeurisPT2/foliohaven/releases/download/v1.0.1/FolioHaven-1.0.1-Native-Windows-x64.zip) | **Pure Native 64-bit C++20 binary (~846 KB)**. Zero Chromium/Electron overhead, boots in milliseconds, uses native SQLite WAL and Windows SAPI speech. |
+| **Native Windows Installer (.exe)** | [Download Native Setup (21 MB)](https://github.com/FeurisPT2/foliohaven/releases/download/v1.0.1/FolioHaven-1.0.1-Setup-Windows-x64.exe) | **Recommended**. Automated 100% Native Windows installer with Start Menu & Desktop shortcuts and clean uninstaller. |
+| **Native Portable Package (.zip)** | [Download Portable Zip (26 MB)](https://github.com/FeurisPT2/foliohaven/releases/download/v1.0.1/FolioHaven-1.0.1-Native-Windows-x64.zip) | Standalone portable C++20 / Qt 6 release (~846 KB binary). Zero installation needed, extract and run. |
 | **Web Reading App** | [Open FolioHaven Web App](https://foliohaven.vercel.app/reader) | Run instantly in any modern browser (Chrome, Edge, Firefox, Safari). Drag & drop your ebooks to start reading immediately. |
 | **Product Landing Page** | [Visit Marketing Site](https://foliohaven.vercel.app/) | Interactive showcase, design philosophy, feature deep-dive, and live demo. |
 
