@@ -72,6 +72,26 @@ static QIcon createColorSwatchIcon(const QString& fillColor, const QString& bord
     return QIcon(pixmap);
 }
 
+static QPixmap createBrandLogoPixmap(int size = 32) {
+    const QString svgXml = QString(R"(
+        <svg xmlns="http://www.w3.org/2000/svg" width="%1" height="%1" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="7" fill="#c2410c"/>
+            <path d="M8 9C8 7.89543 8.89543 7 10 7H22C23.1046 7 24 7.89543 24 9V24H10C8.89543 24 8 23.1046 8 22.1V9Z" fill="#ffffff" fill-opacity="0.25"/>
+            <path d="M10 9H22V22H11C9.89543 22 9 21.1046 9 20V10C9 9.44772 9.44772 9 10 9Z" fill="#ffffff"/>
+            <path d="M13 12H19M13 15.5H19M13 19H17" stroke="#c2410c" stroke-width="1.75" stroke-linecap="round"/>
+        </svg>
+    )").arg(size);
+
+    QSvgRenderer renderer(svgXml.toUtf8());
+    QPixmap pixmap(size * 2, size * 2);
+    pixmap.fill(Qt::transparent);
+    pixmap.setDevicePixelRatio(2.0);
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing);
+    renderer.render(&painter);
+    return pixmap;
+}
+
 static QPixmap createEmptyStateIllustration() {
     QPixmap pix(220, 130);
     pix.fill(Qt::transparent);
@@ -168,6 +188,7 @@ static QString toolbarBtnStyle(bool isActive = false) {
 ReaderWindow::ReaderWindow(QWidget *parent)
     : QMainWindow(parent) {
     setWindowTitle("FolioHaven — Native Desktop Ebook Reader");
+    setWindowIcon(QIcon(createBrandLogoPixmap(64)));
     resize(1280, 850);
     setMinimumSize(960, 640);
     setAcceptDrops(true);
@@ -318,13 +339,32 @@ void ReaderWindow::setupLibraryView() {
     sideLayout->setContentsMargins(16, 20, 16, 20);
     sideLayout->setSpacing(12);
 
-    QLabel *logoLabel = new QLabel("FolioHaven", sidebarWidget);
-    logoLabel->setStyleSheet("font-size: 20px; font-weight: 700; color: #f5f5f4;");
-    sideLayout->addWidget(logoLabel);
+    // Brand Identity Header (Logo Icon + Title + Subtitle at top left)
+    QWidget *brandHeader = new QWidget(sidebarWidget);
+    QHBoxLayout *brandLayout = new QHBoxLayout(brandHeader);
+    brandLayout->setContentsMargins(0, 0, 0, 8);
+    brandLayout->setSpacing(10);
 
-    QLabel *subLogo = new QLabel("Desktop Ebook Library", sidebarWidget);
-    subLogo->setStyleSheet("font-size: 11px; color: #a8a29e; margin-bottom: 10px;");
-    sideLayout->addWidget(subLogo);
+    QLabel *logoIconLabel = new QLabel(brandHeader);
+    logoIconLabel->setFixedSize(32, 32);
+    logoIconLabel->setPixmap(createBrandLogoPixmap(32));
+    brandLayout->addWidget(logoIconLabel);
+
+    QVBoxLayout *brandTextLayout = new QVBoxLayout();
+    brandTextLayout->setContentsMargins(0, 0, 0, 0);
+    brandTextLayout->setSpacing(2);
+
+    QLabel *logoLabel = new QLabel("FolioHaven", brandHeader);
+    logoLabel->setStyleSheet("font-size: 18px; font-weight: 700; color: #f5f5f4; letter-spacing: -0.3px;");
+    brandTextLayout->addWidget(logoLabel);
+
+    QLabel *subLogo = new QLabel("Desktop Ebook Library", brandHeader);
+    subLogo->setStyleSheet("font-size: 11px; color: #a8a29e;");
+    brandTextLayout->addWidget(subLogo);
+
+    brandLayout->addLayout(brandTextLayout);
+    brandLayout->addStretch();
+    sideLayout->addWidget(brandHeader);
 
     m_addBookBtn = new QPushButton("Add Books...", sidebarWidget);
     m_addBookBtn->setIcon(createSvgIcon("M12 5v14 M5 12h14", 16, "#ffffff", 2.5));
