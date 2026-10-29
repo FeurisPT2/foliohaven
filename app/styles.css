@@ -65,12 +65,14 @@ body {
   justify-content: center;
   color: var(--color-on-accent);
   font-weight: 700;
-  font-size: 16px;
+  font-size: var(--type-md-size);
 }
 
 .brand-title {
-  font-size: var(--type-md-size);
+  font-size: var(--type-lg-size);
   font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
   color: var(--color-sidebar-text);
   letter-spacing: -0.01em;
 }
@@ -82,12 +84,77 @@ body {
 }
 
 .sidebar-section-title {
-  font-size: 13px;
+  font-size: var(--type-sm-size);
   font-weight: 600;
   color: var(--color-sidebar-text-muted);
   text-transform: none;
   letter-spacing: normal;
   padding: 14px 12px 6px 12px;
+}
+
+/* ==========================================================================
+   Collapsible Formats Section (Feature 10 / R3)
+   ========================================================================== */
+.sidebar-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--radius-sm);
+  padding: 0;
+  transition: background-color var(--motion-fast);
+}
+
+.sidebar-section-header:hover {
+  background-color: var(--color-sidebar-surface);
+}
+
+.sidebar-section-header:hover .sidebar-section-title,
+.sidebar-section-header:hover .chevron-icon {
+  color: var(--color-sidebar-text);
+}
+
+.sidebar-section-header:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.sidebar-section-header .sidebar-section-title {
+  padding: 14px 12px 6px 12px;
+  flex: 1;
+}
+
+.sidebar-section-header .chevron-icon {
+  color: var(--color-sidebar-text-muted);
+  transition: transform var(--motion-fast), color var(--motion-fast);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.sidebar-section-header.collapsed .chevron-icon {
+  transform: rotate(-90deg);
+}
+
+.sidebar-collapsible {
+  overflow: hidden;
+  max-height: 360px;
+  opacity: 1;
+  transition: max-height var(--motion-base), opacity var(--motion-fast);
+}
+
+.sidebar-collapsible.collapsed {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-collapsible,
+  .chevron-icon {
+    transition: none !important;
+  }
 }
 
 .nav-item {
@@ -265,7 +332,7 @@ body {
 .card-thumb {
   width: 100%;
   height: 180px;
-  background-color: #e2e8f0;
+  background-color: var(--color-surface);
   border-radius: var(--radius-sm);
   position: relative;
   overflow: hidden;
@@ -285,12 +352,12 @@ body {
   font-weight: 700;
 }
 
-.badge-epub { background: #ffedd5; color: #c2410c; }
-.badge-pdf  { background: #ffebe6; color: #c92a2a; }
+.badge-epub { background: #ffedd5; color: var(--color-accent); }
+.badge-pdf  { background: #ffebe6; color: var(--color-danger); }
 .badge-mobi { background: #fff2e6; color: #8c4300; }
-.badge-fb2  { background: #e6f9f0; color: #1b7a4b; }
+.badge-fb2  { background: #e6f9f0; color: var(--color-success); }
 .badge-cbz  { background: #f1f5f9; color: #334155; }
-.badge-txt  { background: #f0f3f8; color: #525b6a; }
+.badge-txt  { background: #f0f3f8; color: var(--color-text-muted); }
 
 .card-favorite-star {
   position: absolute;
@@ -378,25 +445,100 @@ body {
   background: var(--color-surface-active);
 }
 
-/* Empty State */
+/* ==========================================================================
+   Library Empty State Redesign (R2 / Phase 2)
+   ========================================================================== */
 #empty-state {
   display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 60vh;
-  border: 2px dashed var(--color-border);
+  min-height: 420px;
+  height: 55vh;
+  max-height: 520px;
+  border: 1.5px dashed var(--color-border);
   border-radius: var(--radius-lg);
-  margin: 20px;
+  margin: var(--space-5);
+  padding: var(--space-8) var(--space-6);
   text-align: center;
+  background-color: var(--color-bg);
   color: var(--color-text-muted);
 }
 
+.empty-shelf-illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.empty-shelf-illustration svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 .empty-title {
-  font-size: var(--type-lg-size);
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-size: var(--type-xl-size);
+  line-height: var(--type-xl-line);
+  font-weight: 700;
   color: var(--color-text);
-  margin-top: 12px;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.empty-subtitle {
+  font-family: var(--font-sans);
+  font-size: var(--type-base-size);
+  line-height: var(--type-base-line);
+  color: var(--color-text-muted);
+  max-width: 480px;
+  margin: 0 auto var(--space-5) auto;
+}
+
+.empty-btn-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+  font-family: var(--font-sans);
+  font-size: var(--type-sm-size);
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(194, 65, 12, 0.22);
+  transition: background-color var(--motion-fast), transform var(--motion-fast), box-shadow var(--motion-fast);
+}
+
+.empty-btn-add:hover {
+  background-color: var(--color-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.32);
+}
+
+.empty-btn-add:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(194, 65, 12, 0.2);
+}
+
+.empty-btn-add:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.empty-formats-hint {
+  font-family: var(--font-sans);
+  font-size: var(--type-xs-size);
+  line-height: var(--type-xs-line);
+  color: var(--color-text-muted);
+  margin-top: var(--space-4);
+  letter-spacing: 0.01em;
 }
 
 /* Operations Footer (C05) */
@@ -450,6 +592,92 @@ body {
   gap: 6px;
 }
 
+/* ==========================================================================
+   Reader Toolbar Overflow Menu (Feature 11 / Distraction-Free UI)
+   ========================================================================== */
+.reader-overflow-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+#btn-reader-overflow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--reader-text, var(--color-text));
+  transition: background-color var(--motion-fast), color var(--motion-fast);
+}
+
+#btn-reader-overflow:hover,
+#btn-reader-overflow[aria-expanded="true"] {
+  background-color: var(--reader-gutter, var(--color-surface-hover));
+}
+
+#btn-reader-overflow:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.reader-overflow-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 170px;
+  background-color: var(--reader-surface, var(--color-surface));
+  color: var(--reader-text, var(--color-text));
+  border: 1px solid var(--reader-border, var(--color-border));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-popover);
+  padding: 6px;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 70;
+  backdrop-filter: blur(8px);
+}
+
+.reader-overflow-menu.open {
+  display: flex;
+}
+
+.overflow-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--reader-text, var(--color-text));
+  font-family: var(--font-sans);
+  font-size: var(--type-sm-size);
+  font-weight: 500;
+  line-height: var(--type-sm-line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--motion-fast), color var(--motion-fast);
+  white-space: nowrap;
+}
+
+.overflow-menu-item svg {
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+.overflow-menu-item:hover,
+.overflow-menu-item:focus-visible {
+  background-color: var(--reader-gutter, var(--color-surface-hover));
+  color: var(--reader-text, var(--color-text));
+  outline: none;
+}
+
 /* Central Reading Canvas */
 #reader-canvas {
   flex: 1;
@@ -459,6 +687,20 @@ body {
   align-items: center;
   padding: 24px 64px;
   overflow: hidden;
+}
+
+/* Enable text selection in reading canvas while keeping UI chrome unselectable */
+#reader-canvas,
+#reader-book-content,
+.reader-column,
+.reflow-para,
+.single-column-spread,
+.two-column-spread,
+.chapter-heading,
+.fixed-canvas-container,
+.fixed-page-sheet,
+.fixed-doc-body {
+  user-select: text;
 }
 
 .two-column-spread {
@@ -515,12 +757,20 @@ body {
   align-items: center;
   justify-content: center;
   opacity: 0;
+  user-select: none;
   transition: opacity var(--motion-fast);
 }
 
-.margin-click-zone:hover {
+.margin-click-zone:hover,
+.margin-click-zone:focus-visible {
   opacity: 0.35;
   background: rgba(0, 0, 0, 0.05);
+}
+
+.margin-click-zone:focus-visible {
+  opacity: 0.8;
+  outline: 2px solid var(--color-accent);
+  outline-offset: -4px;
 }
 
 .zone-left { left: 0; }
@@ -673,6 +923,11 @@ body {
   transform: scale(1.18);
 }
 
+.swatch-btn[data-color="yellow"] { background: var(--color-highlight-yellow); }
+.swatch-btn[data-color="green"]  { background: var(--color-highlight-green); }
+.swatch-btn[data-color="cyan"]   { background: var(--color-highlight-cyan); }
+.swatch-btn[data-color="pink"]   { background: var(--color-highlight-pink); }
+
 /* Popover Quick Settings (S07) */
 #quick-settings-popover {
   position: absolute;
@@ -820,6 +1075,160 @@ mark.search-match {
   object-fit: cover;
 }
 
+/* ==========================================================================
+   Library Canvas Drag-and-Drop Dropzone Feedback
+   ========================================================================== */
+#library-content.drag-over {
+  background-color: var(--color-surface-hover);
+  outline: 2px dashed var(--color-accent);
+  outline-offset: -12px;
+  transition: background-color var(--motion-fast), outline var(--motion-fast);
+}
+
+/* ==========================================================================
+   Book Import Loading Skeleton State (R1 / Heuristic 1)
+   ========================================================================== */
+.book-card.loading {
+  pointer-events: none;
+  cursor: wait;
+  border-color: var(--color-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-thumb.skeleton-pulse,
+.skeleton-pulse {
+  width: 100%;
+  height: 180px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-surface-hover) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite ease-in-out;
+}
+
+.skeleton-line {
+  border-radius: var(--radius-xs);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-surface-hover) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite ease-in-out;
+}
+
+.skeleton-line.skeleton-title {
+  width: 80%;
+  height: 14px;
+  margin-top: 10px;
+}
+
+.skeleton-line.skeleton-author {
+  width: 55%;
+  height: 10px;
+  margin-top: 6px;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-thumb.skeleton-pulse,
+  .skeleton-pulse,
+  .skeleton-line {
+    animation: none;
+    background: var(--color-surface-hover);
+  }
+}
+
+/* ==========================================================================
+   Undo Toast Notification Banner (S13)
+   ========================================================================== */
+.undo-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-sidebar-bg);
+  color: var(--color-sidebar-text);
+  border: 1px solid var(--color-sidebar-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+  padding: 10px 18px;
+  display: none;
+  align-items: center;
+  gap: 14px;
+  z-index: 250;
+  font-size: var(--type-sm-size);
+  line-height: var(--type-sm-line);
+  transition: opacity var(--motion-fast);
+}
+
+.undo-toast-message {
+  font-weight: 500;
+  color: var(--color-sidebar-text);
+}
+
+.undo-toast-btn {
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+  border: none;
+  border-radius: var(--radius-xs);
+  padding: 4px 12px;
+  font-size: var(--type-xs-size);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--motion-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.undo-toast-btn:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.undo-toast-btn:focus-visible {
+  outline: 2px solid var(--color-on-accent);
+  outline-offset: 2px;
+}
+
+.undo-toast-close {
+  background: transparent;
+  border: none;
+  color: var(--color-sidebar-text-muted);
+  font-size: var(--type-base-size);
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--motion-fast);
+}
+
+.undo-toast-close:hover {
+  color: var(--color-sidebar-text);
+}
+
+.undo-toast-close:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   #sidebar {
@@ -838,5 +1247,384 @@ mark.search-match {
   }
   .spread-gutter {
     display: none;
+  }
+}
+
+/* ==========================================================================
+   Milestone 4 Semantic Class Migrations (Feature 15 / Inline Style Cleanup)
+   ========================================================================== */
+.nav-item .item-left svg {
+  flex-shrink: 0;
+}
+
+#btn-add-category-sidebar {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+}
+
+.hidden-file-input,
+#file-import-input,
+#prop-cover-file {
+  display: none !important;
+}
+
+#table-view th.text-right,
+#table-view td.text-right {
+  text-align: right;
+}
+
+#selection-counter {
+  font-weight: 600;
+}
+
+.operations-btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+#btn-batch-restore,
+#btn-batch-purge {
+  display: none;
+}
+
+.reader-tool-group .btn svg {
+  margin-right: 4px;
+  vertical-align: -2px;
+}
+
+.reader-toolbar-separator {
+  color: var(--color-border);
+  opacity: 0.6;
+}
+
+#reader-book-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.reader-page-info,
+#reader-page-info {
+  font-size: var(--type-sm-size);
+  font-weight: 600;
+  min-width: 130px;
+}
+
+.reader-progress-info,
+#reader-progress-info {
+  font-size: var(--type-sm-size);
+  color: var(--color-text-muted);
+  min-width: 60px;
+  text-align: right;
+}
+
+.drawer-toolbar {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+}
+
+.drawer-toolbar.flex-column {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawer-toolbar.gap-sm {
+  gap: 8px;
+}
+
+.btn-full-width {
+  width: 100%;
+}
+
+.btn-flex-1 {
+  flex: 1;
+}
+
+#inbook-page-jump-container {
+  display: none;
+}
+
+#btn-inbook-page-jump {
+  width: 100%;
+  font-size: var(--type-sm-size);
+}
+
+.drawer-search-hint {
+  color: var(--color-text-muted);
+  font-size: var(--type-sm-size);
+  text-align: center;
+  margin-top: 24px;
+}
+
+#note-popup .popup-separator {
+  color: var(--color-border);
+}
+
+#note-popup .btn svg {
+  margin-right: 4px;
+  vertical-align: -2px;
+}
+
+.settings-btn-group {
+  display: flex;
+  gap: 6px;
+}
+
+.settings-font-ctrl {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+#label-font-size {
+  font-weight: 600;
+  min-width: 36px;
+  text-align: center;
+}
+
+.settings-select,
+.settings-row select {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-input);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--type-sm-size);
+}
+
+#select-font-family {
+  padding: 4px 8px;
+}
+
+#slider-dimmer {
+  width: 140px;
+}
+
+#settings-tts-voice {
+  max-width: 220px;
+}
+
+.print-radio-group {
+  display: flex;
+  gap: 8px;
+}
+
+#modal-properties .modal-dialog {
+  max-width: 580px;
+  width: 580px;
+}
+
+.prop-cover-section {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+#prop-cover-preview {
+  width: 100px;
+  height: 140px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+#prop-cover-fallback {
+  color: var(--color-on-accent);
+  font-weight: 700;
+  font-size: 24px;
+}
+
+#prop-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.prop-cover-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.prop-cover-heading {
+  font-weight: 600;
+  font-size: var(--type-sm-size);
+}
+
+.prop-cover-subtext {
+  font-size: var(--type-xs-size);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.prop-cover-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-cover-action {
+  font-size: var(--type-xs-size);
+  padding: 4px 10px;
+}
+
+#prop-desc {
+  resize: vertical;
+}
+
+.prop-meta-details {
+  font-size: var(--type-xs-size);
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#modal-password .modal-dialog {
+  max-width: 420px;
+}
+
+#modal-password .modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#password-doc-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.password-desc {
+  font-size: var(--type-sm-size);
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}
+
+#password-error-msg {
+  display: none;
+  color: var(--color-danger);
+  font-size: var(--type-xs-size);
+  font-weight: 500;
+  margin-top: 6px;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ==========================================================================
+   Print Media Styles (Feature 13 / Native Print Delegation)
+   ========================================================================== */
+@media print {
+  /* Hide non-printable application chrome */
+  #sidebar,
+  #reader-toolbar,
+  #reader-footer,
+  .margin-click-zone,
+  #dim-overlay,
+  #operations-footer,
+  .drawer,
+  .modal-overlay,
+  #undo-toast,
+  #quick-settings-popover,
+  #reader-overflow-menu,
+  .actions-bar {
+    display: none !important;
+  }
+
+  /* Reset global layout boundaries for natural document flow */
+  html, body {
+    height: auto !important;
+    width: 100% !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    user-select: text !important;
+  }
+
+  #app-container {
+    display: block !important;
+    height: auto !important;
+    width: 100% !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  /* Reader screen and canvas unconstrained print layout */
+  #reader-screen {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: transparent !important;
+    color: #000000 !important;
+  }
+
+  #reader-canvas {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  #reader-book-content {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .two-column-spread {
+    display: block !important;
+    max-width: 100% !important;
+    height: auto !important;
+    gap: 0 !important;
+  }
+
+  .single-column-spread {
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  .reader-column {
+    height: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    page-break-inside: auto;
+  }
+
+  .spread-gutter {
+    display: none !important;
+  }
+
+  /* Clean typography & pagination breaks */
+  .reflow-para {
+    orphans: 3;
+    widows: 3;
+    page-break-inside: avoid;
+    color: #000000 !important;
+  }
+
+  .chapter-heading {
+    page-break-after: avoid;
+    color: #000000 !important;
   }
 }

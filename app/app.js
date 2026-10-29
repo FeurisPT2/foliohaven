@@ -12,11 +12,13 @@ class AppController {
     this.selectedBookIds = new Set();
     this.activeBook = null;
     this.isReading = false;
+    this._undoToastTimer = null;
     this.init();
   }
 
   init() {
     this.initTts();
+    this.initCollapsibleFormats();
     this.bindEvents();
     this.loadSettings();
     this.renderLibrary();
@@ -37,6 +39,67 @@ class AppController {
     } else if (window.location.hash === "#settings") {
       document.getElementById("modal-settings").style.display = "flex";
     }
+  }
+
+  initCollapsibleFormats() {
+    const toggleHeader = document.getElementById("sidebar-formats-toggle") || document.getElementById("nav-formats-toggle");
+    const collapsible = document.getElementById("formats-collapsible");
+    if (!toggleHeader || !collapsible) return;
+
+    const setCollapsedState = (isCollapsed, persist = true) => {
+      if (isCollapsed) {
+        collapsible.classList.add("collapsed");
+        toggleHeader.classList.add("collapsed");
+        toggleHeader.setAttribute("aria-expanded", "false");
+      } else {
+        collapsible.classList.remove("collapsed");
+        toggleHeader.classList.remove("collapsed");
+        toggleHeader.setAttribute("aria-expanded", "true");
+      }
+
+      if (persist) {
+        try {
+          localStorage.setItem("foliohaven_formats_collapsed", isCollapsed ? "true" : "false");
+        } catch (e) {
+          console.warn("Could not save formats collapsed state to localStorage", e);
+        }
+      }
+    };
+
+    // Load persisted state (defaults to expanded if not previously saved)
+    let isCollapsed = false;
+    try {
+      const saved = localStorage.getItem("foliohaven_formats_collapsed");
+      if (saved !== null) {
+        isCollapsed = (saved === "true");
+      }
+    } catch (e) {
+      console.warn("Could not read formats collapsed state from localStorage", e);
+    }
+    setCollapsedState(isCollapsed, false);
+
+    // Public method exposure
+    this.setFormatsCollapsed = setCollapsedState;
+    this.toggleFormatsCollapsed = () => {
+      const current = collapsible.classList.contains("collapsed");
+      setCollapsedState(!current, true);
+    };
+
+    if (this._formatsCollapsibleBound) return;
+    this._formatsCollapsibleBound = true;
+
+    const handleToggle = (e) => {
+      e.preventDefault();
+      const currentCollapsed = collapsible.classList.contains("collapsed");
+      setCollapsedState(!currentCollapsed, true);
+    };
+
+    toggleHeader.addEventListener("click", handleToggle);
+    toggleHeader.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        handleToggle(e);
+      }
+    });
   }
 
   bindEvents() {
@@ -81,58 +144,72 @@ class AppController {
     document.getElementById("btn-empty-add").addEventListener("click", handleAddBook);
 
     fileInput.addEventListener("change", (e) => {
-      const files = Array.from(e.target.files);
-      files.forEach(file => {
-        const ext = file.name.split(".").pop().toUpperCase();
-        const title = file.name.replace(/\.[^/.]+$/, "");
-        window.db.addBook({
-          title: title,
-          author: "Imported Author",
-          format: ext || "EPUB",
-          file_path: file.name,
-          file_size_bytes: file.size,
-          content: `Content preview for ${file.name}.\n\nImported successfully into FolioHaven library.`
-        });
-      });
-      this.renderLibrary();
-      this.updateBadges();
-      fileInput.value = "";
+      if (e.target.files && e.target.files.length > 0) {
+        this.importFiles(e.target.files, "input");
+        fileInput.value = "";
+      }
     });
 
-    // --- Drag and Drop File Import ---
+    // --- Drag and Drop File Import with Visual Feedback ---
     const libraryContent = document.getElementById("library-content");
+    let dragCounter = 0;
+
+    window.addEventListener("dragenter", (e) => {
+      e.preventDefault();
+      dragCounter++;
+      if (libraryContent) libraryContent.classList.add("drag-over");
+    });
+
     window.addEventListener("dragover", (e) => {
       e.preventDefault();
-      libraryContent.style.backgroundColor = "var(--color-surface-hover)";
+      if (libraryContent && !libraryContent.classList.contains("drag-over")) {
+        libraryContent.classList.add("drag-over");
+      }
     });
+
     window.addEventListener("dragleave", () => {
-      libraryContent.style.backgroundColor = "";
+      dragCounter--;
+      if (dragCounter <= 0) {
+        dragCounter = 0;
+        if (libraryContent) libraryContent.classList.remove("drag-over");
+      }
     });
+
     window.addEventListener("drop", (e) => {
       e.preventDefault();
-      libraryContent.style.backgroundColor = "";
-      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        Array.from(e.dataTransfer.files).forEach(file => {
-          const ext = file.name.split(".").pop().toUpperCase();
-          const title = file.name.replace(/\.[^/.]+$/, "");
-          window.db.addBook({
-            title: title,
-            author: "Local File",
-            format: ext || "EPUB",
-            file_path: file.name,
-            file_size_bytes: file.size,
-            content: `Content of dropped document: ${file.name}.`
-          });
-        });
-        this.renderLibrary();
-        this.updateBadges();
+      dragCounter = 0;
+      if (libraryContent) libraryContent.classList.remove("drag-over");
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        this.importFiles(e.dataTransfer.files, "drop");
       }
     });
 
     // --- Reader Navigation & Controls ---
     document.getElementById("btn-back-to-library").addEventListener("click", () => this.closeReader());
-    document.getElementById("zone-prev").addEventListener("click", () => this.pagePrev());
-    document.getElementById("zone-next").addEventListener("click", () => this.pageNext());
+    const zonePrev = document.getElementById("zone-prev");
+    const zoneNext = document.getElementById("zone-next");
+
+    if (zonePrev) {
+      zonePrev.addEventListener("click", () => this.pagePrev());
+      zonePrev.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          e.stopPropagation();
+          this.pagePrev();
+        }
+      });
+    }
+
+    if (zoneNext) {
+      zoneNext.addEventListener("click", () => this.pageNext());
+      zoneNext.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          e.stopPropagation();
+          this.pageNext();
+        }
+      });
+    }
 
     // Scrubber Slider
     document.getElementById("reader-scrubber").addEventListener("input", (e) => {
@@ -213,11 +290,33 @@ class AppController {
     document.getElementById("btn-quick-bookmark").addEventListener("click", () => this.quickAddBookmark());
     document.getElementById("btn-add-bookmark-drawer").addEventListener("click", () => this.quickAddBookmark());
     document.getElementById("btn-clear-all-bookmarks").addEventListener("click", () => {
-      if (this.activeBook) {
-        window.db.clearBookmarks(this.activeBook.id);
-        this.renderBookmarksList();
-        this.updateBookmarkCounts();
-      }
+      if (!this.activeBook) return;
+      const bookId = this.activeBook.id;
+      const existingBookmarks = window.db.getBookmarks(bookId) || [];
+
+      this.showConfirmModal({
+        title: "Clear All Bookmarks",
+        message: existingBookmarks.length > 0
+          ? `Are you sure you want to remove all ${existingBookmarks.length} saved bookmark${existingBookmarks.length > 1 ? "s" : ""} for this book? This will clear your bookmark list.`
+          : "Are you sure you want to remove all saved bookmarks for this book? This will clear your bookmark list.",
+        proceedLabel: "Clear Bookmarks",
+        cancelLabel: "Cancel",
+        onProceed: () => {
+          const snapshot = [...existingBookmarks];
+          window.db.clearBookmarks(bookId);
+          this.renderBookmarksList();
+          this.updateBookmarkCounts();
+
+          this.showUndoToast(
+            snapshot.length > 0 ? `Cleared ${snapshot.length} bookmark${snapshot.length > 1 ? "s" : ""}` : "Bookmarks cleared",
+            () => {
+              snapshot.forEach(bm => window.db.addBookmark(bm));
+              this.renderBookmarksList();
+              this.updateBookmarkCounts();
+            }
+          );
+        }
+      });
     });
 
     document.getElementById("btn-toggle-notes").addEventListener("click", () => {
@@ -226,12 +325,35 @@ class AppController {
     });
     document.getElementById("btn-close-notes").addEventListener("click", () => this.closeDrawer("drawer-notes"));
     document.getElementById("btn-clear-all-notes").addEventListener("click", () => {
-      if (this.activeBook) {
-        window.db.clearAnnotations(this.activeBook.id);
-        this.renderNotesList();
-        this.updateReaderView();
-        this.updateNotesCounts();
-      }
+      if (!this.activeBook) return;
+      const bookId = this.activeBook.id;
+      const existingNotes = window.db.getAnnotations(bookId) || [];
+
+      this.showConfirmModal({
+        title: "Clear All Notes & Highlights",
+        message: existingNotes.length > 0
+          ? `Are you sure you want to delete all ${existingNotes.length} note${existingNotes.length > 1 ? "s" : ""} and highlights for this book? All annotations will be removed.`
+          : "Are you sure you want to delete all notes and highlights for this book? All annotations will be removed.",
+        proceedLabel: "Clear Notes",
+        cancelLabel: "Cancel",
+        onProceed: () => {
+          const snapshot = [...existingNotes];
+          window.db.clearAnnotations(bookId);
+          this.renderNotesList();
+          this.updateReaderView();
+          this.updateNotesCounts();
+
+          this.showUndoToast(
+            snapshot.length > 0 ? `Cleared ${snapshot.length} note${snapshot.length > 1 ? "s" : ""}` : "Notes cleared",
+            () => {
+              snapshot.forEach(ann => window.db.addAnnotation(ann));
+              this.renderNotesList();
+              this.updateReaderView();
+              this.updateNotesCounts();
+            }
+          );
+        }
+      });
     });
     document.getElementById("btn-export-notes-html").addEventListener("click", () => this.exportNotesToHtml());
 
@@ -245,19 +367,56 @@ class AppController {
     // TTS Read Aloud Controller
     document.getElementById("btn-tts-play").addEventListener("click", () => this.toggleTts());
 
-    // Print Dialog
+    // Print Delegation (Feature 13 / R4)
     document.getElementById("btn-reader-print").addEventListener("click", () => {
-      document.getElementById("modal-print").style.display = "flex";
+      this.delegatePrint();
     });
-    document.getElementById("btn-close-print").addEventListener("click", () => {
-      document.getElementById("modal-print").style.display = "none";
+
+    // Defensive event handlers for preserved #modal-print elements
+    const modalPrint = document.getElementById("modal-print");
+    const btnClosePrint = document.getElementById("btn-close-print");
+    const btnCancelPrint = document.getElementById("btn-cancel-print");
+    const btnConfirmPrint = document.getElementById("btn-confirm-print");
+
+    if (btnClosePrint && modalPrint) {
+      btnClosePrint.addEventListener("click", () => {
+        modalPrint.style.display = "none";
+      });
+    }
+    if (btnCancelPrint && modalPrint) {
+      btnCancelPrint.addEventListener("click", () => {
+        modalPrint.style.display = "none";
+      });
+    }
+    if (btnConfirmPrint && modalPrint) {
+      btnConfirmPrint.addEventListener("click", () => {
+        modalPrint.style.display = "none";
+        this.delegatePrint();
+      });
+    }
+
+    // Reader Toolbar Overflow Menu (Feature 11)
+    const btnOverflow = document.getElementById("btn-reader-overflow");
+    if (btnOverflow) {
+      btnOverflow.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.toggleReaderOverflowMenu();
+      });
+    }
+
+    // Dismiss overflow menu when clicking any item
+    document.querySelectorAll("#reader-overflow-menu .overflow-menu-item").forEach(item => {
+      item.addEventListener("click", () => {
+        this.closeReaderOverflowMenu();
+      });
     });
-    document.getElementById("btn-cancel-print").addEventListener("click", () => {
-      document.getElementById("modal-print").style.display = "none";
-    });
-    document.getElementById("btn-confirm-print").addEventListener("click", () => {
-      document.getElementById("modal-print").style.display = "none";
-      window.print();
+
+    // Dismiss overflow menu when clicking outside
+    document.addEventListener("click", (e) => {
+      const wrapper = document.getElementById("reader-overflow-wrapper");
+      if (wrapper && !wrapper.contains(e.target)) {
+        this.closeReaderOverflowMenu();
+      }
     });
 
     // Preferences Modal (S08)
@@ -321,11 +480,30 @@ class AppController {
       this.updateOperationsFooter();
     });
     document.getElementById("btn-batch-delete").addEventListener("click", () => {
-      this.selectedBookIds.forEach(id => window.db.softDeleteBook(id));
-      this.selectedBookIds.clear();
-      this.renderLibrary();
-      this.updateBadges();
-      this.updateOperationsFooter();
+      if (this.selectedBookIds.size === 0) return;
+      const count = this.selectedBookIds.size;
+      const targetIds = Array.from(this.selectedBookIds);
+
+      this.showConfirmModal({
+        title: "Move Books to Trash",
+        message: `Are you sure you want to move ${count} selected book${count > 1 ? "s" : ""} to Trash? You can restore them anytime from the Trash category.`,
+        proceedLabel: "Move to Trash",
+        cancelLabel: "Cancel",
+        onProceed: () => {
+          targetIds.forEach(id => window.db.softDeleteBook(id));
+          this.selectedBookIds.clear();
+          this.renderLibrary();
+          this.updateBadges();
+          this.updateOperationsFooter();
+
+          this.showUndoToast(`Moved ${count} book${count > 1 ? "s" : ""} to Trash`, () => {
+            targetIds.forEach(id => window.db.restoreBook(id));
+            this.renderLibrary();
+            this.updateBadges();
+            this.updateOperationsFooter();
+          });
+        }
+      });
     });
     document.getElementById("btn-batch-restore").addEventListener("click", () => {
       this.selectedBookIds.forEach(id => window.db.restoreBook(id));
@@ -335,11 +513,23 @@ class AppController {
       this.updateOperationsFooter();
     });
     document.getElementById("btn-batch-purge").addEventListener("click", () => {
-      this.selectedBookIds.forEach(id => window.db.purgeBook(id));
-      this.selectedBookIds.clear();
-      this.renderLibrary();
-      this.updateBadges();
-      this.updateOperationsFooter();
+      if (this.selectedBookIds.size === 0) return;
+      const count = this.selectedBookIds.size;
+      const targetIds = Array.from(this.selectedBookIds);
+
+      this.showConfirmModal({
+        title: "Purge Books Permanently",
+        message: `Are you sure you want to permanently delete ${count} selected book${count > 1 ? "s" : ""} from your storage? This action cannot be undone.`,
+        proceedLabel: "Purge Permanently",
+        cancelLabel: "Cancel",
+        onProceed: () => {
+          targetIds.forEach(id => window.db.purgeBook(id));
+          this.selectedBookIds.clear();
+          this.renderLibrary();
+          this.updateBadges();
+          this.updateOperationsFooter();
+        }
+      });
     });
 
     // --- Text Selection NotePopup (S06) ---
@@ -415,6 +605,17 @@ class AppController {
         return; // Don't intercept typing in inputs
       }
 
+      // Persona Accessibility: Ctrl+Z / Cmd+Z triggers Undo when toast is active
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        const toast = document.getElementById("undo-toast");
+        const btnUndo = document.getElementById("btn-undo-action");
+        if (toast && toast.style.display === "flex" && btnUndo && btnUndo.style.display !== "none") {
+          e.preventDefault();
+          btnUndo.click();
+          return;
+        }
+      }
+
       if (this.isReading) {
         if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown" || e.key === "ArrowDown") {
           e.preventDefault();
@@ -424,6 +625,13 @@ class AppController {
           this.pagePrev();
         } else if (e.key === "Escape") {
           e.preventDefault();
+          const overflowMenu = document.getElementById("reader-overflow-menu");
+          if (overflowMenu && overflowMenu.classList.contains("open")) {
+            this.closeReaderOverflowMenu();
+            const btnOver = document.getElementById("btn-reader-overflow");
+            if (btnOver) btnOver.focus();
+            return;
+          }
           this.closeReader();
         } else if (e.key === "F7") {
           e.preventDefault();
@@ -457,7 +665,7 @@ class AppController {
           this.quickAddBookmark();
         } else if (e.ctrlKey && e.key.toLowerCase() === "p") {
           e.preventDefault();
-          document.getElementById("modal-print").style.display = "flex";
+          this.delegatePrint();
         }
       }
     });
@@ -726,7 +934,7 @@ class AppController {
       return;
     }
 
-    // DRM Protection Detection & Warning
+    // DRM Protection Detection & Warning (Preserves compatibility with e2e_suite.py F01-N1)
     if (book.is_drm || (book.file_path && book.file_path.includes(".drm"))) {
       const modal = document.getElementById("modal-confirm");
       document.getElementById("confirm-title").textContent = "DRM Protection Detected";
@@ -735,10 +943,16 @@ class AppController {
       document.getElementById("btn-confirm-proceed").style.display = "none";
       document.getElementById("btn-confirm-cancel").textContent = "Dismiss";
       modal.style.display = "flex";
-      document.getElementById("btn-confirm-cancel").onclick = () => {
+
+      const dismissDrm = () => {
         modal.style.display = "none";
         document.getElementById("btn-confirm-proceed").style.display = "inline-block";
+        document.getElementById("btn-confirm-cancel").textContent = "Cancel";
       };
+
+      document.getElementById("btn-confirm-cancel").onclick = dismissDrm;
+      const btnClose = document.getElementById("btn-close-confirm");
+      if (btnClose) btnClose.onclick = dismissDrm;
       return;
     }
 
@@ -770,6 +984,7 @@ class AppController {
     this.isReading = false;
     document.getElementById("reader-screen").style.display = "none";
     this.closeAllDrawers();
+    this.closeReaderOverflowMenu();
     document.getElementById("quick-settings-popover").style.display = "none";
     this.renderLibrary();
     this.updateBadges();
@@ -822,6 +1037,49 @@ class AppController {
       document.documentElement.requestFullscreen();
     } else {
       if (document.exitFullscreen) document.exitFullscreen();
+    }
+  }
+
+  toggleReaderOverflowMenu() {
+    const menu = document.getElementById("reader-overflow-menu");
+    const btn = document.getElementById("btn-reader-overflow");
+    if (!menu || !btn) return;
+    if (menu.classList.contains("open")) {
+      this.closeReaderOverflowMenu();
+    } else {
+      this.openReaderOverflowMenu();
+    }
+  }
+
+  openReaderOverflowMenu() {
+    const menu = document.getElementById("reader-overflow-menu");
+    const btn = document.getElementById("btn-reader-overflow");
+    if (!menu || !btn) return;
+    menu.classList.add("open");
+    btn.setAttribute("aria-expanded", "true");
+  }
+
+  closeReaderOverflowMenu() {
+    const menu = document.getElementById("reader-overflow-menu");
+    const btn = document.getElementById("btn-reader-overflow");
+    if (!menu || !btn) return;
+    menu.classList.remove("open");
+    btn.setAttribute("aria-expanded", "false");
+  }
+
+  /**
+   * Feature 13: Native Print Delegation (R4)
+   * Direct invocation of native browser printing, bypassing redundant modal dialog.
+   */
+  delegatePrint() {
+    this._printDelegated = true;
+    this.closeReaderOverflowMenu();
+    if (typeof window !== "undefined" && typeof window.print === "function") {
+      try {
+        window.print();
+      } catch (err) {
+        console.warn("[FolioHaven] Native print invocation failed:", err);
+      }
     }
   }
 
@@ -1463,6 +1721,205 @@ class AppController {
       if (e.key === "Enter") tryUnlock();
       else if (e.key === "Escape") closeModal();
     };
+  }
+
+  // --- S12: General Confirmation / Alert Dialog Controller ---
+  showConfirmModal({
+    title = "Confirm Action",
+    message = "Are you sure you want to proceed with this action?",
+    proceedLabel = "Proceed",
+    cancelLabel = "Cancel",
+    onProceed = null,
+    onCancel = null
+  } = {}) {
+    const modal = document.getElementById("modal-confirm");
+    const titleEl = document.getElementById("confirm-title");
+    const msgEl = document.getElementById("confirm-message");
+    const btnProceed = document.getElementById("btn-confirm-proceed");
+    const btnCancel = document.getElementById("btn-confirm-cancel");
+    const btnClose = document.getElementById("btn-close-confirm");
+
+    if (!modal) return;
+
+    // Reset contents and visibility states to clean up any DRM alert side effects
+    if (titleEl) titleEl.textContent = title;
+    if (msgEl) msgEl.textContent = message;
+    if (btnProceed) {
+      btnProceed.textContent = proceedLabel;
+      btnProceed.style.display = "inline-block";
+    }
+    if (btnCancel) {
+      btnCancel.textContent = cancelLabel;
+      btnCancel.style.display = "inline-block";
+    }
+
+    const closeModal = () => {
+      modal.style.display = "none";
+      if (btnProceed) btnProceed.onclick = null;
+      if (btnCancel) btnCancel.onclick = null;
+      if (btnClose) btnClose.onclick = null;
+      modal.onclick = null;
+      document.removeEventListener("keydown", handleKeydown, true);
+    };
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation(); // Prevent reader screen from intercepting Escape
+        closeModal();
+        if (typeof onCancel === "function") onCancel();
+      }
+    };
+
+    if (btnProceed) {
+      btnProceed.onclick = () => {
+        closeModal();
+        if (typeof onProceed === "function") onProceed();
+      };
+    }
+
+    if (btnCancel) {
+      btnCancel.onclick = () => {
+        closeModal();
+        if (typeof onCancel === "function") onCancel();
+      };
+    }
+
+    if (btnClose) {
+      btnClose.onclick = () => {
+        closeModal();
+        if (typeof onCancel === "function") onCancel();
+      };
+    }
+
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        closeModal();
+        if (typeof onCancel === "function") onCancel();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown, true);
+
+    modal.style.display = "flex";
+
+    if (btnCancel) {
+      btnCancel.focus();
+    }
+  }
+
+  // --- S13: Interactive Undo Toast Notification System ---
+  showUndoToast(message, undoCallback, duration = 5000) {
+    const toast = document.getElementById("undo-toast");
+    const msgEl = document.getElementById("undo-toast-message");
+    const btnUndo = document.getElementById("btn-undo-action");
+    const btnClose = document.getElementById("btn-close-undo-toast");
+
+    if (!toast || !msgEl) return;
+
+    if (this._undoToastTimer) {
+      clearTimeout(this._undoToastTimer);
+      this._undoToastTimer = null;
+    }
+
+    const hideToast = () => {
+      toast.style.display = "none";
+      if (btnUndo) btnUndo.onclick = null;
+      if (btnClose) btnClose.onclick = null;
+      if (this._undoToastTimer) {
+        clearTimeout(this._undoToastTimer);
+        this._undoToastTimer = null;
+      }
+    };
+
+    msgEl.textContent = message;
+
+    if (btnUndo) {
+      if (typeof undoCallback === "function") {
+        btnUndo.style.display = "inline-flex";
+        btnUndo.onclick = () => {
+          hideToast();
+          undoCallback();
+        };
+      } else {
+        btnUndo.style.display = "none";
+      }
+    }
+
+    if (btnClose) {
+      btnClose.onclick = () => {
+        hideToast();
+      };
+    }
+
+    toast.style.display = "flex";
+
+    this._undoToastTimer = setTimeout(hideToast, duration);
+  }
+
+  // --- Book Ingestion Pipeline with Shimmering Loading Skeleton (R1 / Heuristic 1) ---
+  importFiles(fileList, source = "input") {
+    const files = Array.from(fileList || []);
+    if (files.length === 0) return Promise.resolve([]);
+
+    const gridView = document.getElementById("grid-view");
+    const emptyState = document.getElementById("empty-state");
+
+    // Hide empty state and show grid view if in grid mode
+    if (emptyState) emptyState.style.display = "none";
+    if (gridView && this.currentViewMode === "grid") {
+      gridView.style.display = "flex";
+    }
+
+    // Mount skeleton cards into #grid-view
+    const skeletons = files.map(() => {
+      const skeleton = document.createElement("div");
+      skeleton.className = "book-card loading";
+      skeleton.setAttribute("aria-busy", "true");
+      skeleton.setAttribute("aria-label", "Importing and parsing ebook...");
+      skeleton.setAttribute("role", "status");
+      skeleton.innerHTML = `
+        <div class="card-thumb skeleton-pulse"></div>
+        <div class="skeleton-line skeleton-title"></div>
+        <div class="skeleton-line skeleton-author"></div>
+      `;
+      if (gridView) {
+        gridView.prepend(skeleton);
+      }
+      return skeleton;
+    });
+
+    // Return a Promise for lifecycle tracking & testability
+    return new Promise((resolve) => {
+      // 350ms simulated parsing window allows smooth CSS shimmer frame animation
+      setTimeout(() => {
+        const addedBooks = [];
+        try {
+          files.forEach(file => {
+            const ext = file.name ? file.name.split(".").pop().toUpperCase() : "EPUB";
+            const title = file.name ? file.name.replace(/\.[^/.]+$/, "") : "Imported Book";
+            const author = source === "drop" ? "Local File" : "Imported Author";
+            const newBook = window.db.addBook({
+              title: title,
+              author: author,
+              format: ext || "EPUB",
+              file_path: file.name || "imported/book",
+              file_size_bytes: file.size || 102400,
+              content: `Content preview for ${file.name || "document"}.\n\nImported successfully into FolioHaven library.`
+            });
+            addedBooks.push(newBook);
+          });
+        } catch (err) {
+          console.error("Error importing ebook files:", err);
+        } finally {
+          // Remove skeletons and re-render library
+          skeletons.forEach(s => s.remove());
+          this.renderLibrary();
+          this.updateBadges();
+          resolve(addedBooks);
+        }
+      }, 350);
+    });
   }
 }
 
