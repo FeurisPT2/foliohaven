@@ -202,7 +202,7 @@ function buildMenu() {
               type: 'info',
               title: 'About FolioHaven',
               message: 'FolioHaven — Desktop Ebook Reader',
-              detail: 'Version 1.0.0 (Windows x64 Standalone)\n\nA clean-room, distraction-free desktop digital bookshelf.\nSupports EPUB, PDF, MOBI, FB2, CBZ, and TXT.\n\n© 2026 FolioHaven Team. Released under the MIT License.',
+              detail: 'Version 1.0.1 (Windows x64 Standalone)\n\nA clean-room, distraction-free desktop digital bookshelf.\nSupports EPUB, PDF, MOBI, FB2, CBZ, and TXT.\n\n© 2026 FolioHaven Team. Released under the MIT License.',
               buttons: ['OK']
             });
           }
@@ -319,7 +319,7 @@ ipcMain.handle('file:read-content', async (_event, filePath) => {
 
 ipcMain.handle('app:get-info', () => {
   return {
-    version: '1.0.0',
+    version: '1.0.1',
     platform: process.platform,
     arch: process.arch,
     isDesktop: true

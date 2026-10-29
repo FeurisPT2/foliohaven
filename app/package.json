@@ -1,7 +1,7 @@
 {
   "name": "foliohaven",
   "productName": "FolioHaven",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "FolioHaven — Distraction-Free Digital Bookshelf & Desktop Ebook Reader",
   "main": "main.js",
   "author": "FolioHaven Team",

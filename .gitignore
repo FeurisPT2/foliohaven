@@ -1,6 +1,11 @@
 # Distribution releases (attach via GitHub releases)
 dist/
+dist_native/
+build_native/
 *.zip
+
+# Virtual environment & tools
+.venv/
 
 # Dependencies
 node_modules/

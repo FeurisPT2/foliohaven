@@ -38,9 +38,10 @@ Unlike proprietary desktop readers bogged down with advertisements, nag screens,
 
 | Target | Access Link | Description |
 | :--- | :--- | :--- |
+| **Native Windows App (100% C++20 / Qt 6)** | [`dist/FolioHaven-Native-win64/FolioHaven.exe`](dist/FolioHaven-Native-win64/FolioHaven.exe) | **Pure Native 64-bit C++20 binary (~826 KB)**. Zero Chromium overhead, boots in milliseconds, uses native SQLite WAL and Windows SAPI speech. [Download 26MB Portable Zip](dist/FolioHaven-1.0.1-Native-Windows-x64.zip). |
+| **Windows Installer (.exe)** | [`dist/FolioHaven Setup 1.0.1.exe`](dist/FolioHaven%20Setup%201.0.1.exe) | Automated Windows setup installer with desktop and Start Menu shortcuts. |
 | **Web Reading App** | [Open FolioHaven Web App](https://foliohaven.vercel.app/reader) | Run instantly in any modern browser (Chrome, Edge, Firefox, Safari). Drag & drop your ebooks to start reading immediately. |
 | **Product Landing Page** | [Visit Marketing Site](https://foliohaven.vercel.app/) | Interactive showcase, design philosophy, feature deep-dive, and live demo. |
-| **Windows Desktop App** | [Download v1.0.0 (.zip)](https://github.com/FeurisPT2/foliohaven/releases/download/v1.0.0/FolioHaven-1.0.0-win-x64.zip) | Standalone portable Windows x64 binary with native window frame and tray integration. |
 
 ---
 
@@ -129,19 +130,25 @@ icecream_ebook_reader_replica/
 
 ## 🛠️ Local Development & Build
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18.0.0 or later recommended)
-- `npm` (bundled with Node.js)
-- Python 3.9+ (optional, for running test suites)
+### 1. Building the 100% Native C++20 / Qt 6 Desktop App
 
-### Running the Web Version
+Requirements: MinGW-w64 GCC 13+ or MSVC 2022, CMake 3.20+, Qt 6.6+ (Core, Gui, Widgets, Sql, Svg).
+
+```bash
+# Configure with CMake and Ninja
+cmake -B build_native -G Ninja -DCMAKE_CXX_COMPILER=g++
+
+# Build native executable
+cmake --build build_native
+
+# Deploy dependencies for portable distribution
+windeployqt --release build_native/FolioHaven.exe
+```
+
+### 2. Running the Web Version
 The web application is pure static HTML/CSS/JS. You can run it with any static HTTP server:
 
 ```bash
-# Clone the repository
-git clone https://github.com/FeurisPT2/foliohaven.git
-cd foliohaven
-
 # Start a local static server
 npx serve app
 
@@ -150,22 +157,15 @@ npx serve app
 # Reader App:   http://localhost:3000/index.html
 ```
 
-### Running the Desktop Electron App
+### 3. Running & Packaging the Electron Version
 
 ```bash
 cd app
 
-# Install dependencies (Electron)
-npm install
-
 # Launch Electron in development mode
 npm start
-```
 
-### Building the Windows Desktop Package
-
-```bash
-# Package into standalone Windows distribution
+# Package standalone distribution
 npm run build
 ```
 
