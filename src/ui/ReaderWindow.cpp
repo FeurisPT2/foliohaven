@@ -22,6 +22,13 @@
 #include <QPixmap>
 #include <QIcon>
 #include <QToolTip>
+#include <QDialog>
+#include <QTabWidget>
+#include <QComboBox>
+#include <QSpinBox>
+#include <QFormLayout>
+#include <QDirIterator>
+#include <QStandardPaths>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -334,8 +341,16 @@ void ReaderWindow::setupLibraryView() {
 
     QLabel *dropTip = new QLabel("Tip: Drag & drop any book file into the app to import.", sidebarWidget);
     dropTip->setWordWrap(true);
-    dropTip->setStyleSheet("font-size: 11px; color: #78716c;");
+    dropTip->setStyleSheet("font-size: 11px; color: #78716c; margin-bottom: 6px;");
     sideLayout->addWidget(dropTip);
+
+    m_settingsBtn = new QPushButton("Settings", sidebarWidget);
+    m_settingsBtn->setIcon(createSvgIcon("M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z", 14, "#d6d3d1"));
+    m_settingsBtn->setCursor(Qt::PointingHandCursor);
+    m_settingsBtn->setToolTip("Preferences & Settings");
+    m_settingsBtn->setStyleSheet(toolbarBtnStyle(false));
+    connect(m_settingsBtn, &QPushButton::clicked, this, &ReaderWindow::onOpenSettingsDialog);
+    sideLayout->addWidget(m_settingsBtn);
 
     mainLayout->addWidget(sidebarWidget);
 
@@ -587,6 +602,14 @@ void ReaderWindow::setupReaderView() {
     m_fsBtn->setStyleSheet(toolbarBtnStyle(false));
     connect(m_fsBtn, &QPushButton::clicked, this, &ReaderWindow::onToggleFullscreen);
     navLayout->addWidget(m_fsBtn);
+
+    m_readerSettingsBtn = new QPushButton("Settings", topNav);
+    m_readerSettingsBtn->setIcon(createSvgIcon("M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z", 14, "#d6d3d1"));
+    m_readerSettingsBtn->setToolTip("Preferences & Settings");
+    m_readerSettingsBtn->setCursor(Qt::PointingHandCursor);
+    m_readerSettingsBtn->setStyleSheet(toolbarBtnStyle(false));
+    connect(m_readerSettingsBtn, &QPushButton::clicked, this, &ReaderWindow::onOpenSettingsDialog);
+    navLayout->addWidget(m_readerSettingsBtn);
 
     readerLayout->addWidget(topNav);
 
@@ -1420,6 +1443,248 @@ void ReaderWindow::onToggleReadAloud() {
         g_pVoice->Speak(textToSpeak.toStdWString().c_str(), SPF_ASYNC | SPF_PURGEBEFORESPEAK, nullptr);
     }
 #endif
+}
+
+void ReaderWindow::onOpenSettingsDialog() {
+    QDialog dialog(this);
+    dialog.setWindowTitle("FolioHaven — Preferences & Settings");
+    dialog.setFixedSize(540, 520);
+    dialog.setStyleSheet(R"(
+        QDialog {
+            background-color: #1c1917;
+            color: #f5f5f4;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        QLabel {
+            color: #f5f5f4;
+            font-size: 13px;
+        }
+        QTabWidget::pane {
+            border: 1px solid #3d3835;
+            background-color: #171514;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        QTabBar::tab {
+            background-color: #24201e;
+            color: #a8a29e;
+            border: 1px solid #3d3835;
+            border-bottom: none;
+            padding: 8px 18px;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            margin-right: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        QTabBar::tab:selected {
+            background-color: #171514;
+            color: #ea580c;
+            border-top: 2px solid #ea580c;
+        }
+        QComboBox, QSpinBox {
+            background-color: #24201e;
+            border: 1px solid #3d3835;
+            border-radius: 6px;
+            padding: 6px 12px;
+            color: #f5f5f4;
+            font-size: 13px;
+        }
+        QComboBox:focus, QSpinBox:focus {
+            border-color: #ea580c;
+        }
+        QComboBox::drop-down {
+            border: none;
+        }
+        QPushButton {
+            background-color: #24201e;
+            border: 1px solid #3d3835;
+            border-radius: 6px;
+            padding: 8px 16px;
+            color: #f5f5f4;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        QPushButton:hover {
+            background-color: #332d29;
+            border-color: #57534e;
+        }
+    )");
+
+    QVBoxLayout *dlgLayout = new QVBoxLayout(&dialog);
+    dlgLayout->setContentsMargins(20, 20, 20, 20);
+    dlgLayout->setSpacing(16);
+
+    QHBoxLayout *headerLayout = new QHBoxLayout();
+    QLabel *titleLabel = new QLabel("Preferences & Settings", &dialog);
+    titleLabel->setStyleSheet("font-size: 18px; font-weight: 700; color: #f5f5f4;");
+    headerLayout->addWidget(titleLabel);
+    headerLayout->addStretch();
+    dlgLayout->addLayout(headerLayout);
+
+    QTabWidget *tabs = new QTabWidget(&dialog);
+
+    // Tab 1: Reading & Display
+    QWidget *readTab = new QWidget();
+    QVBoxLayout *readLayout = new QVBoxLayout(readTab);
+    readLayout->setSpacing(14);
+
+    QFormLayout *form = new QFormLayout();
+    form->setLabelAlignment(Qt::AlignLeft);
+    form->setFormAlignment(Qt::AlignLeft | Qt::AlignTop);
+    form->setHorizontalSpacing(20);
+    form->setVerticalSpacing(14);
+
+    QComboBox *themeCombo = new QComboBox(readTab);
+    themeCombo->addItem("Sepia (Archival Warm)", static_cast<int>(ReaderTheme::Sepia));
+    themeCombo->addItem("Day (Crisp Ivory)", static_cast<int>(ReaderTheme::Day));
+    themeCombo->addItem("Night (Low Glare OLED)", static_cast<int>(ReaderTheme::Night));
+    themeCombo->addItem("Dark Sepia (Deep Tobacco)", static_cast<int>(ReaderTheme::DarkSepia));
+    themeCombo->setCurrentIndex(static_cast<int>(m_currentTheme));
+    form->addRow("Default Reading Theme:", themeCombo);
+
+    QComboBox *layoutCombo = new QComboBox(readTab);
+    layoutCombo->addItem("Single Page (Reflowable)", false);
+    layoutCombo->addItem("Two Pages (Book Spread)", true);
+    layoutCombo->setCurrentIndex(m_isTwoPages ? 1 : 0);
+    form->addRow("Page Layout Mode:", layoutCombo);
+
+    QSpinBox *fontSpin = new QSpinBox(readTab);
+    fontSpin->setRange(10, 36);
+    fontSpin->setValue(m_fontSizePt);
+    fontSpin->setSuffix(" pt");
+    form->addRow("Font Size:", fontSpin);
+
+    readLayout->addLayout(form);
+    readLayout->addStretch();
+    tabs->addTab(readTab, "Reading & Display");
+
+    // Tab 2: Speech & Cache
+    QWidget *sysTab = new QWidget();
+    QVBoxLayout *sysLayout = new QVBoxLayout(sysTab);
+    sysLayout->setSpacing(14);
+
+    QLabel *ttsDesc = new QLabel("Speech Synthesis (Windows SAPI):", sysTab);
+    ttsDesc->setStyleSheet("font-weight: 600; color: #ea580c;");
+    sysLayout->addWidget(ttsDesc);
+
+    QLabel *ttsInfo = new QLabel("High-speed offline text-to-speech using native Windows speech runtime.\nShortcut: Press F7 or click 'Read Aloud' in reader toolbar.", sysTab);
+    ttsInfo->setStyleSheet("color: #a8a29e; font-size: 12px;");
+    ttsInfo->setWordWrap(true);
+    sysLayout->addWidget(ttsInfo);
+
+    QFrame *div = new QFrame(sysTab);
+    div->setFrameShape(QFrame::HLine);
+    div->setStyleSheet("color: #3d3835; margin: 10px 0;");
+    sysLayout->addWidget(div);
+
+    QLabel *cacheHeader = new QLabel("Document & PDF Hardware Render Cache:", sysTab);
+    cacheHeader->setStyleSheet("font-weight: 600; color: #ea580c;");
+    sysLayout->addWidget(cacheHeader);
+
+    QString cachePath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/pdf_cache";
+    QDir cacheDir(cachePath);
+    qint64 cacheSizeBytes = 0;
+    if (cacheDir.exists()) {
+        QDirIterator it(cachePath, QDir::Files, QDirIterator::Subdirectories);
+        while (it.hasNext()) {
+            it.next();
+            cacheSizeBytes += it.fileInfo().size();
+        }
+    }
+    double cacheMb = (double)cacheSizeBytes / (1024.0 * 1024.0);
+
+    QLabel *cacheInfoLabel = new QLabel(QString("Current cache location:\n%1\nCached size: %2 MB").arg(cachePath).arg(QString::number(cacheMb, 'f', 2)), sysTab);
+    cacheInfoLabel->setStyleSheet("color: #a8a29e; font-size: 12px; font-family: monospace;");
+    cacheInfoLabel->setWordWrap(true);
+    sysLayout->addWidget(cacheInfoLabel);
+
+    QPushButton *clearCacheBtn = new QPushButton("Clear Hardware PDF Cache", sysTab);
+    clearCacheBtn->setIcon(createSvgIcon("M3 6h18 M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6 M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", 14, "#f87171"));
+    clearCacheBtn->setStyleSheet("background-color: #2a1f1f; border: 1px solid #7f1d1d; color: #fca5a5; font-size: 12px; padding: 6px 14px;");
+    connect(clearCacheBtn, &QPushButton::clicked, [cachePath, cacheInfoLabel]() {
+        QDir dir(cachePath);
+        if (dir.exists()) {
+            dir.removeRecursively();
+            cacheInfoLabel->setText(QString("Current cache location:\n%1\nCached size: 0.00 MB (Cleaned)").arg(cachePath));
+        }
+    });
+    sysLayout->addWidget(clearCacheBtn);
+    sysLayout->addStretch();
+    tabs->addTab(sysTab, "Speech & Cache");
+
+    // Tab 3: Keyboard Shortcuts
+    QWidget *kbTab = new QWidget();
+    QVBoxLayout *kbLayout = new QVBoxLayout(kbTab);
+    QTableWidget *kbTable = new QTableWidget(7, 2, kbTab);
+    kbTable->setHorizontalHeaderLabels({"Shortcut Key", "Action"});
+    kbTable->horizontalHeader()->setStretchLastSection(true);
+    kbTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    kbTable->verticalHeader()->setVisible(false);
+    kbTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    kbTable->setSelectionMode(QAbstractItemView::NoSelection);
+    kbTable->setStyleSheet("background: transparent; border: 1px solid #3d3835; font-size: 12px;");
+
+    auto setRow = [kbTable](int r, const QString& k, const QString& a) {
+        kbTable->setItem(r, 0, new QTableWidgetItem(k));
+        kbTable->setItem(r, 1, new QTableWidgetItem(a));
+    };
+    setRow(0, "Esc", "Return to Library View");
+    setRow(1, "Left Arrow / Page Up", "Previous Page");
+    setRow(2, "Right Arrow / Space / Page Down", "Next Page");
+    setRow(3, "F", "Toggle Fullscreen Mode");
+    setRow(4, "F7", "Toggle Text-to-Speech (Read Aloud)");
+    setRow(5, "Double Click Book", "Open book in reader");
+    setRow(6, "Drag & Drop", "Import any book into library");
+
+    kbLayout->addWidget(kbTable);
+    tabs->addTab(kbTab, "Keyboard Shortcuts");
+
+    dlgLayout->addWidget(tabs);
+
+    // Dialog bottom buttons
+    QHBoxLayout *btnLayout = new QHBoxLayout();
+    btnLayout->addStretch();
+
+    QPushButton *cancelBtn = new QPushButton("Cancel", &dialog);
+    connect(cancelBtn, &QPushButton::clicked, &dialog, &QDialog::reject);
+    btnLayout->addWidget(cancelBtn);
+
+    QPushButton *saveBtn = new QPushButton("Save Preferences", &dialog);
+    saveBtn->setStyleSheet(R"(
+        QPushButton {
+            background-color: #c2410c;
+            color: #ffffff;
+            border: 1px solid #ea580c;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 6px;
+        }
+        QPushButton:hover {
+            background-color: #ea580c;
+        }
+    )");
+    connect(saveBtn, &QPushButton::clicked, [this, &dialog, themeCombo, layoutCombo, fontSpin]() {
+        ReaderTheme chosenTheme = static_cast<ReaderTheme>(themeCombo->currentData().toInt());
+        bool chosenTwoPages = layoutCombo->currentData().toBool();
+        int chosenFont = fontSpin->value();
+
+        m_fontSizePt = chosenFont;
+        if (m_isTwoPages != chosenTwoPages) {
+            m_isTwoPages = chosenTwoPages;
+            updateLayoutButton();
+            if (m_rightPageBrowser) {
+                m_rightPageBrowser->setVisible(m_isTwoPages);
+            }
+        }
+        applyTheme(chosenTheme);
+        displayCurrentPage();
+        dialog.accept();
+    });
+    btnLayout->addWidget(saveBtn);
+
+    dlgLayout->addLayout(btnLayout);
+    dialog.exec();
 }
 
 void ReaderWindow::dragEnterEvent(QDragEnterEvent *event) {

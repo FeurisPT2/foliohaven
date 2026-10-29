@@ -64,6 +64,7 @@ private slots:
     void onAddHighlight();
     void onExportNotesHtml();
     void onToggleReadAloud();
+    void onOpenSettingsDialog();
 
 private:
     void setupUi();
@@ -122,11 +123,13 @@ private:
     QPushButton *m_notesBtn{nullptr};
     QPushButton *m_speakBtn{nullptr};
     QPushButton *m_fsBtn{nullptr};
+    QPushButton *m_readerSettingsBtn{nullptr};
 
     // UI Widgets - Library Controls
     QPushButton *m_addBookBtn{nullptr};
     QPushButton *m_viewGridBtn{nullptr};
     QPushButton *m_viewTableBtn{nullptr};
+    QPushButton *m_settingsBtn{nullptr};
 
     // Helper functions
     void updateThemeButtons();
