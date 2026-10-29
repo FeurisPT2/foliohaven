@@ -38,8 +38,7 @@ Unlike proprietary desktop readers bogged down with advertisements, nag screens,
 
 | Target | Access Link | Description |
 | :--- | :--- | :--- |
-| **Native Windows App (100% C++20 / Qt 6)** | [`dist/FolioHaven-Native-win64/FolioHaven.exe`](dist/FolioHaven-Native-win64/FolioHaven.exe) | **Pure Native 64-bit C++20 binary (~826 KB)**. Zero Chromium overhead, boots in milliseconds, uses native SQLite WAL and Windows SAPI speech. [Download 26MB Portable Zip](dist/FolioHaven-1.0.1-Native-Windows-x64.zip). |
-| **Windows Installer (.exe)** | [`dist/FolioHaven Setup 1.0.1.exe`](dist/FolioHaven%20Setup%201.0.1.exe) | Automated Windows setup installer with desktop and Start Menu shortcuts. |
+| **Native Windows App (100% C++20 / Qt 6)** | [Download 26MB Portable Zip (GitHub)](https://github.com/FeurisPT2/foliohaven/releases/download/v1.0.1/FolioHaven-1.0.1-Native-Windows-x64.zip) | **Pure Native 64-bit C++20 binary (~846 KB)**. Zero Chromium/Electron overhead, boots in milliseconds, uses native SQLite WAL and Windows SAPI speech. |
 | **Web Reading App** | [Open FolioHaven Web App](https://foliohaven.vercel.app/reader) | Run instantly in any modern browser (Chrome, Edge, Firefox, Safari). Drag & drop your ebooks to start reading immediately. |
 | **Product Landing Page** | [Visit Marketing Site](https://foliohaven.vercel.app/) | Interactive showcase, design philosophy, feature deep-dive, and live demo. |
 
@@ -103,25 +102,36 @@ Unlike proprietary desktop readers bogged down with advertisements, nag screens,
 
 ## 🏗️ Architecture & Project Structure
 
-FolioHaven is built with modular vanilla JavaScript and standard browser APIs, eliminating heavy framework overhead:
+FolioHaven is built with a 100% Pure Native C++20 / Qt 6 architecture for desktop Windows and modular vanilla Web Standards for browsers, completely free of Electron and Chromium runtimes:
 
 ```
 icecream_ebook_reader_replica/
-├── app/
+├── src/                      # 100% Pure Native C++20 / Qt 6 Desktop Source
+│   ├── app/
+│   │   └── main.cpp          # Desktop application entry point & CLI ingestion
+│   ├── engine/
+│   │   ├── DocumentEngine.h  # Native ebook parser (EPUB, PDF, MOBI, FB2, CBZ, TXT)
+│   │   └── DocumentEngine.cpp
+│   ├── storage/
+│   │   ├── DatabaseManager.h # Native SQLite WAL persistence & migrations
+│   │   └── DatabaseManager.cpp
+│   └── ui/
+│       ├── ReaderWindow.h    # High-performance Qt 6 desktop window & SAPI TTS
+│       └── ReaderWindow.cpp
+├── app/                      # Static Web Reader & Marketing Site (Offline-First)
 │   ├── assets/               # Screenshots, fine art CC0 imagery & credits
-│   ├── app.js                # Core UI controller, events, views, and shortcuts
+│   ├── app.js                # Web UI controller, events, views, and shortcuts
 │   ├── db.js                 # IndexedDB local storage engine (books, notes, shelves)
 │   ├── engine.js             # Ebook parsing and rendering engine (EPUB/PDF/TXT/etc.)
-│   ├── index.html            # Main reader application interface
+│   ├── index.html            # Web reader application interface
 │   ├── landing.html          # High-converting marketing & demo landing page
-│   ├── main.js               # Electron main process for desktop Windows app
-│   ├── preload.js            # Secure Electron IPC bridge
 │   ├── styles.css            # Component styles & typography
 │   ├── tokens.css            # Design tokens (colors, elevation, typography scales)
 │   └── vercel.json           # Edge routing configuration for Vercel
 ├── replica/                  # Architecture specs, brand guidelines, and test plans
 ├── scripts/                  # Screenshot automation and utility scripts
 ├── tests/                    # End-to-end and unit test suites
+├── CMakeLists.txt            # Modern CMake build definition for Native Desktop
 ├── vercel.json               # Root deployment routes config
 └── README.md                 # Project documentation
 ```
@@ -145,8 +155,10 @@ cmake --build build_native
 windeployqt --release build_native/FolioHaven.exe
 ```
 
+The resulting standalone executable `FolioHaven.exe` is only **~846 KB** and requires zero Electron or Node runtime.
+
 ### 2. Running the Web Version
-The web application is pure static HTML/CSS/JS. You can run it with any static HTTP server:
+The web application is pure static HTML/CSS/JS with zero external dependencies. You can run it with any static HTTP server:
 
 ```bash
 # Start a local static server
@@ -155,18 +167,6 @@ npx serve app
 # Then open in your browser:
 # Landing Page: http://localhost:3000/landing.html
 # Reader App:   http://localhost:3000/index.html
-```
-
-### 3. Running & Packaging the Electron Version
-
-```bash
-cd app
-
-# Launch Electron in development mode
-npm start
-
-# Package standalone distribution
-npm run build
 ```
 
 ---
