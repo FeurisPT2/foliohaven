@@ -9,7 +9,12 @@
 #include <QProcess>
 #include <QXmlStreamReader>
 #include <QRegularExpression>
+#include <QCryptographicHash>
+#include <QStandardPaths>
+#include <QCoreApplication>
+#include <QTemporaryFile>
 #include <QDebug>
+#include <algorithm>
 
 static QVector<QString> paginateText(const QString& fullText, int wordsPerPage = 320) {
     QVector<QString> pages;
@@ -279,6 +284,232 @@ LoadedBook DocumentEngine::loadGenericDocument(const QString& filePath, const QS
     return book;
 }
 
+LoadedBook DocumentEngine::loadPdf(const QString& filePath) {
+    LoadedBook book;
+    book.filePath = filePath;
+    QFileInfo fi(filePath);
+    book.fileSize = fi.size();
+    book.title = fi.completeBaseName();
+    book.author = "Digital Document";
+    book.format = "PDF";
+
+    if (!QFile::exists(filePath)) {
+        book.isValid = false;
+        book.errorMessage = "File does not exist: " + filePath;
+        return book;
+    }
+
+    // Cache directory based on file path and modification time
+    QByteArray hashInput = (filePath + QString::number(fi.lastModified().toMSecsSinceEpoch())).toUtf8();
+    QString hash = QString(QCryptographicHash::hash(hashInput, QCryptographicHash::Sha256).toHex()).left(16);
+
+    QString cacheBase = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    if (cacheBase.isEmpty()) {
+        cacheBase = QDir::tempPath() + "/FolioHaven";
+    }
+    QString cacheDir = cacheBase + "/pdf_cache/" + hash;
+    QDir dir(cacheDir);
+
+    bool hasCachedPages = false;
+    if (dir.exists()) {
+        QStringList entries = dir.entryList({"page_*.png"}, QDir::Files);
+        if (!entries.isEmpty()) {
+            hasCachedPages = true;
+        }
+    }
+
+    if (!hasCachedPages) {
+        dir.mkpath(".");
+
+        QString scriptPath = QCoreApplication::applicationDirPath() + "/scripts/render_pdf.ps1";
+        if (!QFile::exists(scriptPath)) {
+            scriptPath = QCoreApplication::applicationDirPath() + "/render_pdf.ps1";
+        }
+
+        QTemporaryFile tempScript(QDir::tempPath() + "/foliohaven_pdf_XXXXXX.ps1");
+        if (!QFile::exists(scriptPath)) {
+            if (tempScript.open()) {
+                const char* psScript = R"(
+param([string]$PdfPath = $env:PDF_INPUT_PATH, [string]$OutputDir = $env:PDF_OUTPUT_DIR, [int]$MaxPages = 0)
+if ([string]::IsNullOrWhiteSpace($PdfPath)) { $PdfPath = $env:PDF_INPUT_PATH }
+if ([string]::IsNullOrWhiteSpace($OutputDir)) { $OutputDir = $env:PDF_OUTPUT_DIR }
+try {
+    Add-Type -AssemblyName System.Runtime.WindowsRuntime
+    $asTaskMethod = [System.WindowsRuntimeSystemExtensions].GetMethods() | Where-Object { $_.Name -eq 'AsTask' -and $_.GetParameters().Length -eq 1 -and $_.GetParameters()[0].ParameterType.Name -like 'IAsyncOperation*' } | Select-Object -First 1
+    $asActionMethod = [System.WindowsRuntimeSystemExtensions].GetMethods() | Where-Object { $_.Name -eq 'AsTask' -and $_.GetParameters().Length -eq 1 -and $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncAction' } | Select-Object -First 1
+    [Windows.Storage.StorageFile, Windows.Storage, ContentType = WindowsRuntime] | Out-Null
+    [Windows.Data.Pdf.PdfDocument, Windows.Data.Pdf, ContentType = WindowsRuntime] | Out-Null
+    [Windows.Storage.Streams.InMemoryRandomAccessStream, Windows.Storage.Streams, ContentType = WindowsRuntime] | Out-Null
+    if (!(Test-Path $OutputDir)) { New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null }
+    $op1 = [Windows.Storage.StorageFile]::GetFileFromPathAsync($PdfPath)
+    $file = $asTaskMethod.MakeGenericMethod([Windows.Storage.StorageFile]).Invoke($null, @($op1)).Result
+    $op2 = [Windows.Data.Pdf.PdfDocument]::LoadFromFileAsync($file)
+    $doc = $asTaskMethod.MakeGenericMethod([Windows.Data.Pdf.PdfDocument]).Invoke($null, @($op2)).Result
+    $count = $doc.PageCount
+    Write-Output "PAGE_COUNT:$count"
+    $pagesToRender = $count
+    if ($MaxPages -gt 0 -and $MaxPages -lt $count) { $pagesToRender = $MaxPages }
+    for ($i = 0; $i -lt $pagesToRender; $i++) {
+        $page = $doc.GetPage($i)
+        $stream = New-Object Windows.Storage.Streams.InMemoryRandomAccessStream
+        $renderOp = $page.RenderToStreamAsync($stream)
+        $asActionMethod.Invoke($null, @($renderOp)).Wait()
+        $bytes = New-Object byte[] $stream.Size
+        $netStream = [System.IO.WindowsRuntimeStreamExtensions]::AsStreamForRead($stream)
+        $netStream.Read($bytes, 0, $bytes.Length) | Out-Null
+        $outPath = Join-Path $OutputDir "page_$i.png"
+        [System.IO.File]::WriteAllBytes($outPath, $bytes)
+    }
+    Write-Output "RENDER_SUCCESS:$pagesToRender"
+} catch {
+    Write-Error $_.Exception.Message
+    exit 1
+}
+)";
+                tempScript.write(psScript);
+                tempScript.close();
+                scriptPath = tempScript.fileName();
+            }
+        }
+
+        QProcess process;
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        env.insert("PDF_INPUT_PATH", QDir::toNativeSeparators(filePath));
+        env.insert("PDF_OUTPUT_DIR", QDir::toNativeSeparators(cacheDir));
+        process.setProcessEnvironment(env);
+
+        QStringList args = {
+            "-NoProfile",
+            "-ExecutionPolicy", "Bypass",
+            "-File", scriptPath
+        };
+        process.start("powershell.exe", args);
+        process.waitForFinished(120000);
+    }
+
+    QStringList pngFiles = dir.entryList({"page_*.png"}, QDir::Files);
+    std::sort(pngFiles.begin(), pngFiles.end(), [](const QString& a, const QString& b) {
+        int idxA = a.section('_', 1).section('.', 0, 0).toInt();
+        int idxB = b.section('_', 1).section('.', 0, 0).toInt();
+        return idxA < idxB;
+    });
+
+    if (!pngFiles.isEmpty()) {
+        QString normalizedCacheDir = QDir::fromNativeSeparators(cacheDir);
+        for (int i = 0; i < pngFiles.size(); ++i) {
+            QString imgPath = normalizedCacheDir + "/" + pngFiles[i];
+            QString pageHtml = QString(R"(
+                <div align="center" style="padding: 12px 0;">
+                    <img src="file:///%1" width="96%">
+                </div>
+            )").arg(imgPath);
+            book.pages.append(pageHtml);
+            book.toc.append({QString("Page %1").arg(i + 1), i});
+        }
+        book.isValid = true;
+        return book;
+    }
+
+    return loadGenericDocument(filePath, "PDF");
+}
+
+LoadedBook DocumentEngine::loadCbz(const QString& filePath) {
+    LoadedBook book;
+    book.filePath = filePath;
+    QFileInfo fi(filePath);
+    book.fileSize = fi.size();
+    book.title = fi.completeBaseName();
+    book.author = "Illustrated Book";
+    book.format = "CBZ";
+
+    QTemporaryDir tempDir;
+    if (!tempDir.isValid()) {
+        return loadGenericDocument(filePath, "CBZ");
+    }
+
+    QProcess tarProcess;
+    tarProcess.start("tar", {"-xf", filePath, "-C", tempDir.path()});
+    if (!tarProcess.waitForFinished(10000) || tarProcess.exitCode() != 0) {
+        return loadGenericDocument(filePath, "CBZ");
+    }
+
+    QStringList imageExtensions = {"*.jpg", "*.jpeg", "*.png", "*.webp", "*.bmp", "*.gif"};
+    QDirIterator it(tempDir.path(), imageExtensions, QDir::Files, QDirIterator::Subdirectories);
+    QStringList imageFiles;
+    while (it.hasNext()) {
+        imageFiles.append(it.next());
+    }
+    std::sort(imageFiles.begin(), imageFiles.end());
+
+    if (imageFiles.isEmpty()) {
+        return loadGenericDocument(filePath, "CBZ");
+    }
+
+    QByteArray hashInput = (filePath + QString::number(fi.lastModified().toMSecsSinceEpoch())).toUtf8();
+    QString hash = QString(QCryptographicHash::hash(hashInput, QCryptographicHash::Sha256).toHex()).left(16);
+    QString cacheBase = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    if (cacheBase.isEmpty()) cacheBase = QDir::tempPath() + "/FolioHaven";
+    QString cacheDir = cacheBase + "/cbz_cache/" + hash;
+    QDir().mkpath(cacheDir);
+
+    for (int i = 0; i < imageFiles.size(); ++i) {
+        QString ext = QFileInfo(imageFiles[i]).suffix();
+        QString destPath = QString("%1/page_%2.%3").arg(cacheDir).arg(i).arg(ext);
+        QFile::copy(imageFiles[i], destPath);
+        QString normalizedPath = QDir::fromNativeSeparators(destPath);
+        QString pageHtml = QString(R"(
+            <div align="center" style="padding: 12px 0;">
+                <img src="file:///%1" width="96%">
+            </div>
+        )").arg(normalizedPath);
+        book.pages.append(pageHtml);
+        book.toc.append({QString("Page %1").arg(i + 1), i});
+    }
+
+    book.isValid = true;
+    return book;
+}
+
+LoadedBook DocumentEngine::loadFb2(const QString& filePath) {
+    LoadedBook book;
+    book.filePath = filePath;
+    QFileInfo fi(filePath);
+    book.fileSize = fi.size();
+    book.title = fi.completeBaseName();
+    book.author = "Unknown Author";
+    book.format = "FB2";
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return loadGenericDocument(filePath, "FB2");
+    }
+
+    QXmlStreamReader xml(&file);
+    QString fullText;
+    while (!xml.atEnd()) {
+        if (xml.readNextStartElement()) {
+            if (xml.name() == QLatin1String("book-title")) {
+                book.title = xml.readElementText();
+            } else if (xml.name() == QLatin1String("p")) {
+                QString para = xml.readElementText().trimmed();
+                if (!para.isEmpty()) {
+                    fullText += para + "\n\n";
+                }
+            }
+        }
+    }
+    file.close();
+
+    if (!fullText.trimmed().isEmpty()) {
+        book.pages = paginateText(fullText);
+        book.toc.append({book.title, 0});
+        book.isValid = true;
+        return book;
+    }
+
+    return loadGenericDocument(filePath, "FB2");
+}
+
 LoadedBook DocumentEngine::loadDocument(const QString& filePath) {
     QFileInfo fi(filePath);
     QString ext = fi.suffix().toLower();
@@ -287,6 +518,12 @@ LoadedBook DocumentEngine::loadDocument(const QString& filePath) {
         return loadPlainText(filePath);
     } else if (ext == "epub") {
         return loadEpub(filePath);
+    } else if (ext == "pdf") {
+        return loadPdf(filePath);
+    } else if (ext == "cbz" || ext == "cbr") {
+        return loadCbz(filePath);
+    } else if (ext == "fb2") {
+        return loadFb2(filePath);
     } else {
         return loadGenericDocument(filePath, ext.toUpper());
     }

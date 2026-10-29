@@ -33,9 +33,10 @@ int main(int argc, char *argv[]) {
 
     window.show();
 
-    // Check if initial book passed via CLI args
-    if (argc > 1) {
-        QString initialFile = QString::fromLocal8Bit(argv[1]);
+    // Check if initial book passed via CLI args (Unicode safe)
+    const QStringList cmdArgs = QCoreApplication::arguments();
+    if (cmdArgs.size() > 1) {
+        QString initialFile = cmdArgs.at(1);
         if (QFile::exists(initialFile)) {
             window.openBookFile(initialFile);
         }

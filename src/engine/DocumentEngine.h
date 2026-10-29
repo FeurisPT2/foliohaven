@@ -30,6 +30,9 @@ public:
 private:
     static LoadedBook loadPlainText(const QString& filePath);
     static LoadedBook loadEpub(const QString& filePath);
+    static LoadedBook loadPdf(const QString& filePath);
+    static LoadedBook loadCbz(const QString& filePath);
+    static LoadedBook loadFb2(const QString& filePath);
     static LoadedBook loadGenericDocument(const QString& filePath, const QString& format);
 };
 

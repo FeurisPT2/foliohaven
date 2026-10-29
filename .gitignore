@@ -2,10 +2,14 @@
 dist/
 dist_native/
 build_native/
+build_native_msvcrt/
 *.zip
 
 # Virtual environment & tools
 .venv/
+.agents/
+__pycache__/
+*.pyc
 
 # Dependencies
 node_modules/
