@@ -2,3 +2,7 @@ dist
 *.zip
 node_modules
 .git
+.taste-skill
+replica
+tests
+scripts
