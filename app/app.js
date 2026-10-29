@@ -461,6 +461,26 @@ class AppController {
         }
       }
     });
+
+    // --- Mouse Wheel Page Navigation in Reader ---
+    let lastWheelTime = 0;
+    window.addEventListener("wheel", (e) => {
+      if (!this.isReading) return;
+      // If user is inside an open drawer or modal, allow normal scrolling
+      if (e.target.closest(".drawer") || e.target.closest(".modal-backdrop") || e.target.closest("#quick-settings-popover")) {
+        return;
+      }
+      const now = Date.now();
+      if (now - lastWheelTime < 220) return;
+      if (Math.abs(e.deltaY) > 25) {
+        lastWheelTime = now;
+        if (e.deltaY > 0) {
+          this.pageNext();
+        } else {
+          this.pagePrev();
+        }
+      }
+    }, { passive: true });
   }
 
   loadSettings() {

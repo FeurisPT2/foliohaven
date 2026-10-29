@@ -6,7 +6,6 @@
   <title>FolioHaven: Distraction-Free Digital Bookshelf</title>
   <meta name="description" content="FolioHaven is a serene, open-source desktop ebook reader for Windows and Web. Read EPUB, PDF, and MOBI books with zero popups, zero countdown timers, and zero paywalls.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="styles.css">
   <style>
     /* FolioHaven Design Tokens — Anti-Slop Editorial Design System */
     :root {
@@ -54,8 +53,19 @@
       padding: 0;
     }
 
+    h1, h2, h3, h4, h5, h6 {
+      line-height: 1.4;
+    }
+
+    p, li, th, td, a, span, button {
+      line-height: 1.5;
+    }
+
     html {
       scroll-behavior: smooth;
+      height: auto;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     body {
@@ -67,6 +77,10 @@
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
+      overflow-y: auto;
+      height: auto;
+      min-height: 100vh;
+      user-select: auto;
     }
 
     a {
@@ -183,7 +197,7 @@
     .chapter-heading {
       font-size: var(--type-h2);
       font-weight: 700;
-      line-height: 1.25;
+      line-height: 1.35;
       letter-spacing: -0.02em;
       margin-bottom: 12px;
       color: var(--color-text);
@@ -215,7 +229,7 @@
     .hero-content h1 {
       font-size: var(--type-display);
       font-weight: 700;
-      line-height: 1.15;
+      line-height: 1.3;
       letter-spacing: -0.03em;
       margin-bottom: 18px;
       color: var(--color-text);
@@ -479,7 +493,7 @@
       font-size: var(--type-h2);
       font-weight: 700;
       color: var(--color-accent);
-      line-height: 1;
+      line-height: 1.35;
     }
 
     .flow-card h3 {
@@ -567,7 +581,7 @@
     .rest-band-text h2 {
       font-size: var(--type-h2);
       font-weight: 700;
-      line-height: 1.25;
+      line-height: 1.35;
       margin-bottom: 16px;
       color: #ffffff;
       max-width: 30ch;
@@ -626,7 +640,7 @@
       font-size: 36px;
       font-weight: 700;
       color: var(--color-text);
-      line-height: 1.1;
+      line-height: 1.35;
       margin-bottom: 12px;
       display: flex;
       align-items: baseline;
