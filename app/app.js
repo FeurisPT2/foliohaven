@@ -636,8 +636,10 @@ class AppController {
         <div class="card-thumb" style="display: flex; align-items: center; justify-content: center; position: relative; background: #c2410c; overflow: hidden;">
           ${coverHtml}
           <span class="card-format-badge badge-${b.format.toLowerCase()}">${b.format}</span>
-          <span class="card-favorite-star ${b.is_favorite ? 'active' : ''}">★</span>
-          ${b.is_encrypted ? '<span style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); padding: 2px 6px; border-radius: 4px; font-size: 11px; color: #fff;" title="Password Protected">🔒</span>' : ''}
+          <span class="card-favorite-star ${b.is_favorite ? 'active' : ''}" title="Toggle Favorite">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="${b.is_favorite ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </span>
+          ${b.is_encrypted ? '<span style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.75); padding: 3px 6px; border-radius: 4px; display: inline-flex; align-items: center; color: #fff;" title="Password Protected"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>' : ''}
         </div>
         <div class="card-title" title="${escapeHtml(b.title)}">${escapeHtml(b.title)}</div>
         <div class="card-author">${escapeHtml(b.author)}</div>
@@ -680,19 +682,23 @@ class AppController {
     books.forEach(b => {
       const tr = document.createElement("tr");
       if (this.selectedBookIds.has(b.id)) tr.className = "selected";
+      const iconSvg = b.is_encrypted
+        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>'
+        : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-2px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>';
+
       tr.innerHTML = `
         <td style="font-weight: 600;">
-          <span style="margin-right: 6px;">${b.is_encrypted ? '🔒' : '📄'}</span>
+          <span style="margin-right: 6px;">${iconSvg}</span>
           ${escapeHtml(b.title)}
         </td>
         <td style="color: var(--color-text-muted);">${escapeHtml(b.author)}</td>
-        <td>${new Date(b.date_added).toLocaleDateString()}</td>
-        <td>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <div style="flex: 1; height: 6px; background: var(--color-border); border-radius: 3px; overflow: hidden;">
+        <td style="text-align: right; font-variant-numeric: tabular-nums;">${new Date(b.date_added).toLocaleDateString()}</td>
+        <td style="text-align: right;">
+          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
+            <div style="width: 80px; height: 6px; background: var(--color-border); border-radius: 3px; overflow: hidden;">
               <div style="height: 100%; background: var(--color-success); width: ${b.progress_percent || 0}%;"></div>
             </div>
-            <span style="font-size: 11px; min-width: 32px;">${b.progress_percent || 0}%</span>
+            <span style="font-size: 13px; font-variant-numeric: tabular-nums; min-width: 38px; text-align: right;">${b.progress_percent || 0}%</span>
           </div>
         </td>
         <td><span class="card-format-badge badge-${b.format.toLowerCase()}">${b.format}</span></td>
@@ -1235,9 +1241,8 @@ class AppController {
       margin: 0 auto;
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 48px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
     }
     header {
       border-bottom: 2px solid var(--border-color);
@@ -1340,7 +1345,7 @@ class AppController {
         <span><strong>Exported:</strong> ${dateStr}</span>
       </div>
       <div class="actions-bar">
-        <button class="btn-print" onclick="window.print()">🖨️ Print or Save as PDF</button>
+        <button class="btn-print" onclick="window.print()">Print or Save as PDF</button>
       </div>
     </header>
 
