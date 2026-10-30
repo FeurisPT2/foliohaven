@@ -10,10 +10,11 @@
       },
       "continue": true
     },
-    { "src": "^/$", "dest": "/landing.html" },
-    { "src": "^/reader$", "dest": "/index.html" },
-    { "src": "^/landing$", "dest": "/landing.html" },
-    { "src": "^/app$", "dest": "/index.html" },
+    { "src": "^/$", "dest": "/app/landing.html" },
+    { "src": "^/landing(?:\\.html)?$", "dest": "/app/landing.html" },
+    { "src": "^/reader(?:\\.html)?$", "dest": "/app/index.html" },
+    { "src": "^/app(?:\\.html)?$", "dest": "/app/index.html" },
+    { "src": "^/index(?:\\.html)?$", "dest": "/app/index.html" },
     { "handle": "filesystem" }
   ]
 }

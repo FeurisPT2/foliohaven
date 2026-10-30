@@ -1,191 +1,97 @@
-# FolioHaven
+# FolioHaven (Web Portal & Web Reader)
 
 <p align="center">
-  <img src="app/logo.svg" alt="FolioHaven Logo" width="96" height="96" />
+  <img src="app/assets/branding/app_logo_512.png" alt="FolioHaven Master Logo" width="108" height="108" style="border-radius: 24px;" />
 </p>
 
 <p align="center">
-  <strong>Serene Digital Bookshelf & Distraction-Free Ebook Reader</strong><br>
-  A modern, privacy-first desktop & web reading companion for EPUB, PDF, MOBI, FB2, CBZ, and TXT formats.
+  <strong>Serene Digital Bookshelf & Distraction-Free Ebook Reader — Web Platform</strong><br>
+  Official marketing portal, web reading application, and central home for the FolioHaven literary ecosystem.
 </p>
 
 <p align="center">
-  <a href="https://foliohaven.vercel.app"><img src="https://img.shields.io/badge/Live%20Demo-Vercel-black?style=flat-square&logo=vercel" alt="Vercel Deployment" /></a>
-  <a href="https://github.com/FeurisPT2/foliohaven/releases/tag/v1.0.1"><img src="https://img.shields.io/badge/Release-v1.0.1-blue?style=flat-square&logo=windows" alt="GitHub Release" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-emerald?style=flat-square" alt="MIT License" /></a>
-  <a href="https://foliohaven.vercel.app/reader"><img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Web-blueviolet?style=flat-square" alt="Platforms" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/Design-Tasteskill%20v2%20Anti--Slop-success?style=flat-square" alt="Tasteskill v2" /></a>
+  <a href="https://foliohaven.vercel.app"><img src="https://img.shields.io/badge/Live%20Deploy-Vercel-black?style=flat-square&logo=vercel" alt="Vercel Deployment" /></a>
+  <a href="https://github.com/FeurisPT2/Foliohaven-pc"><img src="https://img.shields.io/badge/PC%20Client-Flutter-blue?style=flat-square&logo=flutter" alt="PC Client" /></a>
+  <a href="https://github.com/FeurisPT2/foliohaven-mobile"><img src="https://img.shields.io/badge/Mobile%20App-Android%20Compose-green?style=flat-square&logo=android" alt="Mobile App" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-orange?style=flat-square" alt="MIT License" /></a>
 </p>
 
 ---
 
-## 🌟 Overview
+## 🏛️ FolioHaven Ecosystem Overview
 
-**FolioHaven** is a clean-room, privacy-first recreation of desktop reading software, designed for book lovers, researchers, and students who value typography, focus, and quiet study. 
+The FolioHaven project is organized across three dedicated, platform-optimized repositories:
 
-Unlike proprietary desktop readers bogged down with advertisements, nag screens, arbitrary format restrictions, or cloud lock-in, FolioHaven runs entirely offline, keeps all your books in your local storage, and delivers a calm, archival reading canvas.
-
-### Why FolioHaven?
-
-- 🔒 **100% Local & Private:** No telemetry, no account registration, and zero cloud uploads. Your library, bookmarks, and notes remain strictly on your machine.
-- 📖 **Universal Format Support:** Read reflowable **EPUB**, fixed-layout **PDF**, **MOBI**, **FB2**, **CBZ** comic archives, and plain **TXT** files.
-- 🎨 **Anti-Slop Craftsmanship:** Built under strict `tasteskill v2` guidelines—featuring hand-crafted SVG iconography, museum-grade artwork, authentic typography (`Crimson Pro` and `Plus Jakarta Sans`), and WCAG AAA-compliant reading palettes.
-- ⚡ **Lightweight & Fast:** Zero bulky frontend frameworks. Powered by lean native Web APIs, IndexedDB persistence, and an optimized canvas/DOM rendering engine.
+| Project | Platform / Technology | Purpose | Repository Link |
+| :--- | :--- | :--- | :--- |
+| **🌐 FolioHaven Web (This Repo)** | HTML5, Canvas &amp; Vanilla Web APIs | Official marketing portal &amp; instant zero-install browser reader deployed to Vercel | [FeurisPT2/foliohaven](https://github.com/FeurisPT2/foliohaven) |
+| **💻 FolioHaven PC** | Dart &amp; Flutter | High-performance native desktop client for Windows, Linux, and macOS | [FeurisPT2/Foliohaven-pc](https://github.com/FeurisPT2/Foliohaven-pc) |
+| **📱 FolioHaven Mobile** | Kotlin &amp; Jetpack Compose | Native Android application with edge-to-edge Material 3 design and offline reader | [FeurisPT2/foliohaven-mobile](https://github.com/FeurisPT2/foliohaven-mobile) |
 
 ---
 
-## 🚀 Live Demo & Downloads
+## 🌟 What is FolioHaven?
 
-| Target | Access Link | Description |
+**FolioHaven** is a privacy-first, distraction-free ebook sanctuary designed for bibliophiles, students, and researchers who value quiet study and typographic craftsmanship.
+
+Unlike mainstream reading apps that push invasive subscriptions, artificial library limits, or telemetry trackers, FolioHaven runs 100% offline and stores your library locally:
+
+- 🔒 **100% Local & Private:** No user accounts, zero trackers, and zero cloud lock-ins. All books, bookmarks, and study notes remain strictly on your device.
+- 📖 **Universal Format Support:** Reflowable **EPUB**, fixed-layout **PDF**, **MOBI**, **FB2**, **CBZ** comic archives, and plain **TXT**.
+- 🎨 **Master 2D Identity:** Unified design tokens, rich terracotta palette (`#C2410C`), archival embossed book covers, and WCAG AAA-compliant reading modes.
+- ⚡ **Zero-Install Web Reader:** Drag and drop books directly into the browser canvas for instant reading without installing software.
+
+---
+
+## 🚀 Live Access & Deployment
+
+| Resource | URL | Description |
 | :--- | :--- | :--- |
-| **Native Windows Installer (.exe)** | [Download Native Setup (21 MB)](https://github.com/FeurisPT2/foliohaven/releases/download/v1.0.1/FolioHaven-1.0.1-Setup-Windows-x64.exe) | **Recommended**. Automated 100% Native Windows installer with Start Menu & Desktop shortcuts and clean uninstaller. |
-| **Native Portable Package (.zip)** | [Download Portable Zip (26 MB)](https://github.com/FeurisPT2/foliohaven/releases/download/v1.0.1/FolioHaven-1.0.1-Native-Windows-x64.zip) | Standalone portable C++20 / Qt 6 release (~846 KB binary). Zero installation needed, extract and run. |
-| **Web Reading App** | [Open FolioHaven Web App](https://foliohaven.vercel.app/reader) | Run instantly in any modern browser (Chrome, Edge, Firefox, Safari). Drag & drop your ebooks to start reading immediately. |
-| **Product Landing Page** | [Visit Marketing Site](https://foliohaven.vercel.app/) | Interactive showcase, design philosophy, feature deep-dive, and live demo. |
+| **Marketing Landing Portal** | [foliohaven.vercel.app](https://foliohaven.vercel.app/) | Interactive feature showcase, design philosophy, and platform downloads |
+| **In-Browser Web Reader** | [foliohaven.vercel.app/reader](https://foliohaven.vercel.app/reader) | Full client-side IndexedDB ebook reader running in any modern browser |
+| **PC Desktop Releases** | [github.com/FeurisPT2/Foliohaven-pc](https://github.com/FeurisPT2/Foliohaven-pc) | Flutter Windows installer, portable zip, and desktop binaries |
+| **Mobile Android Releases** | [github.com/FeurisPT2/foliohaven-mobile](https://github.com/FeurisPT2/foliohaven-mobile) | Android Compose APK and mobile updates |
 
 ---
 
-## ✨ Key Features
+## 🏗️ Web Architecture & Deployment to Vercel
 
-### 📚 Digital Bookshelf & Organization
-- **Multiple Views:** Switch seamlessly between **Book Shelf (Covers)**, **Detailed Grid**, and **Compact Table List**.
-- **Custom Shelves:** Create, rename, and manage custom collections (e.g. *Favorites*, *Research*, *Fiction*, *To Read*).
-- **Search & Filter:** Instant real-time filtering across titles, authors, file formats, and reading progress.
-- **Custom Covers:** Replace book cover art with custom images or auto-generated book plates.
-- **Shelf Lock:** Optional PIN/password lock to safeguard private collections.
-
-### 👓 The Calm Reading Canvas
-- **Ergonomic Reading Themes:**
-  - ☀️ **Day Mode:** Warm ivory/paper background with deep charcoal typography.
-  - 📜 **Sepia Mode:** Soothing archival parchment tone engineered for long study sessions.
-  - 🌙 **Night Mode:** OLED-friendly deep dark canvas with muted off-white text.
-  - 🪵 **Dark Sepia Mode:** Low-contrast warm night palette for twilight reading.
-- **Flexible Layouts:** Single-page reading, dual-column spreads, adjustable margins, font scaling, and custom line heights.
-- **Distraction-Free Fullscreen:** Press `F` to immerse yourself in pure text without window chrome.
-
-### ✍️ Study Tools & Annotation
-- **Harmonious Highlighting:** Select text and highlight using 4 color swatches (*Amber*, *Emerald*, *Azure*, *Rose*).
-- **Inline Commentary:** Add rich notes to any selected passage.
-- **Export Study Notes:** Export all highlights, chapter references, and annotations to a clean, standalone, printable HTML document with one click.
-- **Quick Bookmarks:** Save important pages and quickly jump between bookmarks.
-
-### 🎙️ In-Book Search & Text-to-Speech (TTS)
-- **Instant Search:** Full-text keyword and regex search with highlighted occurrences and direct jump-to-result navigation.
-- **Native TTS Read-Aloud:** Built-in speech synthesis with play, pause, resume, speed control (0.75x – 2.0x), and system voice selection.
-
----
-
-## 📸 Visual Tour
-
-| Library Management (Shelf View) | Immersive Reader Canvas |
-| :---: | :---: |
-| ![FolioHaven Library View](app/assets/foliohaven-library.png) | ![FolioHaven Reader View](app/assets/foliohaven-reader.png) |
-
-| In-Book Search & Navigation | Notes, Highlights & Annotations |
-| :---: | :---: |
-| ![FolioHaven In-Book Search](app/assets/foliohaven-search.png) | ![FolioHaven Annotations](app/assets/foliohaven-notes.png) |
-
----
-
-## ⌨️ Keyboard Shortcuts
-
-| Shortcut | Action |
-| :--- | :--- |
-| <kbd>→</kbd> / <kbd>PageDown</kbd> / <kbd>Space</kbd> | Next page / advance spread |
-| <kbd>←</kbd> / <kbd>PageUp</kbd> / <kbd>Shift</kbd> + <kbd>Space</kbd> | Previous page |
-| <kbd>Home</kbd> / <kbd>End</kbd> | Jump to start / end of book |
-| <kbd>F</kbd> | Toggle distraction-free Fullscreen |
-| <kbd>Ctrl</kbd> + <kbd>F</kbd> | Open In-Book Search |
-| <kbd>Ctrl</kbd> + <kbd>B</kbd> | Toggle Bookmark on current page |
-| <kbd>Esc</kbd> | Close reader / Exit fullscreen / Dismiss modal |
-
----
-
-## 🏗️ Architecture & Project Structure
-
-FolioHaven is built with a 100% Pure Native C++20 / Qt 6 architecture for desktop Windows and modular vanilla Web Standards for browsers, completely free of Electron and Chromium runtimes:
+The web application is pure static Web Standards with zero server-side build steps:
 
 ```
-icecream_ebook_reader_replica/
-├── src/                      # 100% Pure Native C++20 / Qt 6 Desktop Source
-│   ├── app/
-│   │   └── main.cpp          # Desktop application entry point & CLI ingestion
-│   ├── engine/
-│   │   ├── DocumentEngine.h  # Native ebook parser (EPUB, PDF, MOBI, FB2, CBZ, TXT)
-│   │   └── DocumentEngine.cpp
-│   ├── storage/
-│   │   ├── DatabaseManager.h # Native SQLite WAL persistence & migrations
-│   │   └── DatabaseManager.cpp
-│   └── ui/
-│       ├── ReaderWindow.h    # High-performance Qt 6 desktop window & SAPI TTS
-│       └── ReaderWindow.cpp
-├── app/                      # Static Web Reader & Marketing Site (Offline-First)
-│   ├── assets/               # Screenshots, fine art CC0 imagery & credits
-│   ├── app.js                # Web UI controller, events, views, and shortcuts
-│   ├── db.js                 # IndexedDB local storage engine (books, notes, shelves)
-│   ├── engine.js             # Ebook parsing and rendering engine (EPUB/PDF/TXT/etc.)
-│   ├── index.html            # Web reader application interface
-│   ├── landing.html          # High-converting marketing & demo landing page
+foliohaven/
+├── app/
+│   ├── assets/
+│   │   ├── branding/         # Master 2D FH monogram logos (SVG & PNG)
+│   │   └── credits.json      # Fine art attribution records (CC0)
+│   ├── app.js                # Web UI controller, library views & keyboard shortcuts
+│   ├── db.js                 # IndexedDB client-side local database
+│   ├── engine.js             # Client-side ebook parser (EPUB/PDF/TXT/etc.)
+│   ├── favicon.svg           # Master FH monogram browser favicon
+│   ├── icon.png              # App icon
+│   ├── index.html            # Web reading application interface (/reader)
+│   ├── landing.html          # Main landing portal page (/)
 │   ├── styles.css            # Component styles & typography
-│   ├── tokens.css            # Design tokens (colors, elevation, typography scales)
-│   └── vercel.json           # Edge routing configuration for Vercel
-├── replica/                  # Architecture specs, brand guidelines, and test plans
-├── scripts/                  # Screenshot automation and utility scripts
-├── tests/                    # End-to-end and unit test suites
-├── CMakeLists.txt            # Modern CMake build definition for Native Desktop
-├── vercel.json               # Root deployment routes config
-└── README.md                 # Project documentation
+│   └── vercel.json           # Vercel route rewrites & headers
+├── vercel.json               # Platform root routing configuration
+└── README.md
 ```
 
----
+### Deploying to Vercel
 
-## 🛠️ Local Development & Build
-
-### 1. Building the 100% Native C++20 / Qt 6 Desktop App
-
-Requirements: MinGW-w64 GCC 13+ or MSVC 2022, CMake 3.20+, Qt 6.6+ (Core, Gui, Widgets, Sql, Svg).
+Deploy instantly with the Vercel CLI:
 
 ```bash
-# Configure with CMake and Ninja
-cmake -B build_native -G Ninja -DCMAKE_CXX_COMPILER=g++
+# Deploy to preview
+vercel
 
-# Build native executable
-cmake --build build_native
-
-# Deploy dependencies for portable distribution
-windeployqt --release build_native/FolioHaven.exe
+# Deploy directly to production
+vercel --prod
 ```
 
-The resulting standalone executable `FolioHaven.exe` is only **~846 KB** and requires zero Electron or Node runtime.
-
-### 2. Running the Web Version
-The web application is pure static HTML/CSS/JS with zero external dependencies. You can run it with any static HTTP server:
-
-```bash
-# Start a local static server
-npx serve app
-
-# Then open in your browser:
-# Landing Page: http://localhost:3000/landing.html
-# Reader App:   http://localhost:3000/index.html
-```
-
----
-
-## 🧪 Testing & Verification
-
-FolioHaven includes automated tests covering format parsing, search routines, local database migrations, and landing page responsiveness:
-
-```bash
-# Run unit and integration feature tests
-python tests/test_cloned_features.py
-
-# Run launch artifact and schema verification
-python tests/test_launch_artifacts.py
-
-# Run full end-to-end test suite
-python tests/e2e_suite.py
-```
+Or connect the repository to your Vercel Dashboard with Root Directory set to `./` or `app`. The provided `vercel.json` configurations automatically route:
+- `/` $\rightarrow$ `landing.html`
+- `/reader` or `/app` $\rightarrow$ `index.html`
 
 ---
 
@@ -201,4 +107,4 @@ Formal provenance and licensing records are documented in [`app/assets/credits.j
 
 ## 📄 License
 
-FolioHaven is distributed under the terms of the **[MIT License](LICENSE)**. Free for personal, educational, and commercial use.
+Distributed under the terms of the **[MIT License](LICENSE)**.
